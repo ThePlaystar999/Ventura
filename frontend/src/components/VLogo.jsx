@@ -22,57 +22,45 @@ const VLogo = ({ size = 'md', className = '' }) => {
       data-testid="v-logo"
     >
       <defs>
-        {/* Left arm gradient */}
-        <linearGradient id="leftArm" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" stopColor="#1976D2" />
-          <stop offset="60%" stopColor="#2196F3" />
-          <stop offset="100%" stopColor="#42A5F5" />
-        </linearGradient>
-        
-        {/* Right arm dark section */}
-        <linearGradient id="rightArmDark" x1="100%" y1="0%" x2="0%" y2="100%">
+        {/* Left wing gradient - dark to bright blue */}
+        <linearGradient id="leftWingGrad" x1="0%" y1="100%" x2="100%" y2="0%">
           <stop offset="0%" stopColor="#0D47A1" />
           <stop offset="50%" stopColor="#1565C0" />
-          <stop offset="100%" stopColor="#1976D2" />
+          <stop offset="100%" stopColor="#1E88E5" />
         </linearGradient>
         
-        {/* Right arm light highlight plane */}
-        <linearGradient id="rightArmLight" x1="50%" y1="100%" x2="100%" y2="0%">
-          <stop offset="0%" stopColor="#42A5F5" />
-          <stop offset="40%" stopColor="#64B5F6" />
-          <stop offset="80%" stopColor="#90CAF9" />
-          <stop offset="100%" stopColor="#BBDEFB" />
+        {/* Right wing upper gradient */}
+        <linearGradient id="rightWingUpperGrad" x1="100%" y1="100%" x2="0%" y2="0%">
+          <stop offset="0%" stopColor="#1565C0" />
+          <stop offset="50%" stopColor="#1976D2" />
+          <stop offset="100%" stopColor="#2196F3" />
         </linearGradient>
         
-        {/* Highlight edge */}
-        <linearGradient id="highlightEdge" x1="0%" y1="100%" x2="100%" y2="0%">
-          <stop offset="0%" stopColor="#90CAF9" />
-          <stop offset="100%" stopColor="#E3F2FD" />
+        {/* Right wing inner highlight - white to light blue */}
+        <linearGradient id="innerHighlightGrad" x1="100%" y1="0%" x2="0%" y2="100%">
+          <stop offset="0%" stopColor="#FFFFFF" />
+          <stop offset="30%" stopColor="#E3F2FD" />
+          <stop offset="70%" stopColor="#BBDEFB" />
+          <stop offset="100%" stopColor="#90CAF9" />
         </linearGradient>
       </defs>
       
-      {/* Left arm of the V */}
+      {/* Shape 1: Left Wing - larger dark blue trapezoid */}
       <polygon
-        points="12,5 46,5 50,95"
-        fill="url(#leftArm)"
+        points="8,10 44,10 50,90 50,90"
+        fill="url(#leftWingGrad)"
       />
       
-      {/* Right arm - dark outer section */}
+      {/* Shape 2: Right Wing Upper - upper part of right arm */}
       <polygon
-        points="54,5 88,5 50,95"
-        fill="url(#rightArmDark)"
+        points="56,10 92,10 50,90"
+        fill="url(#rightWingUpperGrad)"
       />
       
-      {/* Right arm - light highlight plane (the 3D cut) */}
+      {/* Shape 3: Right Wing Inner - the bright white/light blue elongated highlight */}
       <polygon
-        points="66,5 88,5 88,25 54,78"
-        fill="url(#rightArmLight)"
-      />
-      
-      {/* Diagonal highlight line edge */}
-      <polygon
-        points="66,5 68,5 88,27 88,25"
-        fill="url(#highlightEdge)"
+        points="70,10 92,10 92,30 55,80"
+        fill="url(#innerHighlightGrad)"
       />
     </svg>
   );
