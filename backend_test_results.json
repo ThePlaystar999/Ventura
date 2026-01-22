@@ -1,0 +1,131 @@
+{
+  "total_tests": 16,
+  "passed_tests": 13,
+  "failed_tests": 3,
+  "success_rate": 81.25,
+  "detailed_results": [
+    {
+      "test_name": "GET /api/",
+      "success": true,
+      "status_code": 200,
+      "error": null,
+      "response_data": {
+        "message": "Ventura API",
+        "version": "1.0.0"
+      }
+    },
+    {
+      "test_name": "GET /api/health",
+      "success": true,
+      "status_code": 200,
+      "error": null,
+      "response_data": {
+        "status": "healthy"
+      }
+    },
+    {
+      "test_name": "POST /api/contact",
+      "success": true,
+      "status_code": 200,
+      "error": null,
+      "response_data": {
+        "message_id": "msg_c342c99733da",
+        "name": "Test User 152647",
+        "email": "test@example.com",
+        "message": "This is a test message from automated testing.",
+        "created_at": "2026-01-22T15:26:47.048897Z"
+      }
+    },
+    {
+      "test_name": "Contact Response Structure",
+      "success": true,
+      "status_code": null,
+      "error": null,
+      "response_data": null
+    },
+    {
+      "test_name": "GET /projects (No Auth)",
+      "success": true,
+      "status_code": 401,
+      "error": null,
+      "response_data": null
+    },
+    {
+      "test_name": "POST /projects (No Auth)",
+      "success": true,
+      "status_code": 401,
+      "error": null,
+      "response_data": null
+    },
+    {
+      "test_name": "GET /valuations (No Auth)",
+      "success": true,
+      "status_code": 401,
+      "error": null,
+      "response_data": null
+    },
+    {
+      "test_name": "POST /valuations (No Auth)",
+      "success": true,
+      "status_code": 401,
+      "error": null,
+      "response_data": null
+    },
+    {
+      "test_name": "GET /auth/me (No Auth)",
+      "success": true,
+      "status_code": 401,
+      "error": null,
+      "response_data": null
+    },
+    {
+      "test_name": "GET /api/share/nonexistent123",
+      "success": true,
+      "status_code": 404,
+      "error": null,
+      "response_data": null
+    },
+    {
+      "test_name": "GET /api/share/nonexistent123/pdf",
+      "success": true,
+      "status_code": 404,
+      "error": null,
+      "response_data": null
+    },
+    {
+      "test_name": "POST /api/auth/session",
+      "success": true,
+      "status_code": 401,
+      "error": null,
+      "response_data": null
+    },
+    {
+      "test_name": "GET /api/nonexistent",
+      "success": true,
+      "status_code": 404,
+      "error": null,
+      "response_data": null
+    },
+    {
+      "test_name": "GET /api/projects/invalid_id",
+      "success": false,
+      "status_code": 405,
+      "error": "Expected 404 Not Found",
+      "response_data": null
+    },
+    {
+      "test_name": "GET /api/valuations/invalid_id",
+      "success": false,
+      "status_code": 401,
+      "error": "Expected 404 Not Found",
+      "response_data": null
+    },
+    {
+      "test_name": "CORS Headers Present",
+      "success": false,
+      "status_code": 405,
+      "error": "Missing CORS headers: ['Access-Control-Allow-Origin', 'Access-Control-Allow-Methods', 'Access-Control-Allow-Headers']",
+      "response_data": null
+    }
+  ]
+}
