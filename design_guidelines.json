@@ -1,0 +1,126 @@
+{
+  "identity": {
+    "name": "Ventura",
+    "persona": "E1 - The Anti-AI Designer",
+    "aesthetic": "Corporate Premium / Fintech / Consulting-Grade",
+    "tone": "Authoritative, Precise, Trustworthy, Clean",
+    "theme_mode": "light"
+  },
+  "typography": {
+    "font_family": {
+      "primary": "Inter, sans-serif",
+      "headings": "Inter, sans-serif",
+      "mono": "JetBrains Mono, monospace"
+    },
+    "weights": {
+      "light": 300,
+      "regular": 400,
+      "medium": 500,
+      "semibold": 600,
+      "bold": 700,
+      "black": 900
+    },
+    "styles": {
+      "h1": "text-5xl md:text-6xl font-bold tracking-tight text-slate-900 leading-tight",
+      "h2": "text-4xl md:text-5xl font-semibold tracking-tight text-slate-900",
+      "h3": "text-2xl md:text-3xl font-semibold tracking-tight text-slate-900",
+      "body_large": "text-lg md:text-xl text-slate-600 leading-relaxed",
+      "body": "text-base text-slate-600 leading-relaxed",
+      "caption": "text-sm text-slate-500 font-medium uppercase tracking-wider",
+      "nav_link": "text-sm font-medium text-slate-600 hover:text-primary transition-colors"
+    }
+  },
+  "colors": {
+    "palette": {
+      "primary": "#0B4DBB",
+      "primary_hover": "#093c96",
+      "secondary": "#1E6AE1",
+      "accent_light": "#A7C8FF",
+      "accent_lighter": "#DCEAFF",
+      "background": "#FFFFFF",
+      "surface": "#F8FAFC",
+      "border": "#EEF2F7",
+      "text_main": "#0F172A",
+      "text_muted": "#64748B",
+      "success": "#10B981",
+      "warning": "#F59E0B",
+      "error": "#EF4444"
+    },
+    "gradients": {
+      "hero_wave": "bg-gradient-to-r from-[#0B4DBB] via-[#1E6AE1] to-[#A7C8FF]",
+      "subtle_blue": "bg-gradient-to-b from-[#F0F7FF] to-[#FFFFFF]",
+      "card_hover": "hover:bg-gradient-to-br hover:from-white hover:to-[#F0F7FF]"
+    }
+  },
+  "layout": {
+    "spacing": {
+      "container_padding": "px-6 md:px-12 lg:px-24",
+      "section_gap": "py-20 md:py-32",
+      "element_gap": "gap-6 md:gap-8"
+    },
+    "grid_systems": {
+      "dashboard": "grid grid-cols-1 md:grid-cols-12 gap-6",
+      "marketing_features": "grid grid-cols-1 md:grid-cols-3 gap-8",
+      "valuation_wizard": "max-w-4xl mx-auto"
+    },
+    "border_radius": {
+      "card": "rounded-xl",
+      "button": "rounded-lg",
+      "input": "rounded-md"
+    }
+  },
+  "components": {
+    "buttons": {
+      "primary": "bg-[#0B4DBB] text-white hover:bg-[#093c96] shadow-lg shadow-blue-900/20 transition-all duration-300 px-8 py-3 font-medium",
+      "secondary": "bg-white text-[#0B4DBB] border border-[#EEF2F7] hover:bg-[#F0F7FF] transition-all duration-300 px-8 py-3 font-medium",
+      "ghost": "text-slate-600 hover:text-[#0B4DBB] hover:bg-blue-50 transition-colors px-4 py-2"
+    },
+    "cards": {
+      "base": "bg-white border border-[#EEF2F7] shadow-sm hover:shadow-md transition-shadow duration-300 p-8",
+      "feature": "bg-white border border-[#EEF2F7] p-8 hover:-translate-y-1 transition-transform duration-300 shadow-sm hover:shadow-xl hover:shadow-blue-900/5"
+    },
+    "inputs": {
+      "base": "border-[#EEF2F7] bg-white focus:ring-2 focus:ring-[#0B4DBB]/20 focus:border-[#0B4DBB] transition-all h-12"
+    }
+  },
+  "assets": {
+    "images": {
+      "hero_bg": "https://images.unsplash.com/photo-1759178460886-ca62c5d0aa5d?crop=entropy&cs=srgb&fm=jpg&q=85",
+      "about_office": "https://images.pexels.com/photos/260689/pexels-photo-260689.jpeg",
+      "team_meeting": "https://images.unsplash.com/photo-1758691737182-d42aefd6dee8?crop=entropy&cs=srgb&fm=jpg&q=85",
+      "user_testimonial": "https://images.unsplash.com/photo-1765648684555-de2d0f6af467?crop=entropy&cs=srgb&fm=jpg&q=85",
+      "abstract_wave": "https://images.unsplash.com/photo-1533941970076-83e6904c0895?crop=entropy&cs=srgb&fm=jpg&q=85"
+    },
+    "icons": "Use 'lucide-react' for all UI icons. Use simple, thin strokes (1.5px) for a premium feel."
+  },
+  "motion": {
+    "page_transition": {
+      "initial": { "opacity": 0, "y": 20 },
+      "animate": { "opacity": 1, "y": 0 },
+      "exit": { "opacity": 0, "y": -20 },
+      "transition": { "duration": 0.4, "ease": "easeOut" }
+    },
+    "hover_lift": "hover:-translate-y-1 transition-transform duration-300",
+    "fade_in": "animate-in fade-in duration-700"
+  },
+  "instructions_to_main_agent": [
+    "STRICTLY follow the Blue/White color palette. NO black backgrounds.",
+    "Use 'Inter' font for everything. Use 'tracking-tight' on headings to make them look premium.",
+    "Implement the 'Valuation Wizard' as a multi-step form using 'framer-motion' for smooth step transitions.",
+    "The Dashboard should look like a high-end financial terminal but simplified (think Stripe/Brex/Carta).",
+    "Use 'recharts' for all data visualization (Valuation charts, Exit scenarios).",
+    "Ensure the 'V' logo is present in the header. You can create a CSS-only version: a div with a gradient background and a clip-path or SVG.",
+    "For the 'Services' section on the landing page, use the 'feature' card style defined above.",
+    "Authentication is mocked, but build the UI for it (Login page).",
+    "Do NOT use gradients for text unless it's a very subtle brand moment. Keep text high-contrast.",
+    "Use 'sonner' for notifications.",
+    "Create a 'Layout' component that wraps pages and handles the Navbar and Footer."
+  ],
+  "universal_guidelines": [
+    "Don't make generic centered layouts. Use asymmetry where possible.",
+    "Use 2-3x more spacing than feels comfortable.",
+    "Every interaction needs micro-animations.",
+    "Never use 'transition: all'.",
+    "Ensure all interactive elements have 'data-testid'."
+  ]
+}
