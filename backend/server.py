@@ -671,27 +671,6 @@ async def export_shared_pdf(share_token: str):
         media_type="application/pdf",
         headers={"Content-Disposition": f'attachment; filename="{filename}"'}
     )
-        team_size=metrics.get("team_size", 0),
-        arr=metrics.get("arr", 0) or metrics.get("mrr", 0) * 12,
-        growth_rate=metrics.get("growth_rate", 0),
-        gross_margin=metrics.get("gross_margin", 0),
-        low_valuation=result.get("low", 0),
-        base_valuation=result.get("base", 0),
-        high_valuation=result.get("high", 0),
-        multiple_used=result.get("multiple_used", 0),
-        exit_scenarios=valuation.get("exit_scenarios", []),
-        chart_base64=chart_base64,
-        generated_date=datetime.now(timezone.utc).strftime("%B %d, %Y")
-    )
-    
-    pdf_bytes = HTML(string=html_content).write_pdf()
-    filename = f"{company_info.get('company_name', 'valuation').replace(' ', '_')}_Valuation.pdf"
-    
-    return StreamingResponse(
-        io.BytesIO(pdf_bytes),
-        media_type="application/pdf",
-        headers={"Content-Disposition": f'attachment; filename="{filename}"'}
-    )
 
 # ============ CONTACT ROUTES ============
 
