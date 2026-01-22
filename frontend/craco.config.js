@@ -96,6 +96,21 @@ if (config.enableVisualEdits && babelMetadataPlugin) {
 }
 
 webpackConfig.devServer = (devServerConfig) => {
+  // Disable error overlay for ResizeObserver errors
+  devServerConfig.client = {
+    ...devServerConfig.client,
+    overlay: {
+      errors: true,
+      warnings: false,
+      runtimeErrors: (error) => {
+        if (error?.message?.includes?.('ResizeObserver')) {
+          return false;
+        }
+        return true;
+      },
+    },
+  };
+
   // Apply visual edits dev server setup only if enabled
   if (config.enableVisualEdits && setupDevServer) {
     devServerConfig = setupDevServer(devServerConfig);
