@@ -329,12 +329,14 @@ def calculate_margin_adjustment(gross_margin: float, business_model: str) -> tup
     """Calculate gross margin adjustment with explanation"""
     # Different expectations by business model
     expectations = {
-        "SaaS": {"excellent": 80, "good": 70, "acceptable": 60},
+        "Subscription (SaaS)": {"excellent": 80, "good": 70, "acceptable": 60},
         "Marketplace": {"excellent": 70, "good": 50, "acceptable": 35},
         "E-Commerce": {"excellent": 50, "good": 35, "acceptable": 25},
-        "FinTech": {"excellent": 75, "good": 60, "acceptable": 45},
-        "AI/ML": {"excellent": 85, "good": 75, "acceptable": 65},
-        "HealthTech": {"excellent": 70, "good": 55, "acceptable": 40},
+        "Transactional": {"excellent": 60, "good": 45, "acceptable": 30},
+        "Usage-Based": {"excellent": 75, "good": 65, "acceptable": 55},
+        "Freemium": {"excellent": 75, "good": 60, "acceptable": 45},
+        "Enterprise": {"excellent": 85, "good": 75, "acceptable": 65},
+        "Advertising": {"excellent": 60, "good": 45, "acceptable": 30},
         "Other": {"excellent": 65, "good": 50, "acceptable": 35}
     }
     
