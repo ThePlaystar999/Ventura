@@ -22,57 +22,44 @@ const VLogo = ({ size = 'md', className = '' }) => {
       data-testid="v-logo"
     >
       <defs>
-        {/* Left arm gradient - dark blue outer to mid blue inner */}
-        <linearGradient id="leftArmGrad" x1="0%" y1="0%" x2="100%" y2="50%">
-          <stop offset="0%" stopColor="#1565C0" />
-          <stop offset="40%" stopColor="#1976D2" />
-          <stop offset="100%" stopColor="#2196F3" />
+        {/* Left arm gradient - darker outer edge to lighter inner */}
+        <linearGradient id="leftArmGrad" x1="0%" y1="0%" x2="80%" y2="80%">
+          <stop offset="0%" stopColor="#1976D2" />
+          <stop offset="50%" stopColor="#2196F3" />
+          <stop offset="100%" stopColor="#42A5F5" />
         </linearGradient>
         
-        {/* Right arm outer gradient - dark blue to medium */}
-        <linearGradient id="rightArmOuterGrad" x1="100%" y1="0%" x2="0%" y2="50%">
+        {/* Right arm main body gradient */}
+        <linearGradient id="rightArmGrad" x1="100%" y1="0%" x2="20%" y2="80%">
           <stop offset="0%" stopColor="#0D47A1" />
-          <stop offset="50%" stopColor="#1565C0" />
+          <stop offset="40%" stopColor="#1565C0" />
           <stop offset="100%" stopColor="#1E88E5" />
         </linearGradient>
         
-        {/* Right arm inner/highlight gradient - bright blue to light */}
-        <linearGradient id="rightArmInnerGrad" x1="0%" y1="100%" x2="100%" y2="0%">
-          <stop offset="0%" stopColor="#42A5F5" />
-          <stop offset="40%" stopColor="#64B5F6" />
-          <stop offset="100%" stopColor="#90CAF9" />
-        </linearGradient>
-        
-        {/* Highlight line gradient - almost white */}
-        <linearGradient id="highlightGrad" x1="0%" y1="100%" x2="100%" y2="0%">
-          <stop offset="0%" stopColor="#BBDEFB" />
-          <stop offset="100%" stopColor="#E3F2FD" />
+        {/* Right arm highlight section - the lighter inner plane */}
+        <linearGradient id="highlightPlaneGrad" x1="0%" y1="100%" x2="100%" y2="0%">
+          <stop offset="0%" stopColor="#64B5F6" />
+          <stop offset="50%" stopColor="#90CAF9" />
+          <stop offset="100%" stopColor="#BBDEFB" />
         </linearGradient>
       </defs>
       
-      {/* Left arm of the V - solid darker plane */}
+      {/* Left arm of the V */}
       <polygon
-        points="10,12 42,12 50,90 50,90"
+        points="15,8 45,8 50,92 50,92"
         fill="url(#leftArmGrad)"
       />
       
-      {/* Right arm outer plane - darker section */}
+      {/* Right arm main body */}
       <polygon
-        points="58,12 90,12 50,90 50,90"
-        fill="url(#rightArmOuterGrad)"
+        points="55,8 85,8 50,92"
+        fill="url(#rightArmGrad)"
       />
       
-      {/* Right arm inner plane - brighter highlight section */}
-      {/* This creates the diagonal cut effect */}
+      {/* Right arm highlight plane - creates the 3D cut effect */}
       <polygon
-        points="68,12 90,12 90,28 56,75"
-        fill="url(#rightArmInnerGrad)"
-      />
-      
-      {/* Diagonal highlight line - the bright edge */}
-      <path
-        d="M68,12 L90,28 L88,32 L66,16 Z"
-        fill="url(#highlightGrad)"
+        points="62,8 85,8 85,22 53,72"
+        fill="url(#highlightPlaneGrad)"
       />
     </svg>
   );
