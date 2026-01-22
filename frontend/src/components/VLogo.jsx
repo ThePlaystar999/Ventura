@@ -2,11 +2,11 @@ import React from 'react';
 
 const VLogo = ({ size = 'md', className = '' }) => {
   const sizes = {
-    sm: { width: 32, height: 28 },
-    md: { width: 48, height: 42 },
-    lg: { width: 80, height: 70 },
-    xl: { width: 120, height: 105 },
-    hero: { width: 180, height: 157 }
+    sm: { width: 32, height: 32 },
+    md: { width: 48, height: 48 },
+    lg: { width: 80, height: 80 },
+    xl: { width: 120, height: 120 },
+    hero: { width: 180, height: 180 }
   };
 
   const { width, height } = sizes[size] || sizes.md;
@@ -15,76 +15,64 @@ const VLogo = ({ size = 'md', className = '' }) => {
     <svg
       width={width}
       height={height}
-      viewBox="0 0 100 87"
+      viewBox="0 0 100 100"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
       className={className}
       data-testid="v-logo"
     >
       <defs>
-        {/* Main gradient - deep blue to bright blue */}
-        <linearGradient id="vMainGradient" x1="0%" y1="100%" x2="100%" y2="0%">
-          <stop offset="0%" stopColor="#0B4DBB" />
-          <stop offset="40%" stopColor="#1565C0" />
-          <stop offset="70%" stopColor="#1E88E5" />
-          <stop offset="100%" stopColor="#42A5F5" />
-        </linearGradient>
-        {/* Left side darker gradient */}
-        <linearGradient id="vLeftGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+        {/* Left arm gradient - dark blue outer to mid blue inner */}
+        <linearGradient id="leftArmGrad" x1="0%" y1="0%" x2="100%" y2="50%">
           <stop offset="0%" stopColor="#1565C0" />
-          <stop offset="50%" stopColor="#0D47A1" />
-          <stop offset="100%" stopColor="#0B4DBB" />
-        </linearGradient>
-        {/* Right side lighter gradient */}
-        <linearGradient id="vRightGradient" x1="100%" y1="0%" x2="0%" y2="100%">
-          <stop offset="0%" stopColor="#42A5F5" />
-          <stop offset="30%" stopColor="#2196F3" />
-          <stop offset="70%" stopColor="#1976D2" />
-          <stop offset="100%" stopColor="#1565C0" />
-        </linearGradient>
-        {/* Accent gradient for the cut line area */}
-        <linearGradient id="vAccentGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" stopColor="#64B5F6" />
+          <stop offset="40%" stopColor="#1976D2" />
           <stop offset="100%" stopColor="#2196F3" />
+        </linearGradient>
+        
+        {/* Right arm outer gradient - dark blue to medium */}
+        <linearGradient id="rightArmOuterGrad" x1="100%" y1="0%" x2="0%" y2="50%">
+          <stop offset="0%" stopColor="#0D47A1" />
+          <stop offset="50%" stopColor="#1565C0" />
+          <stop offset="100%" stopColor="#1E88E5" />
+        </linearGradient>
+        
+        {/* Right arm inner/highlight gradient - bright blue to light */}
+        <linearGradient id="rightArmInnerGrad" x1="0%" y1="100%" x2="100%" y2="0%">
+          <stop offset="0%" stopColor="#42A5F5" />
+          <stop offset="40%" stopColor="#64B5F6" />
+          <stop offset="100%" stopColor="#90CAF9" />
+        </linearGradient>
+        
+        {/* Highlight line gradient - almost white */}
+        <linearGradient id="highlightGrad" x1="0%" y1="100%" x2="100%" y2="0%">
+          <stop offset="0%" stopColor="#BBDEFB" />
+          <stop offset="100%" stopColor="#E3F2FD" />
         </linearGradient>
       </defs>
       
-      {/* Left arm of the V */}
-      <path
-        d="M5 5L50 82L35 82L5 25L5 5Z"
-        fill="url(#vLeftGradient)"
+      {/* Left arm of the V - solid darker plane */}
+      <polygon
+        points="10,12 42,12 50,90 50,90"
+        fill="url(#leftArmGrad)"
       />
       
-      {/* Main body - left side */}
-      <path
-        d="M5 5L35 5L50 32L35 82L5 25L5 5Z"
-        fill="url(#vMainGradient)"
+      {/* Right arm outer plane - darker section */}
+      <polygon
+        points="58,12 90,12 50,90 50,90"
+        fill="url(#rightArmOuterGrad)"
       />
       
-      {/* Right arm of the V - lower part */}
-      <path
-        d="M50 82L65 82L95 25L95 5L75 5L50 45L50 82Z"
-        fill="url(#vRightGradient)"
+      {/* Right arm inner plane - brighter highlight section */}
+      {/* This creates the diagonal cut effect */}
+      <polygon
+        points="68,12 90,12 90,28 56,75"
+        fill="url(#rightArmInnerGrad)"
       />
       
-      {/* Right arm upper accent - creates the diagonal cut effect */}
+      {/* Diagonal highlight line - the bright edge */}
       <path
-        d="M75 5L95 5L95 25L67 25L75 5Z"
-        fill="url(#vAccentGradient)"
-      />
-      
-      {/* Diagonal accent line - the sharp white cut */}
-      <path
-        d="M72 8L93 22L91 25L68 25L65 20L72 8Z"
-        fill="none"
-        stroke="rgba(255,255,255,0.3)"
-        strokeWidth="0.5"
-      />
-      
-      {/* Highlight on the left edge */}
-      <path
-        d="M8 8L32 8L30 12L8 12Z"
-        fill="rgba(255,255,255,0.15)"
+        d="M68,12 L90,28 L88,32 L66,16 Z"
+        fill="url(#highlightGrad)"
       />
     </svg>
   );
