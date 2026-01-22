@@ -4,8 +4,12 @@ import Navbar from '../components/Navbar';
 import { Button } from '../components/ui/button';
 import { Slider } from '../components/ui/slider';
 import { toast } from 'sonner';
-import { ArrowLeft, Download, Share2, Copy, Check, Building2, TrendingUp, Users, Briefcase, Target, DollarSign } from 'lucide-react';
-import { motion } from 'framer-motion';
+import { 
+  ArrowLeft, Download, Share2, Copy, Check, Building2, TrendingUp, 
+  Users, Briefcase, Target, AlertTriangle, CheckCircle, Info,
+  ChevronDown, ChevronUp
+} from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 
 const API = process.env.REACT_APP_BACKEND_URL + "/api";
 
@@ -16,9 +20,11 @@ const ValuationResults = () => {
   const [loading, setLoading] = useState(true);
   const [downloading, setDownloading] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [showAssumptions, setShowAssumptions] = useState(false);
+  const [showAdjustments, setShowAdjustments] = useState(false);
   
   // Scenario slider state
-  const [growthAdjustment, setGrowthAdjustment] = useState([100]); // 100% = base case
+  const [growthAdjustment, setGrowthAdjustment] = useState([100]);
   const [multipleAdjustment, setMultipleAdjustment] = useState([100]);
 
   useEffect(() => {
@@ -78,6 +84,7 @@ const ValuationResults = () => {
   };
 
   const formatCurrency = (value) => {
+    if (!value) return '$0';
     if (value >= 1000000) {
       return `$${(value / 1000000).toFixed(1)}M`;
     }
@@ -114,11 +121,13 @@ const ValuationResults = () => {
 
   if (!valuation) return null;
 
+  const { result, exit_scenarios, assumptions, ai_commentary } = valuation;
+
   return (
     <div className="min-h-screen bg-[#F8FAFC]" data-testid="valuation-results">
       <Navbar />
 
-      <main className="pt-24 pb-12 px-6 md:px-12 lg:px-24 max-w-6xl mx-auto">
+      <main className="pt-24 pb-12 px-6 md:px-12 lg:px-24 max-w-7xl mx-auto">
         {/* Header */}
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
           <div className="flex items-center gap-4">
@@ -163,19 +172,27 @@ const ValuationResults = () => {
         >
           <div className="text-center">
             <p className="text-white/80 text-sm uppercase tracking-wider mb-2">
-              {valuation.company_info.company_name}
+              {valuation.company_info?.company_name}
             </p>
             <h1 className="text-4xl md:text-6xl font-bold mb-4" data-testid="valuation-amount">
               {formatCurrency(adjustedVal.base)}
             </h1>
             <p className="text-white/80">
-              Estimated Valuation • {valuation.result.methodology}
+              Estimated Valuation • {result?.methodology}
             </p>
+            <div className="mt-4 flex items-center justify-center gap-4 text-sm">
+              <span className="bg-white/20 px-3 py-1 rounded-full">
+                Base Multiple: {result?.base_multiple}x
+              </span>
+              <span className="bg-white/20 px-3 py-1 rounded-full">
+                Final Multiple: {result?.multiple_used}x
+              </span>
+            </div>
           </div>
         </motion.div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Left Column - Details */}
+          {/* Left Column - Main Results */}
           <div className="lg:col-span-2 space-y-6">
             {/* Valuation Range */}
             <div className="bg-white rounded-xl border border-[#EEF2F7] p-6">
@@ -198,6 +215,7 @@ const ValuationResults = () => {
 
               {/* Scenario Sliders */}
               <div className="space-y-6 pt-6 border-t border-[#EEF2F7]">
+                <h4 className="font-medium text-slate-700">Scenario Analysis</h4>
                 <div>
                   <div className="flex items-center justify-between mb-3">
                     <label className="text-sm font-medium text-slate-700">Growth Adjustment</label>
@@ -231,12 +249,53 @@ const ValuationResults = () => {
               </div>
             </div>
 
+            {/* Adjustments Breakdown */}
+            {result?.adjustments && result.adjustments.length > 0 && (
+              <div className="bg-white rounded-xl border border-[#EEF2F7] overflow-hidden">
+                <button
+                  onClick={() => setShowAdjustments(!showAdjustments)}
+                  className="w-full px-6 py-4 flex items-center justify-between hover:bg-slate-50 transition-colors"
+                >
+                  <h3 className="text-lg font-semibold text-slate-900">Valuation Adjustments</h3>
+                  {showAdjustments ? <ChevronUp className="w-5 h-5" /> : <ChevronDown className="w-5 h-5" />}
+                </button>
+                
+                <AnimatePresence>
+                  {showAdjustments && (
+                    <motion.div
+                      initial={{ height: 0 }}
+                      animate={{ height: 'auto' }}
+                      exit={{ height: 0 }}
+                      className="overflow-hidden"
+                    >
+                      <div className="px-6 pb-6 space-y-3">
+                        {result.adjustments.map((adj, index) => (
+                          <div key={index} className="flex items-start gap-3 p-3 bg-slate-50 rounded-lg">
+                            <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
+                              adj.adjustment > 0 ? 'bg-green-100 text-green-600' : 
+                              adj.adjustment < 0 ? 'bg-red-100 text-red-600' : 'bg-slate-100 text-slate-600'
+                            }`}>
+                              {adj.adjustment > 0 ? '+' : ''}{(adj.adjustment * 100).toFixed(0)}%
+                            </div>
+                            <div className="flex-1">
+                              <p className="font-medium text-slate-900">{adj.factor}</p>
+                              <p className="text-sm text-slate-600">{adj.reason}</p>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
+            )}
+
             {/* Exit Scenarios */}
             <div className="bg-white rounded-xl border border-[#EEF2F7] p-6">
               <h3 className="text-lg font-semibold text-slate-900 mb-6">Exit Scenarios</h3>
               
               <div className="space-y-4">
-                {valuation.exit_scenarios?.map((scenario, index) => (
+                {exit_scenarios?.map((scenario, index) => (
                   <motion.div
                     key={scenario.scenario_type}
                     initial={{ opacity: 0, x: -20 }}
@@ -251,28 +310,84 @@ const ValuationResults = () => {
                         <p className="text-2xl font-bold text-[#0B4DBB] mt-1">
                           {formatCurrency(scenario.estimated_value * (growthAdjustment[0] / 100) * (multipleAdjustment[0] / 100))}
                         </p>
+                        <p className="text-sm text-slate-500 mt-1">{scenario.multiple}x multiple</p>
                       </div>
-                      <div className="flex items-center gap-2">
+                      <div className="flex flex-col items-end gap-2">
                         <span className={`text-xs font-medium px-2 py-1 rounded ${
                           scenario.probability === 'High' ? 'bg-green-100 text-green-700' :
                           scenario.probability === 'Medium' ? 'bg-yellow-100 text-yellow-700' :
                           'bg-slate-100 text-slate-600'
                         }`}>
-                          {scenario.probability}
+                          {scenario.probability} Probability
                         </span>
                         <span className="text-xs font-medium px-2 py-1 rounded bg-[#F0F7FF] text-[#0B4DBB]">
                           {scenario.timeline}
                         </span>
                       </div>
                     </div>
-                    <p className="text-sm text-slate-600">{scenario.description}</p>
+                    <p className="text-sm text-slate-600 mb-2">{scenario.description}</p>
+                    <p className="text-xs text-slate-500 italic border-t border-slate-100 pt-2 mt-2">
+                      {scenario.rationale}
+                    </p>
                   </motion.div>
                 ))}
               </div>
             </div>
+
+            {/* AI Commentary */}
+            {ai_commentary && (
+              <div className="bg-white rounded-xl border border-[#EEF2F7] p-6">
+                <h3 className="text-lg font-semibold text-slate-900 mb-6">Analysis Summary</h3>
+                
+                <p className="text-slate-600 leading-relaxed mb-6">{ai_commentary.summary}</p>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {/* Strengths */}
+                  <div>
+                    <h4 className="font-medium text-green-700 flex items-center gap-2 mb-3">
+                      <CheckCircle className="w-4 h-4" />
+                      Key Strengths
+                    </h4>
+                    <ul className="space-y-2">
+                      {ai_commentary.key_strengths?.map((strength, i) => (
+                        <li key={i} className="text-sm text-slate-600 flex items-start gap-2">
+                          <span className="w-1.5 h-1.5 rounded-full bg-green-500 mt-1.5 flex-shrink-0"></span>
+                          {strength}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                  
+                  {/* Risks */}
+                  <div>
+                    <h4 className="font-medium text-amber-700 flex items-center gap-2 mb-3">
+                      <AlertTriangle className="w-4 h-4" />
+                      Key Risks
+                    </h4>
+                    <ul className="space-y-2">
+                      {ai_commentary.key_risks?.map((risk, i) => (
+                        <li key={i} className="text-sm text-slate-600 flex items-start gap-2">
+                          <span className="w-1.5 h-1.5 rounded-full bg-amber-500 mt-1.5 flex-shrink-0"></span>
+                          {risk}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                </div>
+                
+                {/* Exit Readiness */}
+                <div className="mt-6 p-4 bg-[#F0F7FF] rounded-lg">
+                  <h4 className="font-medium text-[#0B4DBB] flex items-center gap-2 mb-2">
+                    <Info className="w-4 h-4" />
+                    Exit Readiness Assessment
+                  </h4>
+                  <p className="text-sm text-slate-700">{ai_commentary.exit_readiness}</p>
+                </div>
+              </div>
+            )}
           </div>
 
-          {/* Right Column - Company Info */}
+          {/* Right Column - Company Info & Assumptions */}
           <div className="space-y-6">
             {/* Company Info Card */}
             <div className="bg-white rounded-xl border border-[#EEF2F7] p-6">
@@ -285,7 +400,7 @@ const ValuationResults = () => {
                   </div>
                   <div>
                     <p className="text-xs text-slate-500">Company</p>
-                    <p className="font-medium text-slate-900">{valuation.company_info.company_name}</p>
+                    <p className="font-medium text-slate-900">{valuation.company_info?.company_name}</p>
                   </div>
                 </div>
 
@@ -294,8 +409,8 @@ const ValuationResults = () => {
                     <Briefcase className="w-5 h-5 text-[#0B4DBB]" strokeWidth={1.5} />
                   </div>
                   <div>
-                    <p className="text-xs text-slate-500">Industry</p>
-                    <p className="font-medium text-slate-900">{valuation.company_info.industry}</p>
+                    <p className="text-xs text-slate-500">Industry / Model</p>
+                    <p className="font-medium text-slate-900">{valuation.company_info?.industry} / {valuation.company_info?.business_model}</p>
                   </div>
                 </div>
 
@@ -305,7 +420,7 @@ const ValuationResults = () => {
                   </div>
                   <div>
                     <p className="text-xs text-slate-500">Stage</p>
-                    <p className="font-medium text-slate-900">{valuation.company_info.stage}</p>
+                    <p className="font-medium text-slate-900">{valuation.company_info?.stage}</p>
                   </div>
                 </div>
 
@@ -315,7 +430,7 @@ const ValuationResults = () => {
                   </div>
                   <div>
                     <p className="text-xs text-slate-500">Team Size</p>
-                    <p className="font-medium text-slate-900">{valuation.metrics.team_size} employees</p>
+                    <p className="font-medium text-slate-900">{valuation.metrics?.team_size} employees</p>
                   </div>
                 </div>
               </div>
@@ -328,22 +443,80 @@ const ValuationResults = () => {
               <div className="space-y-4">
                 <div className="flex items-center justify-between py-2 border-b border-[#EEF2F7]">
                   <span className="text-slate-600">ARR</span>
-                  <span className="font-semibold text-slate-900">{formatCurrency(valuation.metrics.arr || valuation.metrics.mrr * 12)}</span>
+                  <span className="font-semibold text-slate-900">{formatCurrency(result?.arr_used)}</span>
                 </div>
                 <div className="flex items-center justify-between py-2 border-b border-[#EEF2F7]">
                   <span className="text-slate-600">Growth Rate</span>
-                  <span className="font-semibold text-slate-900">{valuation.metrics.growth_rate}%</span>
+                  <span className="font-semibold text-slate-900">{valuation.metrics?.growth_rate}%</span>
                 </div>
                 <div className="flex items-center justify-between py-2 border-b border-[#EEF2F7]">
                   <span className="text-slate-600">Gross Margin</span>
-                  <span className="font-semibold text-slate-900">{valuation.metrics.gross_margin}%</span>
+                  <span className="font-semibold text-slate-900">{valuation.metrics?.gross_margin}%</span>
+                </div>
+                <div className="flex items-center justify-between py-2 border-b border-[#EEF2F7]">
+                  <span className="text-slate-600">NRR</span>
+                  <span className="font-semibold text-slate-900">{valuation.metrics?.nrr}%</span>
                 </div>
                 <div className="flex items-center justify-between py-2">
                   <span className="text-slate-600">Multiple Used</span>
-                  <span className="font-semibold text-[#0B4DBB]">{valuation.result.multiple_used}x</span>
+                  <span className="font-semibold text-[#0B4DBB]">{result?.multiple_used}x</span>
                 </div>
               </div>
             </div>
+
+            {/* Assumptions Card */}
+            {assumptions && (
+              <div className="bg-white rounded-xl border border-[#EEF2F7] overflow-hidden">
+                <button
+                  onClick={() => setShowAssumptions(!showAssumptions)}
+                  className="w-full px-6 py-4 flex items-center justify-between hover:bg-slate-50 transition-colors"
+                >
+                  <h3 className="text-lg font-semibold text-slate-900">Assumptions</h3>
+                  {showAssumptions ? <ChevronUp className="w-5 h-5" /> : <ChevronDown className="w-5 h-5" />}
+                </button>
+                
+                <AnimatePresence>
+                  {showAssumptions && (
+                    <motion.div
+                      initial={{ height: 0 }}
+                      animate={{ height: 'auto' }}
+                      exit={{ height: 0 }}
+                      className="overflow-hidden"
+                    >
+                      <div className="px-6 pb-6 space-y-4 text-sm">
+                        <div>
+                          <p className="font-medium text-slate-700">Multiple Source</p>
+                          <p className="text-slate-600">{assumptions.base_multiple_source}</p>
+                        </div>
+                        <div>
+                          <p className="font-medium text-slate-700">Growth Assumption</p>
+                          <p className="text-slate-600">{assumptions.growth_assumption}</p>
+                        </div>
+                        <div>
+                          <p className="font-medium text-slate-700">Margin Assumption</p>
+                          <p className="text-slate-600">{assumptions.margin_assumption}</p>
+                        </div>
+                        <div>
+                          <p className="font-medium text-slate-700">Market</p>
+                          <p className="text-slate-600">{assumptions.market_assumption}</p>
+                        </div>
+                        <div>
+                          <p className="font-medium text-amber-700">Risk Factors</p>
+                          <ul className="mt-1 space-y-1">
+                            {assumptions.risk_factors?.map((risk, i) => (
+                              <li key={i} className="text-slate-600 flex items-start gap-2">
+                                <span className="w-1.5 h-1.5 rounded-full bg-amber-500 mt-1.5 flex-shrink-0"></span>
+                                {risk}
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
+            )}
 
             {/* Quick Actions */}
             <div className="bg-gradient-to-br from-[#F0F7FF] to-white rounded-xl border border-[#DCEAFF] p-6">
