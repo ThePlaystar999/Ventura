@@ -481,73 +481,190 @@ def calculate_valuation(
         ai_commentary=ai_commentary
     )
 
-def calculate_valuation(company_info: CompanyInfo, metrics: ValuationMetrics) -> ValuationResult:
-    """Mock AI valuation calculation"""
-    # Use ARR if available, otherwise MRR * 12
-    annual_revenue = metrics.arr if metrics.arr > 0 else metrics.mrr * 12
-    
-    # Base multiple based on stage
-    stage_multiples = {
-        "Pre-seed": 8,
-        "Seed": 10,
-        "Series A": 12,
-        "Series B": 15,
-        "Series C+": 18
-    }
-    base_multiple = stage_multiples.get(company_info.stage, 10)
-    
-    # Adjust for growth rate
-    if metrics.growth_rate > 100:
-        base_multiple *= 1.5
-    elif metrics.growth_rate > 50:
-        base_multiple *= 1.2
-    elif metrics.growth_rate < 20:
-        base_multiple *= 0.8
-    
-    # Adjust for gross margin
-    if metrics.gross_margin > 80:
-        base_multiple *= 1.2
-    elif metrics.gross_margin < 50:
-        base_multiple *= 0.9
-    
-    # Industry adjustments
-    industry_factors = {
-        "SaaS": 1.3,
-        "AI/ML": 1.5,
-        "FinTech": 1.2,
-        "HealthTech": 1.1,
-        "E-Commerce": 0.9,
-        "Marketplace": 1.0,
-        "Other": 1.0
-    }
-    industry_factor = industry_factors.get(company_info.industry, 1.0)
-    base_multiple *= industry_factor
-    
-    base_valuation = annual_revenue * base_multiple
-    
-    return ValuationResult(
-        low=round(base_valuation * 0.7, 0),
-        base=round(base_valuation, 0),
-        high=round(base_valuation * 1.4, 0),
-        multiple_used=round(base_multiple, 1),
-        methodology=f"Revenue Multiple ({company_info.industry} sector, {company_info.stage} stage)"
-    )
-
-def generate_exit_scenarios(valuation_result: ValuationResult, company_info: CompanyInfo) -> List[ExitScenario]:
-    """Generate exit scenarios based on valuation"""
+def generate_exit_scenarios(
+    valuation_result: ValuationResult, 
+    company_info: CompanyInfo,
+    metrics: ValuationMetrics
+) -> List[ExitScenario]:
+    """Generate detailed exit scenarios with rationale"""
     base_val = valuation_result.base
+    multiple = valuation_result.multiple_used
+    arr = valuation_result.arr_used
+    
+    # Strategic acquisition - typically premium for synergies
+    strategic_multiple = min(multiple * 1.3, multiple + 5)
+    strategic_value = arr * strategic_multiple
+    
+    # PE buyout - more conservative, focused on profitability
+    pe_multiple = multiple * 0.9 if metrics.gross_margin < 60 else multiple
+    pe_value = arr * pe_multiple
+    
+    # Secondary - typically at discount for liquidity
+    secondary_multiple = multiple * 0.85
+    secondary_value = arr * secondary_multiple
     
     scenarios = [
         ExitScenario(
             scenario_type="strategic_acquisition",
             name="Strategic Acquisition",
-            description=f"Acquisition by a larger {company_info.industry} company seeking market expansion or technology integration.",
-            estimated_value=round(base_val * 1.3, 0),
-            probability="Medium",
-            timeline="2-4 years"
+            description=f"Acquisition by a larger {company_info.industry} player seeking market expansion, technology capabilities, or talent acquisition.",
+            estimated_value=round(strategic_value, 0),
+            multiple=round(strategic_multiple, 2),
+            probability="Medium" if metrics.growth_rate > 30 else "Low",
+            timeline="2-4 years",
+            rationale=f"Strategic buyers typically pay a premium of 20-40% over financial valuations for synergy potential. With {metrics.growth_rate}% growth and {metrics.gross_margin}% margins, strategic interest is {'likely' if metrics.growth_rate > 50 else 'possible'}."
         ),
         ExitScenario(
             scenario_type="pe_buyout",
+            name="Private Equity Buyout",
+            description="Acquisition by a PE firm focused on operational improvements, consolidation plays, and growth acceleration through add-on acquisitions.",
+            estimated_value=round(pe_value, 0),
+            multiple=round(pe_multiple, 2),
+            probability="High" if metrics.gross_margin > 60 else "Medium",
+            timeline="3-5 years",
+            rationale=f"PE buyers prioritize predictable cash flows and margin expansion potential. Current {metrics.gross_margin}% gross margin {'meets' if metrics.gross_margin > 60 else 'is below'} typical PE thresholds. {metrics.nrr}% NRR indicates {'strong' if metrics.nrr > 110 else 'acceptable'} revenue quality."
+        ),
+        ExitScenario(
+            scenario_type="secondary_sale",
+            name="Secondary / Partial Exit",
+            description="Sale of existing shares to later-stage investors, secondary funds, or employee liquidity programs.",
+            estimated_value=round(secondary_value, 0),
+            multiple=round(secondary_multiple, 2),
+            probability="High",
+            timeline="1-2 years",
+            rationale=f"Secondary transactions typically occur at 10-20% discount to primary valuations for liquidity. This provides near-term liquidity for founders and early investors while maintaining company trajectory."
+        )
+    ]
+    
+    return scenarios
+
+def generate_assumptions(
+    company_info: CompanyInfo,
+    metrics: ValuationMetrics,
+    qualitative: QualitativeScores,
+    base_multiple: float
+) -> ValuationAssumptions:
+    """Generate transparent assumptions list"""
+    risk_factors = []
+    
+    if metrics.growth_rate < 30:
+        risk_factors.append("Growth rate below market expectations for stage")
+    if metrics.gross_margin < 60:
+        risk_factors.append("Gross margin indicates potential unit economics concerns")
+    if metrics.nrr < 100:
+        risk_factors.append("Net churn indicates retention challenges")
+    if qualitative.competitive_moat == "Low":
+        risk_factors.append("Limited competitive differentiation")
+    if qualitative.market_size == "Small":
+        risk_factors.append("Addressable market may limit upside")
+    if metrics.team_size < 5:
+        risk_factors.append("Small team - key person risk")
+    
+    if not risk_factors:
+        risk_factors.append("No significant risk factors identified")
+    
+    return ValuationAssumptions(
+        base_multiple_source=f"Base {base_multiple}x multiple derived from {company_info.business_model} sector benchmarks at {company_info.stage} stage",
+        growth_assumption=f"Assumes current {metrics.growth_rate}% YoY growth trajectory is sustainable for 12-24 months",
+        margin_assumption=f"Current {metrics.gross_margin}% gross margin expected to {'improve' if metrics.gross_margin < 70 else 'maintain'} as scale increases",
+        market_assumption=f"{qualitative.market_size} market size with {qualitative.competitive_moat.lower()} competitive barriers",
+        risk_factors=risk_factors
+    )
+
+def generate_ai_commentary(
+    company_info: CompanyInfo,
+    metrics: ValuationMetrics,
+    qualitative: QualitativeScores,
+    valuation: ValuationResult
+) -> AICommentary:
+    """Generate investment-grade AI commentary"""
+    strengths = []
+    risks = []
+    drivers = []
+    
+    # Analyze strengths
+    if metrics.growth_rate > 80:
+        strengths.append(f"Exceptional {metrics.growth_rate}% YoY growth demonstrates strong product-market fit")
+    elif metrics.growth_rate > 50:
+        strengths.append(f"Strong {metrics.growth_rate}% growth rate positions company for rapid scaling")
+    
+    if metrics.gross_margin > 75:
+        strengths.append(f"Industry-leading {metrics.gross_margin}% gross margin indicates strong unit economics")
+    elif metrics.gross_margin > 60:
+        strengths.append(f"Healthy {metrics.gross_margin}% gross margin supports sustainable growth")
+    
+    if metrics.nrr > 120:
+        strengths.append(f"Excellent {metrics.nrr}% NRR indicates strong customer expansion and satisfaction")
+    elif metrics.nrr > 105:
+        strengths.append(f"Solid {metrics.nrr}% NRR demonstrates customer retention strength")
+    
+    if qualitative.market_size == "Large":
+        strengths.append("Large addressable market provides significant expansion runway")
+    
+    if qualitative.competitive_moat == "Strong":
+        strengths.append("Strong competitive moat protects market position")
+    
+    # Analyze risks
+    if metrics.growth_rate < 30:
+        risks.append(f"{metrics.growth_rate}% growth rate may challenge future fundraising at premium valuations")
+    
+    if metrics.gross_margin < 50:
+        risks.append(f"{metrics.gross_margin}% gross margin indicates unit economics challenges requiring attention")
+    
+    if metrics.nrr < 100:
+        risks.append(f"Net churn at {metrics.nrr}% NRR requires immediate retention focus")
+    
+    if qualitative.competitive_moat == "Low":
+        risks.append("Limited competitive differentiation increases market risk")
+    
+    if qualitative.product_maturity <= 2:
+        risks.append("Early-stage product may face execution risk in scaling")
+    
+    if metrics.team_size < 10:
+        risks.append(f"Team of {metrics.team_size} may face scaling challenges")
+    
+    # Valuation drivers
+    drivers.append(f"ARR of ${valuation.arr_used:,.0f} provides revenue base for multiple-based valuation")
+    drivers.append(f"{valuation.multiple_used}x revenue multiple applied based on growth profile and market position")
+    
+    total_adj = sum(adj.adjustment for adj in valuation.adjustments)
+    if total_adj > 0:
+        drivers.append(f"Net positive {total_adj*100:.0f}% adjustment to base multiple for strong fundamentals")
+    elif total_adj < 0:
+        drivers.append(f"Net negative {abs(total_adj)*100:.0f}% adjustment to base multiple for risk factors")
+    
+    # Exit readiness assessment
+    if metrics.growth_rate > 50 and metrics.gross_margin > 60 and metrics.nrr > 100:
+        exit_readiness = "HIGH - Company demonstrates metrics attractive to both strategic and financial buyers. Recommend preparing data room and advisor engagement within 18-24 months."
+    elif metrics.growth_rate > 30 and metrics.gross_margin > 50:
+        exit_readiness = "MEDIUM - Fundamentals support exit discussions, but improving growth rate and retention metrics would strengthen negotiating position. Consider 2-3 year optimization window."
+    else:
+        exit_readiness = "DEVELOPING - Focus on improving core metrics before exit preparation. Priority areas: growth acceleration, margin improvement, and retention. 3-5 year horizon recommended."
+    
+    # Generate summary
+    arr_str = f"${metrics.arr/1000000:.1f}M" if metrics.arr >= 1000000 else f"${metrics.arr/1000:.0f}K"
+    val_str = f"${valuation.base/1000000:.1f}M" if valuation.base >= 1000000 else f"${valuation.base/1000:.0f}K"
+    
+    summary = f"{company_info.company_name} is a {company_info.stage} stage {company_info.business_model} company operating in the {company_info.industry} sector. "
+    summary += f"With {arr_str} ARR growing at {metrics.growth_rate}% YoY and {metrics.gross_margin}% gross margins, the company demonstrates "
+    
+    if metrics.growth_rate > 50 and metrics.gross_margin > 60:
+        summary += "strong fundamentals suitable for premium valuation. "
+    elif metrics.growth_rate > 30:
+        summary += "solid fundamentals with room for optimization. "
+    else:
+        summary += "early-stage metrics requiring focused execution. "
+    
+    summary += f"Base case valuation of {val_str} reflects a {valuation.multiple_used}x revenue multiple, "
+    summary += f"adjusted from the {valuation.base_multiple}x sector baseline based on company-specific factors."
+    
+    return AICommentary(
+        key_strengths=strengths if strengths else ["Company demonstrates potential in target market"],
+        key_risks=risks if risks else ["Standard execution risks for stage"],
+        valuation_drivers=drivers,
+        exit_readiness=exit_readiness,
+        summary=summary
+    )
             name="PE Buyout",
             description="Private equity firm acquisition focused on operational improvements and growth acceleration.",
             estimated_value=round(base_val * 1.1, 0),
