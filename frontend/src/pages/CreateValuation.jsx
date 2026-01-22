@@ -38,27 +38,35 @@ const CreateValuation = () => {
     competitive_moat: 'Medium'
   });
 
+  // Industry = Sector/Vertical the company operates in
   const industries = [
     'SaaS',
     'AI/ML',
     'FinTech',
     'HealthTech',
+    'EdTech',
+    'CleanTech',
+    'Cybersecurity',
+    'MarTech',
     'E-Commerce',
-    'Marketplace',
     'Other'
   ];
 
+  // Business Model = How the company generates revenue
   const businessModels = [
-    'SaaS',
+    'Subscription (SaaS)',
     'Marketplace',
+    'Transactional',
     'E-Commerce',
-    'FinTech',
-    'AI/ML',
-    'HealthTech',
+    'Usage-Based',
+    'Freemium',
+    'Enterprise',
+    'Advertising',
     'Other'
   ];
 
   const stages = [
+    'Bootstrapped',
     'Pre-seed',
     'Seed',
     'Series A',
