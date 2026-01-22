@@ -304,6 +304,7 @@ def calculate_growth_adjustment(growth_rate: float, stage: str) -> tuple:
     """Calculate growth rate adjustment with explanation"""
     # Different thresholds by stage
     thresholds = {
+        "Bootstrapped": {"exceptional": 100, "strong": 50, "moderate": 25},
         "Pre-seed": {"exceptional": 200, "strong": 100, "moderate": 50},
         "Seed": {"exceptional": 150, "strong": 80, "moderate": 40},
         "Series A": {"exceptional": 100, "strong": 60, "moderate": 30},
