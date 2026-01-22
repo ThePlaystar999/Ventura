@@ -3,33 +3,38 @@ import ReactDOM from "react-dom/client";
 import "@/index.css";
 import App from "@/App";
 
-// Suppress ResizeObserver loop errors globally (benign error from UI libraries)
-// This error occurs with Radix UI components and is safe to ignore
-const resizeObserverErr = window.console.error;
-window.console.error = (...args) => {
-  if (args[0]?.includes?.('ResizeObserver loop') || 
+// PATCH: Fix ResizeObserver loop error by debouncing the callback
+// This is the proper fix for Radix UI components
+const OriginalResizeObserver = window.ResizeObserver;
+window.ResizeObserver = class ResizeObserver extends OriginalResizeObserver {
+  constructor(callback) {
+    super((entries, observer) => {
+      requestAnimationFrame(() => {
+        callback(entries, observer);
+      });
+    });
+  }
+};
+
+// Also suppress any remaining console errors about ResizeObserver
+const originalError = console.error;
+console.error = (...args) => {
+  if (args[0]?.toString?.().includes?.('ResizeObserver') || 
       (typeof args[0] === 'string' && args[0].includes('ResizeObserver'))) {
     return;
   }
-  resizeObserverErr(...args);
+  originalError.apply(console, args);
 };
 
-// Also suppress at window error level to prevent React error overlay
+// Suppress at window level
 window.addEventListener('error', (e) => {
-  if (e.message?.includes?.('ResizeObserver loop')) {
+  if (e.message?.includes?.('ResizeObserver')) {
     e.stopImmediatePropagation();
+    e.stopPropagation();
     e.preventDefault();
     return false;
   }
-});
-
-// Suppress unhandled promise rejections related to ResizeObserver
-window.addEventListener('unhandledrejection', (e) => {
-  if (e.reason?.message?.includes?.('ResizeObserver loop')) {
-    e.preventDefault();
-    return false;
-  }
-});
+}, true);
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
