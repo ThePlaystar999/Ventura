@@ -635,36 +635,10 @@ async def export_pdf(valuation_id: str, user: UserBase = Depends(get_current_use
     if not valuation:
         raise HTTPException(status_code=404, detail="Valuation not found")
     
-    # Parse result
-    result = valuation.get("result", {})
     company_info = valuation.get("company_info", {})
-    metrics = valuation.get("metrics", {})
     
-    # Generate chart
-    chart_base64 = generate_chart_base64(ValuationResult(**result))
-    
-    # Render template
-    template = Template(PDF_TEMPLATE)
-    html_content = template.render(
-        company_name=company_info.get("company_name", "Unknown"),
-        industry=company_info.get("industry", "Unknown"),
-        stage=company_info.get("stage", "Unknown"),
-        country=company_info.get("country", "Unknown"),
-        team_size=metrics.get("team_size", 0),
-        arr=metrics.get("arr", 0) or metrics.get("mrr", 0) * 12,
-        growth_rate=metrics.get("growth_rate", 0),
-        gross_margin=metrics.get("gross_margin", 0),
-        low_valuation=result.get("low", 0),
-        base_valuation=result.get("base", 0),
-        high_valuation=result.get("high", 0),
-        multiple_used=result.get("multiple_used", 0),
-        exit_scenarios=valuation.get("exit_scenarios", []),
-        chart_base64=chart_base64,
-        generated_date=datetime.now(timezone.utc).strftime("%B %d, %Y")
-    )
-    
-    # Generate PDF
-    pdf_bytes = HTML(string=html_content).write_pdf()
+    # Generate PDF using fpdf2
+    pdf_bytes = generate_valuation_pdf(valuation)
     
     filename = f"{company_info.get('company_name', 'valuation').replace(' ', '_')}_Valuation.pdf"
     
@@ -685,19 +659,18 @@ async def export_shared_pdf(share_token: str):
     if not valuation:
         raise HTTPException(status_code=404, detail="Valuation not found")
     
-    # Same PDF generation as above
-    result = valuation.get("result", {})
     company_info = valuation.get("company_info", {})
-    metrics = valuation.get("metrics", {})
     
-    chart_base64 = generate_chart_base64(ValuationResult(**result))
+    # Generate PDF using fpdf2
+    pdf_bytes = generate_valuation_pdf(valuation)
     
-    template = Template(PDF_TEMPLATE)
-    html_content = template.render(
-        company_name=company_info.get("company_name", "Unknown"),
-        industry=company_info.get("industry", "Unknown"),
-        stage=company_info.get("stage", "Unknown"),
-        country=company_info.get("country", "Unknown"),
+    filename = f"{company_info.get('company_name', 'valuation').replace(' ', '_')}_Valuation.pdf"
+    
+    return StreamingResponse(
+        io.BytesIO(pdf_bytes),
+        media_type="application/pdf",
+        headers={"Content-Disposition": f'attachment; filename="{filename}"'}
+    )
         team_size=metrics.get("team_size", 0),
         arr=metrics.get("arr", 0) or metrics.get("mrr", 0) * 12,
         growth_rate=metrics.get("growth_rate", 0),
