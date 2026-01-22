@@ -8,6 +8,7 @@ import CreateValuation from "./pages/CreateValuation";
 import ValuationResults from "./pages/ValuationResults";
 import SharedValuation from "./pages/SharedValuation";
 import AuthCallback from "./pages/AuthCallback";
+import PricingPage from "./pages/PricingPage";
 import "./App.css";
 
 const API = process.env.REACT_APP_BACKEND_URL + "/api";
