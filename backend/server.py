@@ -948,7 +948,7 @@ async def get_valuations(project_id: Optional[str] = None, user: UserBase = Depe
 
 @api_router.post("/valuations", response_model=Valuation)
 async def create_valuation(data: ValuationCreate, user: UserBase = Depends(get_current_user)):
-    """Create a new valuation with AI analysis"""
+    """Create a new valuation with the deterministic valuation engine"""
     # Verify project exists and belongs to user
     project = await db.projects.find_one({
         "project_id": data.project_id,
@@ -958,9 +958,12 @@ async def create_valuation(data: ValuationCreate, user: UserBase = Depends(get_c
     if not project:
         raise HTTPException(status_code=404, detail="Project not found")
     
-    # Calculate valuation
-    result = calculate_valuation(data.company_info, data.metrics)
-    exit_scenarios = generate_exit_scenarios(result, data.company_info)
+    # Calculate valuation using the new comprehensive engine
+    full_result = calculate_valuation(
+        data.company_info, 
+        data.metrics,
+        data.qualitative
+    )
     
     # Generate share token
     share_token = uuid.uuid4().hex[:16]
@@ -970,8 +973,11 @@ async def create_valuation(data: ValuationCreate, user: UserBase = Depends(get_c
         user_id=user.user_id,
         company_info=data.company_info,
         metrics=data.metrics,
-        result=result,
-        exit_scenarios=exit_scenarios,
+        qualitative=data.qualitative,
+        result=full_result.valuation,
+        exit_scenarios=full_result.exit_scenarios,
+        assumptions=full_result.assumptions,
+        ai_commentary=full_result.ai_commentary,
         share_token=share_token
     )
     
