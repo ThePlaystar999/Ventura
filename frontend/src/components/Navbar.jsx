@@ -44,6 +44,13 @@ const Navbar = ({ transparent = false }) => {
               >
                 About
               </a>
+              <Link 
+                to="/pricing" 
+                className="text-sm font-medium text-slate-600 hover:text-[#0B4DBB] transition-colors"
+                data-testid="nav-pricing"
+              >
+                Pricing
+              </Link>
               <a 
                 href="#contact" 
                 className="text-sm font-medium text-slate-600 hover:text-[#0B4DBB] transition-colors"
