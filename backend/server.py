@@ -11,8 +11,7 @@ from typing import List, Optional
 import uuid
 from datetime import datetime, timezone, timedelta
 import io
-from weasyprint import HTML
-from jinja2 import Template
+from fpdf import FPDF
 import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
