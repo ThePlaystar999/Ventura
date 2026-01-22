@@ -211,7 +211,8 @@ async def get_current_user(request: Request) -> UserBase:
 
 # Base multiples by stage and business model
 BASE_MULTIPLES = {
-    "SaaS": {
+    "Subscription (SaaS)": {
+        "Bootstrapped": 3.0,
         "Pre-seed": 5.0,
         "Seed": 8.0,
         "Series A": 12.0,
@@ -219,6 +220,7 @@ BASE_MULTIPLES = {
         "Series C+": 18.0
     },
     "Marketplace": {
+        "Bootstrapped": 2.0,
         "Pre-seed": 3.0,
         "Seed": 5.0,
         "Series A": 8.0,
@@ -226,38 +228,62 @@ BASE_MULTIPLES = {
         "Series C+": 12.0
     },
     "E-Commerce": {
+        "Bootstrapped": 1.5,
         "Pre-seed": 2.0,
         "Seed": 3.0,
         "Series A": 5.0,
         "Series B": 6.0,
         "Series C+": 8.0
     },
-    "FinTech": {
-        "Pre-seed": 6.0,
-        "Seed": 10.0,
-        "Series A": 15.0,
-        "Series B": 18.0,
-        "Series C+": 22.0
+    "Transactional": {
+        "Bootstrapped": 2.5,
+        "Pre-seed": 4.0,
+        "Seed": 6.0,
+        "Series A": 10.0,
+        "Series B": 12.0,
+        "Series C+": 15.0
     },
-    "AI/ML": {
-        "Pre-seed": 8.0,
-        "Seed": 12.0,
-        "Series A": 18.0,
-        "Series B": 22.0,
-        "Series C+": 28.0
+    "Usage-Based": {
+        "Bootstrapped": 3.0,
+        "Pre-seed": 5.0,
+        "Seed": 8.0,
+        "Series A": 12.0,
+        "Series B": 15.0,
+        "Series C+": 18.0
     },
-    "HealthTech": {
+    "Freemium": {
+        "Bootstrapped": 2.0,
         "Pre-seed": 4.0,
         "Seed": 7.0,
         "Series A": 10.0,
-        "Series B": 14.0,
-        "Series C+": 18.0
+        "Series B": 13.0,
+        "Series C+": 16.0
+    },
+    "Enterprise": {
+        "Bootstrapped": 4.0,
+        "Pre-seed": 6.0,
+        "Seed": 10.0,
+        "Series A": 14.0,
+        "Series B": 18.0,
+        "Series C+": 22.0
+    },
+    "Advertising": {
+        "Bootstrapped": 1.5,
+        "Pre-seed": 2.5,
+        "Seed": 4.0,
+        "Series A": 6.0,
+        "Series B": 8.0,
+        "Series C+": 10.0
     },
     "Other": {
+        "Bootstrapped": 2.0,
         "Pre-seed": 4.0,
         "Seed": 6.0,
         "Series A": 9.0,
         "Series B": 12.0,
+        "Series C+": 15.0
+    }
+}
         "Series C+": 15.0
     }
 }
