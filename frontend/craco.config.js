@@ -65,24 +65,6 @@ const webpackConfig = {
       if (config.enableHealthCheck && healthPluginInstance) {
         webpackConfig.plugins.push(healthPluginInstance);
       }
-      
-      // Disable error overlay for ResizeObserver errors
-      if (webpackConfig.devServer) {
-        webpackConfig.devServer.client = {
-          ...webpackConfig.devServer.client,
-          overlay: {
-            errors: true,
-            warnings: false,
-            runtimeErrors: (error) => {
-              if (error?.message?.includes?.('ResizeObserver')) {
-                return false;
-              }
-              return true;
-            },
-          },
-        };
-      }
-      
       return webpackConfig;
     },
   },
