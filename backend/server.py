@@ -60,28 +60,65 @@ class CompanyInfo(BaseModel):
     industry: str
     country: str = "United States"
     stage: str  # Pre-seed, Seed, Series A, etc.
+    business_model: str = "SaaS"  # SaaS, Marketplace, E-Commerce, etc.
 
 class ValuationMetrics(BaseModel):
     arr: float = 0  # Annual Recurring Revenue
     mrr: float = 0  # Monthly Recurring Revenue  
     growth_rate: float = 0  # YoY growth %
     gross_margin: float = 0  # Gross margin %
+    nrr: float = 100  # Net Revenue Retention %
     team_size: int = 1
+
+class QualitativeScores(BaseModel):
+    product_maturity: int = 3  # 1-5 scale
+    market_size: str = "Medium"  # Small, Medium, Large
+    competitive_moat: str = "Medium"  # Low, Medium, Strong
+
+class ValuationAdjustment(BaseModel):
+    factor: str
+    adjustment: float
+    reason: str
 
 class ValuationResult(BaseModel):
     low: float
     base: float
     high: float
     multiple_used: float
+    base_multiple: float
     methodology: str
+    arr_used: float
+    adjustments: List[ValuationAdjustment] = []
 
 class ExitScenario(BaseModel):
     scenario_type: str  # strategic_acquisition, pe_buyout, secondary_sale
     name: str
     description: str
     estimated_value: float
+    multiple: float
     probability: str  # High, Medium, Low
     timeline: str  # 1-2 years, 3-5 years, etc.
+    rationale: str
+
+class ValuationAssumptions(BaseModel):
+    base_multiple_source: str
+    growth_assumption: str
+    margin_assumption: str
+    market_assumption: str
+    risk_factors: List[str]
+
+class AICommentary(BaseModel):
+    key_strengths: List[str]
+    key_risks: List[str]
+    valuation_drivers: List[str]
+    exit_readiness: str
+    summary: str
+
+class FullValuationResult(BaseModel):
+    valuation: ValuationResult
+    exit_scenarios: List[ExitScenario]
+    assumptions: ValuationAssumptions
+    ai_commentary: AICommentary
 
 class Project(BaseModel):
     model_config = ConfigDict(extra="ignore")
@@ -98,8 +135,11 @@ class Valuation(BaseModel):
     user_id: str
     company_info: CompanyInfo
     metrics: ValuationMetrics
+    qualitative: Optional[QualitativeScores] = None
     result: Optional[ValuationResult] = None
     exit_scenarios: List[ExitScenario] = []
+    assumptions: Optional[ValuationAssumptions] = None
+    ai_commentary: Optional[AICommentary] = None
     share_token: Optional[str] = None
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
@@ -107,6 +147,7 @@ class ValuationCreate(BaseModel):
     project_id: str
     company_info: CompanyInfo
     metrics: ValuationMetrics
+    qualitative: Optional[QualitativeScores] = None
 
 class ProjectCreate(BaseModel):
     name: str
@@ -166,7 +207,279 @@ async def get_current_user(request: Request) -> UserBase:
     
     return UserBase(**user)
 
-# ============ VALUATION LOGIC (MOCK AI) ============
+# ============ VALUATION ENGINE - DETERMINISTIC & EXPLAINABLE ============
+
+# Base multiples by stage and business model
+BASE_MULTIPLES = {
+    "SaaS": {
+        "Pre-seed": 5.0,
+        "Seed": 8.0,
+        "Series A": 12.0,
+        "Series B": 15.0,
+        "Series C+": 18.0
+    },
+    "Marketplace": {
+        "Pre-seed": 3.0,
+        "Seed": 5.0,
+        "Series A": 8.0,
+        "Series B": 10.0,
+        "Series C+": 12.0
+    },
+    "E-Commerce": {
+        "Pre-seed": 2.0,
+        "Seed": 3.0,
+        "Series A": 5.0,
+        "Series B": 6.0,
+        "Series C+": 8.0
+    },
+    "FinTech": {
+        "Pre-seed": 6.0,
+        "Seed": 10.0,
+        "Series A": 15.0,
+        "Series B": 18.0,
+        "Series C+": 22.0
+    },
+    "AI/ML": {
+        "Pre-seed": 8.0,
+        "Seed": 12.0,
+        "Series A": 18.0,
+        "Series B": 22.0,
+        "Series C+": 28.0
+    },
+    "HealthTech": {
+        "Pre-seed": 4.0,
+        "Seed": 7.0,
+        "Series A": 10.0,
+        "Series B": 14.0,
+        "Series C+": 18.0
+    },
+    "Other": {
+        "Pre-seed": 4.0,
+        "Seed": 6.0,
+        "Series A": 9.0,
+        "Series B": 12.0,
+        "Series C+": 15.0
+    }
+}
+
+# Multiple caps by stage (prevent absurd outputs)
+MULTIPLE_CAPS = {
+    "Pre-seed": 15.0,
+    "Seed": 25.0,
+    "Series A": 35.0,
+    "Series B": 45.0,
+    "Series C+": 60.0
+}
+
+def get_base_multiple(business_model: str, stage: str) -> float:
+    """Get base multiple for business model and stage"""
+    model_multiples = BASE_MULTIPLES.get(business_model, BASE_MULTIPLES["Other"])
+    return model_multiples.get(stage, 8.0)
+
+def calculate_growth_adjustment(growth_rate: float, stage: str) -> tuple:
+    """Calculate growth rate adjustment with explanation"""
+    # Different thresholds by stage
+    thresholds = {
+        "Pre-seed": {"exceptional": 200, "strong": 100, "moderate": 50},
+        "Seed": {"exceptional": 150, "strong": 80, "moderate": 40},
+        "Series A": {"exceptional": 100, "strong": 60, "moderate": 30},
+        "Series B": {"exceptional": 80, "strong": 50, "moderate": 25},
+        "Series C+": {"exceptional": 60, "strong": 40, "moderate": 20}
+    }
+    
+    t = thresholds.get(stage, thresholds["Seed"])
+    
+    if growth_rate >= t["exceptional"]:
+        return 0.4, f"Exceptional growth ({growth_rate}% YoY) - premium applied"
+    elif growth_rate >= t["strong"]:
+        return 0.2, f"Strong growth ({growth_rate}% YoY) - positive adjustment"
+    elif growth_rate >= t["moderate"]:
+        return 0.0, f"Moderate growth ({growth_rate}% YoY) - baseline"
+    elif growth_rate >= 10:
+        return -0.15, f"Below-average growth ({growth_rate}% YoY) - discount applied"
+    else:
+        return -0.3, f"Low growth ({growth_rate}% YoY) - significant discount"
+
+def calculate_margin_adjustment(gross_margin: float, business_model: str) -> tuple:
+    """Calculate gross margin adjustment with explanation"""
+    # Different expectations by business model
+    expectations = {
+        "SaaS": {"excellent": 80, "good": 70, "acceptable": 60},
+        "Marketplace": {"excellent": 70, "good": 50, "acceptable": 35},
+        "E-Commerce": {"excellent": 50, "good": 35, "acceptable": 25},
+        "FinTech": {"excellent": 75, "good": 60, "acceptable": 45},
+        "AI/ML": {"excellent": 85, "good": 75, "acceptable": 65},
+        "HealthTech": {"excellent": 70, "good": 55, "acceptable": 40},
+        "Other": {"excellent": 65, "good": 50, "acceptable": 35}
+    }
+    
+    e = expectations.get(business_model, expectations["Other"])
+    
+    if gross_margin >= e["excellent"]:
+        return 0.2, f"Excellent gross margin ({gross_margin}%) for {business_model}"
+    elif gross_margin >= e["good"]:
+        return 0.1, f"Good gross margin ({gross_margin}%) for {business_model}"
+    elif gross_margin >= e["acceptable"]:
+        return 0.0, f"Acceptable gross margin ({gross_margin}%) for {business_model}"
+    elif gross_margin >= 20:
+        return -0.15, f"Below-average margin ({gross_margin}%) - improvement needed"
+    else:
+        return -0.25, f"Low margin ({gross_margin}%) - significant concern"
+
+def calculate_nrr_adjustment(nrr: float) -> tuple:
+    """Calculate Net Revenue Retention adjustment"""
+    if nrr >= 130:
+        return 0.25, f"Exceptional NRR ({nrr}%) indicates strong expansion"
+    elif nrr >= 120:
+        return 0.15, f"Strong NRR ({nrr}%) - healthy customer expansion"
+    elif nrr >= 100:
+        return 0.0, f"Healthy NRR ({nrr}%) - stable customer base"
+    elif nrr >= 85:
+        return -0.15, f"NRR below 100% ({nrr}%) - churn concern"
+    else:
+        return -0.3, f"Significant churn ({nrr}% NRR) - major risk factor"
+
+def calculate_qualitative_adjustment(qualitative: QualitativeScores) -> tuple:
+    """Calculate qualitative factors adjustment"""
+    total_adj = 0.0
+    reasons = []
+    
+    # Product maturity (1-5)
+    if qualitative.product_maturity >= 5:
+        total_adj += 0.1
+        reasons.append("Mature, polished product (+10%)")
+    elif qualitative.product_maturity >= 4:
+        total_adj += 0.05
+        reasons.append("Well-developed product (+5%)")
+    elif qualitative.product_maturity <= 2:
+        total_adj -= 0.1
+        reasons.append("Early-stage product (-10%)")
+    
+    # Market size
+    if qualitative.market_size == "Large":
+        total_adj += 0.15
+        reasons.append("Large addressable market (+15%)")
+    elif qualitative.market_size == "Small":
+        total_adj -= 0.1
+        reasons.append("Limited market size (-10%)")
+    
+    # Competitive moat
+    if qualitative.competitive_moat == "Strong":
+        total_adj += 0.15
+        reasons.append("Strong competitive moat (+15%)")
+    elif qualitative.competitive_moat == "Low":
+        total_adj -= 0.15
+        reasons.append("Weak competitive position (-15%)")
+    
+    return total_adj, "; ".join(reasons) if reasons else "Standard qualitative assessment"
+
+def calculate_valuation(
+    company_info: CompanyInfo, 
+    metrics: ValuationMetrics,
+    qualitative: Optional[QualitativeScores] = None
+) -> FullValuationResult:
+    """
+    Deterministic, explainable valuation calculation.
+    No randomness, no black box - every adjustment is documented.
+    """
+    # Use ARR if available, otherwise MRR * 12
+    arr = metrics.arr if metrics.arr > 0 else metrics.mrr * 12
+    if arr == 0:
+        arr = 100000  # Minimum for calculation
+    
+    business_model = company_info.business_model or "SaaS"
+    stage = company_info.stage or "Seed"
+    
+    # Default qualitative if not provided
+    if not qualitative:
+        qualitative = QualitativeScores()
+    
+    # Step 1: Get base multiple
+    base_multiple = get_base_multiple(business_model, stage)
+    adjustments = []
+    
+    # Step 2: Apply growth adjustment
+    growth_adj, growth_reason = calculate_growth_adjustment(metrics.growth_rate, stage)
+    if growth_adj != 0:
+        adjustments.append(ValuationAdjustment(
+            factor="Growth Rate",
+            adjustment=growth_adj,
+            reason=growth_reason
+        ))
+    
+    # Step 3: Apply margin adjustment
+    margin_adj, margin_reason = calculate_margin_adjustment(metrics.gross_margin, business_model)
+    if margin_adj != 0:
+        adjustments.append(ValuationAdjustment(
+            factor="Gross Margin",
+            adjustment=margin_adj,
+            reason=margin_reason
+        ))
+    
+    # Step 4: Apply NRR adjustment
+    nrr_adj, nrr_reason = calculate_nrr_adjustment(metrics.nrr)
+    if nrr_adj != 0:
+        adjustments.append(ValuationAdjustment(
+            factor="Net Revenue Retention",
+            adjustment=nrr_adj,
+            reason=nrr_reason
+        ))
+    
+    # Step 5: Apply qualitative adjustment
+    qual_adj, qual_reason = calculate_qualitative_adjustment(qualitative)
+    if qual_adj != 0:
+        adjustments.append(ValuationAdjustment(
+            factor="Qualitative Factors",
+            adjustment=qual_adj,
+            reason=qual_reason
+        ))
+    
+    # Calculate total adjustment
+    total_adjustment = sum(adj.adjustment for adj in adjustments)
+    adjusted_multiple = base_multiple * (1 + total_adjustment)
+    
+    # Apply cap
+    cap = MULTIPLE_CAPS.get(stage, 30.0)
+    final_multiple = min(adjusted_multiple, cap)
+    if adjusted_multiple > cap:
+        adjustments.append(ValuationAdjustment(
+            factor="Multiple Cap",
+            adjustment=0,
+            reason=f"Multiple capped at {cap}x for {stage} stage"
+        ))
+    
+    # Calculate valuations
+    base_valuation = arr * final_multiple
+    low_valuation = base_valuation * 0.7
+    high_valuation = base_valuation * 1.4
+    
+    # Build valuation result
+    valuation_result = ValuationResult(
+        low=round(low_valuation, 0),
+        base=round(base_valuation, 0),
+        high=round(high_valuation, 0),
+        multiple_used=round(final_multiple, 2),
+        base_multiple=round(base_multiple, 2),
+        arr_used=arr,
+        methodology=f"Revenue Multiple ({business_model}, {stage} stage)",
+        adjustments=adjustments
+    )
+    
+    # Generate exit scenarios
+    exit_scenarios = generate_exit_scenarios(valuation_result, company_info, metrics)
+    
+    # Generate assumptions
+    assumptions = generate_assumptions(company_info, metrics, qualitative, base_multiple)
+    
+    # Generate AI commentary
+    ai_commentary = generate_ai_commentary(company_info, metrics, qualitative, valuation_result)
+    
+    return FullValuationResult(
+        valuation=valuation_result,
+        exit_scenarios=exit_scenarios,
+        assumptions=assumptions,
+        ai_commentary=ai_commentary
+    )
 
 def calculate_valuation(company_info: CompanyInfo, metrics: ValuationMetrics) -> ValuationResult:
     """Mock AI valuation calculation"""
