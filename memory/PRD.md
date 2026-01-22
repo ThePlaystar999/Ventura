@@ -24,22 +24,28 @@ Build Ventura, a B2B SaaS web app that estimates startup valuation and exit scen
 ### Valuation Engine Logic
 
 #### Base Multiples by Business Model & Stage
-| Model | Pre-seed | Seed | Series A | Series B | Series C+ |
-|-------|----------|------|----------|----------|-----------|
-| SaaS | 5x | 8x | 12x | 15x | 18x |
-| AI/ML | 8x | 12x | 18x | 22x | 28x |
-| FinTech | 6x | 10x | 15x | 18x | 22x |
-| Marketplace | 3x | 5x | 8x | 10x | 12x |
-| E-Commerce | 2x | 3x | 5x | 6x | 8x |
+| Model | Bootstrapped | Pre-seed | Seed | Series A | Series B | Series C+ |
+|-------|--------------|----------|------|----------|----------|-----------|
+| Subscription (SaaS) | 3x | 5x | 8x | 12x | 15x | 18x |
+| Enterprise | 4x | 6x | 10x | 14x | 18x | 22x |
+| Usage-Based | 3x | 5x | 8x | 12x | 15x | 18x |
+| Marketplace | 2x | 3x | 5x | 8x | 10x | 12x |
+| E-Commerce | 1.5x | 2x | 3x | 5x | 6x | 8x |
+| Transactional | 2.5x | 4x | 6x | 10x | 12x | 15x |
+| Freemium | 2x | 4x | 7x | 10x | 13x | 16x |
+| Advertising | 1.5x | 2.5x | 4x | 6x | 8x | 10x |
+
+#### Industries Supported
+SaaS, AI/ML, FinTech, HealthTech, EdTech, CleanTech, Cybersecurity, MarTech, E-Commerce, Other
 
 #### Adjustments Applied
 1. **Growth Rate** - Positive/negative based on stage-specific thresholds
-2. **Gross Margin** - Model-specific expectations (SaaS: 80%+, E-Commerce: 35%+)
+2. **Gross Margin** - Model-specific expectations
 3. **Net Revenue Retention (NRR)** - 130%+ exceptional, <85% significant discount
 4. **Qualitative Scores** - Product maturity (1-5), Market size, Competitive moat
 
 #### Multiple Caps
-- Pre-seed: 15x, Seed: 25x, Series A: 35x, Series B: 45x, Series C+: 60x
+- Bootstrapped: 10x, Pre-seed: 15x, Seed: 25x, Series A: 35x, Series B: 45x, Series C+: 60x
 
 ### Core Features Implemented (January 22, 2026)
 
@@ -59,8 +65,9 @@ Build Ventura, a B2B SaaS web app that estimates startup valuation and exit scen
 - [x] Contact form storage
 
 #### Frontend
-- [x] **New 3D gradient V logo**
+- [x] **Custom V logo** (user-provided design)
 - [x] Landing page with wave backgrounds
+- [x] **Pricing page** with 3 plans (REPORT 49€, FOUNDER 39€/mo, PRO 99€/mo)
 - [x] Auth callback handling
 - [x] Dashboard with project cards
 - [x] **4-Step Valuation Wizard** (Company → Financials → Qualitative → Analysis)
@@ -74,6 +81,11 @@ Build Ventura, a B2B SaaS web app that estimates startup valuation and exit scen
 - [x] Shared valuation view
 - [x] PDF download functionality
 
+#### Pricing Plans
+- **REPORT** (49€ one-time): 1 valuation, PDF report
+- **FOUNDER** (39€/mo): 3 valuations/month, exit scenarios, history
+- **PRO** (99€/mo): Unlimited valuations, white-label, shareable links
+
 ## Prioritized Backlog
 
 ### P0 (Critical) - ✅ DONE
@@ -82,19 +94,21 @@ Build Ventura, a B2B SaaS web app that estimates startup valuation and exit scen
 - Exit scenarios with rationale
 - AI commentary
 - Assumptions transparency
+- Pricing page
 
 ### P1 (Important)
+- [ ] Stripe integration for payments
 - [ ] Email notifications for shared valuations
 - [ ] Valuation comparison charts (Recharts)
 - [ ] Historical valuation tracking within projects
 
 ### P2 (Nice to Have)
 - [ ] Team collaboration features
-- [ ] Stripe integration for premium tiers
 - [ ] Custom branding for PDF reports
 - [ ] Webhook integrations
+- [ ] Real AI integration (GPT/Claude)
 
 ## Next Action Items
-1. Add email notifications with SendGrid for shared valuations
-2. Implement valuation comparison visualizations
-3. Consider adding user onboarding tutorial flow
+1. Integrate Stripe for payment processing
+2. Add email notifications with SendGrid for shared valuations
+3. Implement valuation comparison visualizations
