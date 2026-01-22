@@ -4,7 +4,7 @@
 Build Ventura, a B2B SaaS web app that estimates startup valuation and exit scenarios using AI. Clean, corporate, premium, tech/finance/consulting-grade design similar to McKinsey/BCG/Goldman Sachs SaaS tools. White-first UI with fluid blue wave gradients.
 
 ## User Choices
-- Mock AI for valuation (uses revenue multiples calculation)
+- **Deterministic Valuation Engine** (no black box, fully explainable logic)
 - Emergent-managed Google OAuth for authentication
 - Real PDF export using fpdf2
 - Contact form stores in database (no email sending)
@@ -21,64 +21,72 @@ Build Ventura, a B2B SaaS web app that estimates startup valuation and exit scen
 - **Authentication**: Emergent Google OAuth
 - **PDF Generation**: fpdf2
 
-### Core Features Implemented
-1. **Landing Page** - Hero with V logo, services cards, about section, contact form
-2. **Dashboard** - Project management, valuation history
-3. **Valuation Wizard** - Step-by-step flow (Company Info → Metrics → AI Analysis)
-4. **Results Page** - Valuation range (Low/Base/High), exit scenarios, scenario sliders
-5. **PDF Export** - Professional valuation reports
-6. **Share Links** - Public read-only views for investors
+### Valuation Engine Logic
 
-## User Personas
-1. **Startup Founders** - Need valuation for fundraising, investor meetings
-2. **Investors** - Review startup valuations via shared links
-3. **Finance Professionals** - Conduct due diligence on startups
+#### Base Multiples by Business Model & Stage
+| Model | Pre-seed | Seed | Series A | Series B | Series C+ |
+|-------|----------|------|----------|----------|-----------|
+| SaaS | 5x | 8x | 12x | 15x | 18x |
+| AI/ML | 8x | 12x | 18x | 22x | 28x |
+| FinTech | 6x | 10x | 15x | 18x | 22x |
+| Marketplace | 3x | 5x | 8x | 10x | 12x |
+| E-Commerce | 2x | 3x | 5x | 6x | 8x |
 
-## Core Requirements (Static)
-- Clean corporate premium design
-- Blue color palette (#0B4DBB primary)
-- White-first UI (no dark mode)
-- Inter font
-- Responsive design (desktop-first)
-- Google OAuth authentication
+#### Adjustments Applied
+1. **Growth Rate** - Positive/negative based on stage-specific thresholds
+2. **Gross Margin** - Model-specific expectations (SaaS: 80%+, E-Commerce: 35%+)
+3. **Net Revenue Retention (NRR)** - 130%+ exceptional, <85% significant discount
+4. **Qualitative Scores** - Product maturity (1-5), Market size, Competitive moat
 
-## What's Been Implemented (January 22, 2026)
+#### Multiple Caps
+- Pre-seed: 15x, Seed: 25x, Series A: 35x, Series B: 45x, Series C+: 60x
 
-### Backend
+### Core Features Implemented (January 22, 2026)
+
+#### Backend
 - [x] User authentication (Emergent Google OAuth)
 - [x] Project CRUD operations
-- [x] Valuation CRUD with mock AI calculation
-- [x] Exit scenarios generation
+- [x] **Deterministic Valuation Engine** with:
+  - Base multiples by business model & stage
+  - Growth/Margin/NRR adjustments with explanations
+  - Qualitative score adjustments
+  - Multiple caps enforcement
+- [x] Exit scenarios with detailed rationale
+- [x] AI Commentary (strengths, risks, exit readiness)
+- [x] Transparent assumptions
 - [x] PDF export with fpdf2
 - [x] Share token generation
 - [x] Contact form storage
 
-### Frontend
+#### Frontend
+- [x] **New 3D gradient V logo**
 - [x] Landing page with wave backgrounds
-- [x] V logo component
 - [x] Auth callback handling
 - [x] Dashboard with project cards
-- [x] Multi-step valuation wizard
-- [x] Results page with scenario sliders
+- [x] **4-Step Valuation Wizard** (Company → Financials → Qualitative → Analysis)
+- [x] Results page with:
+  - Valuation range (Low/Base/High)
+  - Adjustments breakdown (expandable)
+  - Exit scenarios with rationale
+  - AI Commentary with strengths/risks
+  - Assumptions transparency
+  - Scenario sliders for live adjustments
 - [x] Shared valuation view
 - [x] PDF download functionality
 
 ## Prioritized Backlog
 
 ### P0 (Critical) - ✅ DONE
-- Landing page
-- Authentication
-- Project management
-- Valuation wizard
-- Results display
-- PDF export
-- Share links
+- Deterministic valuation engine
+- All adjustments with explanations
+- Exit scenarios with rationale
+- AI commentary
+- Assumptions transparency
 
 ### P1 (Important)
-- [ ] Real AI integration (replace mock valuation)
 - [ ] Email notifications for shared valuations
-- [ ] Valuation comparison charts
-- [ ] Historical valuation tracking
+- [ ] Valuation comparison charts (Recharts)
+- [ ] Historical valuation tracking within projects
 
 ### P2 (Nice to Have)
 - [ ] Team collaboration features
@@ -87,7 +95,6 @@ Build Ventura, a B2B SaaS web app that estimates startup valuation and exit scen
 - [ ] Webhook integrations
 
 ## Next Action Items
-1. Add real AI integration (GPT or Claude) for valuation analysis
-2. Implement email notifications with SendGrid
-3. Add valuation comparison visualizations using Recharts
-4. Consider adding user onboarding flow
+1. Add email notifications with SendGrid for shared valuations
+2. Implement valuation comparison visualizations
+3. Consider adding user onboarding tutorial flow
