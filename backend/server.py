@@ -665,23 +665,6 @@ def generate_ai_commentary(
         exit_readiness=exit_readiness,
         summary=summary
     )
-            name="PE Buyout",
-            description="Private equity firm acquisition focused on operational improvements and growth acceleration.",
-            estimated_value=round(base_val * 1.1, 0),
-            probability="High",
-            timeline="3-5 years"
-        ),
-        ExitScenario(
-            scenario_type="secondary_sale",
-            name="Secondary Sale",
-            description="Sale of existing shares to new investors or secondary market participants.",
-            estimated_value=round(base_val * 0.9, 0),
-            probability="High",
-            timeline="1-2 years"
-        )
-    ]
-    
-    return scenarios
 
 # ============ PDF GENERATION ============
 
