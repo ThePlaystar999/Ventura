@@ -284,12 +284,10 @@ BASE_MULTIPLES = {
         "Series C+": 15.0
     }
 }
-        "Series C+": 15.0
-    }
-}
 
 # Multiple caps by stage (prevent absurd outputs)
 MULTIPLE_CAPS = {
+    "Bootstrapped": 10.0,
     "Pre-seed": 15.0,
     "Seed": 25.0,
     "Series A": 35.0,
