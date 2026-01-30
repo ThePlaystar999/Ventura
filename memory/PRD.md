@@ -1,4 +1,9 @@
-# Ventura - B2B SaaS Startup Valuation Platform
+# Ventura - AI-Powered Startup Valuation Platform
+
+## Product Requirements Document
+
+### Latest Update: January 30, 2026
+- **Hero Section Redesign**: Updated to centered layout with standalone V logo, new headline structure ("Know your value." / "Plan your exit."), and centered CTAs
 
 ## Original Problem Statement
 Build Ventura, a B2B SaaS web app that estimates startup valuation and exit scenarios using AI. Clean, corporate, premium, tech/finance/consulting-grade design similar to McKinsey/BCG/Goldman Sachs SaaS tools. White-first UI with fluid blue wave gradients.
