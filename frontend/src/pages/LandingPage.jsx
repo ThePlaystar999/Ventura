@@ -243,8 +243,130 @@ const LandingPage = () => {
         </div>
       </section>
 
+      {/* COST OF NOT KNOWING SECTION */}
+      <section id="cost-of-ignorance" className="py-20 md:py-28 bg-[#F8FAFC]" data-testid="cost-section">
+        <div className="max-w-[1100px] mx-auto px-6 md:px-12">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-start">
+            {/* Left Column - Content */}
+            <motion.div
+              initial={{ opacity: 0, x: -20 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.5 }}
+              viewport={{ once: true }}
+            >
+              <h3 className="text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight text-slate-900 leading-tight mb-8">
+                Most founders don't know what their business is really worth.
+              </h3>
+
+              <p className="text-lg text-slate-600 mb-4">They rely on:</p>
+              
+              {/* List A - Subtle */}
+              <ul className="space-y-2 mb-6 pl-1">
+                {['Gut feeling', 'Outdated multiples', 'Biased advisors', 'Or no valuation at all'].map((item, i) => (
+                  <li key={i} className="flex items-center gap-3 text-slate-500">
+                    <span className="w-1.5 h-1.5 rounded-full bg-slate-300 flex-shrink-0" />
+                    <span>{item}</span>
+                  </li>
+                ))}
+              </ul>
+
+              {/* Divider */}
+              <div className="w-16 h-px bg-slate-200 my-6" />
+
+              <p className="text-lg text-slate-600 mb-4">That leads to:</p>
+
+              {/* List B - Stronger */}
+              <ul className="space-y-3 mb-8 pl-1">
+                {[
+                  'Bad negotiations',
+                  'Unnecessary dilution',
+                  'Missed exit windows',
+                  'Six-figure mistakes'
+                ].map((item, i) => (
+                  <li key={i} className="flex items-center gap-3 text-slate-800 font-medium">
+                    <span className="w-2 h-2 rounded-full bg-[#0B4DBB] flex-shrink-0" />
+                    <span>{item}</span>
+                  </li>
+                ))}
+              </ul>
+
+              {/* Closing line */}
+              <p className="text-lg md:text-xl font-semibold text-slate-900 mb-8 border-l-4 border-[#0B4DBB] pl-4">
+                One wrong valuation decision can cost years of work.
+              </p>
+
+              {/* CTA */}
+              <Button
+                onClick={login}
+                size="lg"
+                className="bg-[#0B4DBB] hover:bg-[#093c96] text-white px-8 py-6 text-lg font-semibold shadow-xl shadow-blue-900/20 hover:shadow-2xl hover:shadow-blue-900/30 transition-all"
+                data-testid="cost-cta"
+              >
+                Avoid blind decisions
+              </Button>
+            </motion.div>
+
+            {/* Right Column - Cost of Ignorance Card */}
+            <motion.div
+              initial={{ opacity: 0, x: 20 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.5, delay: 0.2 }}
+              viewport={{ once: true }}
+              className="lg:sticky lg:top-32"
+            >
+              <div className="bg-white rounded-2xl border border-slate-200 p-8 shadow-lg shadow-slate-900/5">
+                {/* Label */}
+                <div className="inline-flex items-center gap-2 bg-red-50 text-red-600 text-sm font-medium px-3 py-1.5 rounded-full mb-6">
+                  <span className="w-2 h-2 rounded-full bg-red-500" />
+                  Cost of Ignorance
+                </div>
+
+                {/* Metric chips */}
+                <div className="space-y-4">
+                  <div className="flex items-center gap-4 p-4 bg-slate-50 rounded-xl">
+                    <div className="w-12 h-12 rounded-lg bg-[#0B4DBB]/10 flex items-center justify-center flex-shrink-0">
+                      <svg className="w-6 h-6 text-[#0B4DBB]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      </svg>
+                    </div>
+                    <div>
+                      <p className="text-sm text-slate-500">Potential loss</p>
+                      <p className="text-lg font-semibold text-slate-900">Weeks lost</p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-4 p-4 bg-slate-50 rounded-xl">
+                    <div className="w-12 h-12 rounded-lg bg-[#0B4DBB]/10 flex items-center justify-center flex-shrink-0">
+                      <svg className="w-6 h-6 text-[#0B4DBB]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 013 19.875v-6.75zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V8.625zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z" />
+                      </svg>
+                    </div>
+                    <div>
+                      <p className="text-sm text-slate-500">Potential loss</p>
+                      <p className="text-lg font-semibold text-slate-900">Equity diluted</p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-4 p-4 bg-slate-50 rounded-xl">
+                    <div className="w-12 h-12 rounded-lg bg-[#0B4DBB]/10 flex items-center justify-center flex-shrink-0">
+                      <svg className="w-6 h-6 text-[#0B4DBB]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 18.75a60.07 60.07 0 0115.797 2.101c.727.198 1.453-.342 1.453-1.096V18.75M3.75 4.5v.75A.75.75 0 013 6h-.75m0 0v-.375c0-.621.504-1.125 1.125-1.125H20.25M2.25 6v9m18-10.5v.75c0 .414.336.75.75.75h.75m-1.5-1.5h.375c.621 0 1.125.504 1.125 1.125v9.75c0 .621-.504 1.125-1.125 1.125h-.375m1.5-1.5H21a.75.75 0 00-.75.75v.75m0 0H3.75m0 0h-.375a1.125 1.125 0 01-1.125-1.125V15m1.5 1.5v-.75A.75.75 0 003 15h-.75M15 10.5a3 3 0 11-6 0 3 3 0 016 0zm3 0h.008v.008H18V10.5zm-12 0h.008v.008H6V10.5z" />
+                      </svg>
+                    </div>
+                    <div>
+                      <p className="text-sm text-slate-500">Potential loss</p>
+                      <p className="text-lg font-semibold text-slate-900">Exit value missed</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+          </div>
+        </div>
+      </section>
+
       {/* Services Section */}
-      <section id="services" className="py-20 md:py-32 bg-[#F8FAFC]" data-testid="services-section">
+      <section id="services" className="py-20 md:py-32 bg-white" data-testid="services-section">
         <div className="max-w-7xl mx-auto px-6 md:px-12 lg:px-24">
           <div className="text-center mb-16">
             <h2 className="text-3xl md:text-4xl font-semibold tracking-tight text-slate-900 mb-4">
