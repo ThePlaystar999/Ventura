@@ -1,5 +1,4 @@
-import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState } from 'react';
 import { useAuth } from '../App';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
@@ -13,44 +12,10 @@ import { motion } from 'framer-motion';
 
 const API = process.env.REACT_APP_BACKEND_URL + "/api";
 
-// Typewriter component
-const TypewriterText = ({ text, delay = 50 }) => {
-  const [displayText, setDisplayText] = useState('');
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const [isComplete, setIsComplete] = useState(false);
-
-  useEffect(() => {
-    if (currentIndex < text.length) {
-      const timeout = setTimeout(() => {
-        setDisplayText(prev => prev + text[currentIndex]);
-        setCurrentIndex(prev => prev + 1);
-      }, delay);
-      return () => clearTimeout(timeout);
-    } else {
-      setIsComplete(true);
-    }
-  }, [currentIndex, text, delay]);
-
-  return (
-    <span className="inline-block">
-      {displayText}
-      {!isComplete && (
-        <span className="inline-block w-[3px] h-[1em] bg-[#0B4DBB] ml-1 animate-pulse" />
-      )}
-    </span>
-  );
-};
-
 const LandingPage = () => {
   const { login } = useAuth();
   const [contactForm, setContactForm] = useState({ name: '', email: '', message: '' });
   const [submitting, setSubmitting] = useState(false);
-  const [showTypewriter, setShowTypewriter] = useState(false);
-
-  useEffect(() => {
-    const timer = setTimeout(() => setShowTypewriter(true), 800);
-    return () => clearTimeout(timer);
-  }, []);
 
   const handleContactSubmit = async (e) => {
     e.preventDefault();
