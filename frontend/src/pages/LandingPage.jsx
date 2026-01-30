@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { useAuth } from '../App';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
@@ -12,10 +13,44 @@ import { motion } from 'framer-motion';
 
 const API = process.env.REACT_APP_BACKEND_URL + "/api";
 
+// Typewriter component
+const TypewriterText = ({ text, delay = 50 }) => {
+  const [displayText, setDisplayText] = useState('');
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [isComplete, setIsComplete] = useState(false);
+
+  useEffect(() => {
+    if (currentIndex < text.length) {
+      const timeout = setTimeout(() => {
+        setDisplayText(prev => prev + text[currentIndex]);
+        setCurrentIndex(prev => prev + 1);
+      }, delay);
+      return () => clearTimeout(timeout);
+    } else {
+      setIsComplete(true);
+    }
+  }, [currentIndex, text, delay]);
+
+  return (
+    <span className="inline-block">
+      {displayText}
+      {!isComplete && (
+        <span className="inline-block w-[3px] h-[1em] bg-[#0B4DBB] ml-1 animate-pulse" />
+      )}
+    </span>
+  );
+};
+
 const LandingPage = () => {
   const { login } = useAuth();
   const [contactForm, setContactForm] = useState({ name: '', email: '', message: '' });
   const [submitting, setSubmitting] = useState(false);
+  const [showTypewriter, setShowTypewriter] = useState(false);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setShowTypewriter(true), 800);
+    return () => clearTimeout(timer);
+  }, []);
 
   const handleContactSubmit = async (e) => {
     e.preventDefault();
@@ -60,70 +95,143 @@ const LandingPage = () => {
     <div className="min-h-screen bg-white" data-testid="landing-page">
       <Navbar />
 
-      {/* Hero Section */}
-      <section className="relative pt-32 pb-24 md:pt-40 md:pb-32 overflow-hidden" data-testid="hero-section">
-        {/* Wave Background */}
-        <div className="absolute inset-0 bg-gradient-to-b from-white via-[#F8FAFC] to-[#DCEAFF]"></div>
-        <div className="absolute bottom-0 left-0 right-0 h-40">
-          <svg viewBox="0 0 1440 320" preserveAspectRatio="none" className="w-full h-full">
-            <path 
-              fill="#A7C8FF" 
-              fillOpacity="0.3" 
-              d="M0,224L48,213.3C96,203,192,181,288,181.3C384,181,480,203,576,218.7C672,235,768,245,864,229.3C960,213,1056,171,1152,160C1248,149,1344,171,1392,181.3L1440,192L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"
-            />
-          </svg>
-        </div>
-        <div className="absolute bottom-0 left-0 right-0 h-32">
-          <svg viewBox="0 0 1440 320" preserveAspectRatio="none" className="w-full h-full">
-            <path 
-              fill="#0B4DBB" 
-              fillOpacity="0.05" 
-              d="M0,160L48,170.7C96,181,192,203,288,197.3C384,192,480,160,576,149.3C672,139,768,149,864,165.3C960,181,1056,203,1152,197.3C1248,192,1344,160,1392,144L1440,128L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"
-            />
-          </svg>
-        </div>
+      {/* HERO SECTION - Conversion Focused */}
+      <section className="relative min-h-[90vh] pt-24 md:pt-32 overflow-hidden" data-testid="hero-section">
+        {/* Background gradient */}
+        <div className="absolute inset-0 bg-gradient-to-br from-white via-[#F8FAFC] to-[#E8F0FE]" />
+        
+        {/* Subtle grid pattern */}
+        <div 
+          className="absolute inset-0 opacity-[0.03]"
+          style={{
+            backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%230B4DBB' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`
+          }}
+        />
 
-        <div className="relative max-w-7xl mx-auto px-6 md:px-12 lg:px-24 text-center">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-          >
-            {/* Large V Logo */}
-            <div className="flex justify-center mb-8">
-              <VLogo size="hero" />
+        <div className="relative max-w-7xl mx-auto px-6 md:px-12 lg:px-24">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center min-h-[70vh]">
+            {/* Left Content */}
+            <div className="space-y-8">
+              {/* Main Headlines */}
+              <div className="space-y-4">
+                <motion.h1 
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5 }}
+                  className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-slate-900 leading-[1.1]"
+                >
+                  Know your real<br />business value.
+                </motion.h1>
+                <motion.h1 
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5, delay: 0.1 }}
+                  className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-[#0B4DBB] leading-[1.1]"
+                >
+                  Plan your exit<br />with confidence.
+                </motion.h1>
+              </div>
+
+              {/* Subheadline */}
+              <motion.p 
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.2 }}
+                className="text-lg md:text-xl text-slate-600 max-w-lg"
+              >
+                AI-powered valuation for founders who want leverage, not guesses.
+              </motion.p>
+
+              {/* Animated Sentence */}
+              <motion.div 
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.5, delay: 0.4 }}
+                className="h-8"
+              >
+                {showTypewriter && (
+                  <p className="text-lg font-medium text-[#0B4DBB]">
+                    <TypewriterText 
+                      text="Exit your startup for life-changing money." 
+                      delay={40}
+                    />
+                  </p>
+                )}
+              </motion.div>
+
+              {/* CTAs */}
+              <motion.div 
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.5 }}
+                className="flex flex-col sm:flex-row items-start gap-4 pt-4"
+              >
+                <Button 
+                  onClick={login}
+                  size="lg"
+                  className="bg-[#0B4DBB] hover:bg-[#093c96] text-white px-8 py-6 text-lg font-semibold shadow-xl shadow-blue-900/20 hover:shadow-2xl hover:shadow-blue-900/30 transition-all"
+                  data-testid="hero-cta-primary"
+                >
+                  Get my valuation
+                </Button>
+                <Button 
+                  variant="ghost"
+                  size="lg"
+                  onClick={() => document.getElementById('services').scrollIntoView({ behavior: 'smooth' })}
+                  className="text-slate-700 hover:text-[#0B4DBB] px-6 py-6 text-lg font-medium group"
+                  data-testid="hero-cta-secondary"
+                >
+                  See how it works
+                  <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
+                </Button>
+              </motion.div>
+
+              {/* Trust Line */}
+              <motion.p 
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.5, delay: 0.7 }}
+                className="text-sm text-slate-500 pt-4 max-w-md"
+              >
+                Used by startup & online business founders preparing exits, fundraising & negotiations.
+              </motion.p>
             </div>
 
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-slate-900 mb-6">
-              Know your value.<br />
-              <span className="text-[#0B4DBB]">Plan your exit.</span>
-            </h1>
+            {/* Right Side - Reserved for future visual */}
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.6, delay: 0.3 }}
+              className="hidden lg:flex items-center justify-center"
+            >
+              <div className="relative w-full aspect-square max-w-lg">
+                {/* Placeholder visual - abstract valuation graphic */}
+                <div className="absolute inset-0 bg-gradient-to-br from-[#0B4DBB]/5 to-[#0B4DBB]/10 rounded-3xl" />
+                <div className="absolute inset-4 border-2 border-dashed border-[#0B4DBB]/20 rounded-2xl flex items-center justify-center">
+                  <div className="text-center space-y-4">
+                    <VLogo size="xl" />
+                    <div className="space-y-2">
+                      <div className="h-3 w-32 bg-[#0B4DBB]/10 rounded mx-auto" />
+                      <div className="h-3 w-24 bg-[#0B4DBB]/10 rounded mx-auto" />
+                    </div>
+                  </div>
+                </div>
+                {/* Decorative elements */}
+                <div className="absolute -top-4 -right-4 w-24 h-24 bg-[#DCEAFF] rounded-2xl -z-10" />
+                <div className="absolute -bottom-4 -left-4 w-32 h-32 bg-[#0B4DBB]/5 rounded-2xl -z-10" />
+              </div>
+            </motion.div>
+          </div>
+        </div>
 
-            <p className="text-lg md:text-xl text-slate-600 max-w-2xl mx-auto mb-10 leading-relaxed">
-              AI-powered startup valuation & exit modeling for founders and investors.
-            </p>
-
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-              <Button 
-                onClick={login}
-                size="lg"
-                className="bg-[#0B4DBB] hover:bg-[#093c96] text-white px-8 py-6 text-lg shadow-lg shadow-blue-900/25 hover:shadow-xl hover:shadow-blue-900/30 transition-all"
-                data-testid="hero-get-valued-btn"
-              >
-                Get Valued
-                <ArrowRight className="w-5 h-5 ml-2" />
-              </Button>
-              <Button 
-                variant="outline"
-                size="lg"
-                onClick={() => document.getElementById('services').scrollIntoView({ behavior: 'smooth' })}
-                className="border-[#EEF2F7] bg-white hover:bg-[#F0F7FF] text-slate-700 px-8 py-6 text-lg"
-                data-testid="hero-how-it-works-btn"
-              >
-                How it Works
-              </Button>
-            </div>
-          </motion.div>
+        {/* Bottom wave */}
+        <div className="absolute bottom-0 left-0 right-0">
+          <svg viewBox="0 0 1440 120" preserveAspectRatio="none" className="w-full h-20">
+            <path 
+              fill="#FFFFFF" 
+              d="M0,64L48,69.3C96,75,192,85,288,80C384,75,480,53,576,48C672,43,768,53,864,64C960,75,1056,85,1152,80C1248,75,1344,53,1392,42.7L1440,32L1440,120L1392,120C1344,120,1248,120,1152,120C1056,120,960,120,864,120C768,120,672,120,576,120C480,120,384,120,288,120C192,120,96,120,48,120L0,120Z"
+            />
+          </svg>
         </div>
       </section>
 
@@ -147,7 +255,7 @@ const LandingPage = () => {
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: index * 0.1 }}
                 viewport={{ once: true }}
-                className="service-card bg-white border border-[#EEF2F7] rounded-xl p-8 text-center"
+                className="service-card bg-white border border-[#EEF2F7] rounded-xl p-8 text-center hover:border-[#0B4DBB]/30 hover:shadow-lg transition-all"
                 data-testid={`service-card-${index}`}
               >
                 <div className="service-icon w-16 h-16 mx-auto mb-6 rounded-xl bg-[#F0F7FF] flex items-center justify-center text-[#0B4DBB]">
@@ -162,7 +270,7 @@ const LandingPage = () => {
       </section>
 
       {/* About Section */}
-      <section id="about" className="py-20 md:py-32 bg-gradient-to-b from-[#F8FAFC] to-white" data-testid="about-section">
+      <section id="about" className="py-20 md:py-32 bg-[#F8FAFC]" data-testid="about-section">
         <div className="max-w-7xl mx-auto px-6 md:px-12 lg:px-24">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
             <motion.div
@@ -196,12 +304,8 @@ const LandingPage = () => {
               viewport={{ once: true }}
               className="relative"
             >
-              <div className="aspect-video rounded-2xl overflow-hidden shadow-2xl shadow-blue-900/10">
-                <img 
-                  src="https://images.pexels.com/photos/260689/pexels-photo-260689.jpeg" 
-                  alt="Modern office" 
-                  className="w-full h-full object-cover"
-                />
+              <div className="aspect-video rounded-2xl overflow-hidden shadow-2xl shadow-blue-900/10 bg-gradient-to-br from-[#0B4DBB] to-[#1E6AE1] flex items-center justify-center">
+                <VLogo size="hero" className="opacity-20" />
               </div>
               <div className="absolute -bottom-6 -left-6 w-32 h-32 bg-[#DCEAFF] rounded-2xl -z-10"></div>
               <div className="absolute -top-6 -right-6 w-24 h-24 bg-[#0B4DBB] rounded-2xl opacity-10 -z-10"></div>
