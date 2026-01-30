@@ -523,8 +523,132 @@ const LandingPage = () => {
         </div>
       </section>
 
+      {/* COST COMPARISON SECTION */}
+      <section id="cost-comparison" className="py-20 md:py-28 bg-white" data-testid="cost-comparison-section">
+        <div className="max-w-[1000px] mx-auto px-6 md:px-12">
+          {/* Title */}
+          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-slate-900 text-center mb-16">
+            Ventura vs Traditional M&A Advisors
+          </h2>
+
+          {/* Comparison Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 mb-12">
+            {/* Ventura Column */}
+            <motion.div 
+              initial={{ opacity: 0, x: -20 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.5 }}
+              viewport={{ once: true }}
+              className="bg-[#F0F7FF] border border-[#0B4DBB]/20 rounded-2xl p-8"
+              data-testid="ventura-comparison"
+            >
+              <div className="flex items-center gap-3 mb-6">
+                <div className="w-3 h-3 rounded-full bg-[#0B4DBB]" />
+                <h3 className="text-2xl font-bold text-[#0B4DBB]">Ventura</h3>
+              </div>
+              <ul className="space-y-4">
+                <li className="flex items-center gap-3">
+                  <svg className="w-5 h-5 text-[#0B4DBB] flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                  </svg>
+                  <span className="text-lg font-semibold text-slate-900">$49 – $299</span>
+                </li>
+                <li className="flex items-center gap-3">
+                  <svg className="w-5 h-5 text-[#0B4DBB] flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                  </svg>
+                  <span className="text-lg font-semibold text-slate-900">Minutes</span>
+                </li>
+                <li className="flex items-center gap-3">
+                  <svg className="w-5 h-5 text-[#0B4DBB] flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                  </svg>
+                  <span className="text-lg font-semibold text-slate-900">No commitment</span>
+                </li>
+              </ul>
+            </motion.div>
+
+            {/* Traditional Advisors Column */}
+            <motion.div 
+              initial={{ opacity: 0, x: 20 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.5, delay: 0.1 }}
+              viewport={{ once: true }}
+              className="bg-slate-50 border border-slate-200 rounded-2xl p-8"
+              data-testid="traditional-comparison"
+            >
+              <div className="flex items-center gap-3 mb-6">
+                <div className="w-3 h-3 rounded-full bg-slate-400" />
+                <h3 className="text-2xl font-bold text-slate-600">Traditional M&A Advisors</h3>
+              </div>
+              <ul className="space-y-4">
+                <li className="flex items-center gap-3">
+                  <svg className="w-5 h-5 text-slate-400 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                  <span className="text-lg text-slate-600">$10,000 – $50,000+</span>
+                </li>
+                <li className="flex items-center gap-3">
+                  <svg className="w-5 h-5 text-slate-400 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                  <span className="text-lg text-slate-600">Weeks / months</span>
+                </li>
+                <li className="flex items-center gap-3">
+                  <svg className="w-5 h-5 text-slate-400 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                  <span className="text-lg text-slate-600">Long-term engagement</span>
+                </li>
+              </ul>
+            </motion.div>
+          </div>
+
+          {/* Animated Cost Bar */}
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.2 }}
+            viewport={{ once: true }}
+            className="bg-slate-50 rounded-xl p-6 md:p-8"
+          >
+            <p className="text-sm font-medium text-slate-500 mb-4 text-center">Cost comparison</p>
+            <div className="space-y-4">
+              {/* Ventura Bar */}
+              <div className="flex items-center gap-4">
+                <span className="text-sm font-medium text-[#0B4DBB] w-20 flex-shrink-0">Ventura</span>
+                <div className="flex-1 h-8 bg-slate-200 rounded-full overflow-hidden">
+                  <motion.div 
+                    initial={{ width: 0 }}
+                    whileInView={{ width: '8%' }}
+                    transition={{ duration: 1, delay: 0.5, ease: "easeOut" }}
+                    viewport={{ once: true }}
+                    className="h-full bg-gradient-to-r from-[#0B4DBB] to-[#1E6AE1] rounded-full"
+                  />
+                </div>
+                <span className="text-sm font-semibold text-slate-700 w-24 text-right">~$200</span>
+              </div>
+              {/* Traditional Bar */}
+              <div className="flex items-center gap-4">
+                <span className="text-sm font-medium text-slate-500 w-20 flex-shrink-0">Traditional</span>
+                <div className="flex-1 h-8 bg-slate-200 rounded-full overflow-hidden">
+                  <motion.div 
+                    initial={{ width: 0 }}
+                    whileInView={{ width: '100%' }}
+                    transition={{ duration: 1.5, delay: 0.7, ease: "easeOut" }}
+                    viewport={{ once: true }}
+                    className="h-full bg-slate-400 rounded-full"
+                  />
+                </div>
+                <span className="text-sm font-semibold text-slate-700 w-24 text-right">~$30,000</span>
+              </div>
+            </div>
+          </motion.div>
+        </div>
+      </section>
+
       {/* Services Section */}
-      <section id="services" className="py-20 md:py-32 bg-white" data-testid="services-section">
+      <section id="services" className="py-20 md:py-32 bg-[#F8FAFC]" data-testid="services-section">
         <div className="max-w-7xl mx-auto px-6 md:px-12 lg:px-24">
           <div className="text-center mb-16">
             <h2 className="text-3xl md:text-4xl font-semibold tracking-tight text-slate-900 mb-4">
