@@ -455,8 +455,76 @@ const LandingPage = () => {
         </div>
       </section>
 
+      {/* HOW IT WORKS SECTION */}
+      <section id="how-it-works" className="py-20 md:py-28 bg-[#F8FAFC]" data-testid="how-it-works-section">
+        <div className="max-w-[1100px] mx-auto px-6 md:px-12">
+          {/* Title */}
+          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-slate-900 text-center mb-16">
+            From data to decision — in minutes
+          </h2>
+
+          {/* Steps */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-6 mb-16">
+            {/* Step 1 */}
+            <div className="relative text-center md:text-left" data-testid="step-1">
+              <div className="flex flex-col items-center md:items-start">
+                <span className="text-5xl md:text-6xl font-bold text-[#0B4DBB]/10 mb-4">1</span>
+                <h3 className="text-xl font-semibold text-slate-900 mb-2">
+                  Enter your metrics
+                </h3>
+                <p className="text-slate-600">
+                  Revenue, growth, margins, business model.
+                </p>
+              </div>
+              {/* Connector line - desktop only */}
+              <div className="hidden md:block absolute top-8 left-full w-full h-px bg-slate-200 -translate-x-1/2" />
+            </div>
+
+            {/* Step 2 */}
+            <div className="relative text-center md:text-left" data-testid="step-2">
+              <div className="flex flex-col items-center md:items-start">
+                <span className="text-5xl md:text-6xl font-bold text-[#0B4DBB]/10 mb-4">2</span>
+                <h3 className="text-xl font-semibold text-slate-900 mb-2">
+                  AI valuation engine
+                </h3>
+                <p className="text-slate-600">
+                  Benchmarks, risk analysis, exit logic.
+                </p>
+              </div>
+              {/* Connector line - desktop only */}
+              <div className="hidden md:block absolute top-8 left-full w-full h-px bg-slate-200 -translate-x-1/2" />
+            </div>
+
+            {/* Step 3 */}
+            <div className="text-center md:text-left" data-testid="step-3">
+              <div className="flex flex-col items-center md:items-start">
+                <span className="text-5xl md:text-6xl font-bold text-[#0B4DBB]/10 mb-4">3</span>
+                <h3 className="text-xl font-semibold text-slate-900 mb-2">
+                  Get your valuation report
+                </h3>
+                <p className="text-slate-600">
+                  Clear range. Key drivers. Strategic insights.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* CTA */}
+          <div className="text-center">
+            <Button
+              onClick={login}
+              size="lg"
+              className="bg-[#0B4DBB] hover:bg-[#093c96] text-white px-10 py-6 text-lg font-semibold shadow-xl shadow-blue-900/20 hover:shadow-2xl hover:shadow-blue-900/30 transition-all"
+              data-testid="how-it-works-cta"
+            >
+              Start my valuation
+            </Button>
+          </div>
+        </div>
+      </section>
+
       {/* Services Section */}
-      <section id="services" className="py-20 md:py-32 bg-[#F8FAFC]" data-testid="services-section">
+      <section id="services" className="py-20 md:py-32 bg-white" data-testid="services-section">
         <div className="max-w-7xl mx-auto px-6 md:px-12 lg:px-24">
           <div className="text-center mb-16">
             <h2 className="text-3xl md:text-4xl font-semibold tracking-tight text-slate-900 mb-4">
