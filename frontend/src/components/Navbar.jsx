@@ -10,6 +10,7 @@ const Navbar = ({ transparent = false }) => {
   const location = useLocation();
   const isLanding = location.pathname === '/';
   const isPricing = location.pathname === '/pricing';
+  const isAbout = location.pathname === '/about';
 
   return (
     <nav 
@@ -31,23 +32,23 @@ const Navbar = ({ transparent = false }) => {
           {/* Navigation Links - Show for all users */}
           <div className="hidden md:flex items-center gap-8">
             {isLanding && (
-              <>
-                <a 
-                  href="#services" 
-                  className="text-sm font-medium text-slate-600 hover:text-[#0B4DBB] transition-colors"
-                  data-testid="nav-services"
-                >
-                  Services
-                </a>
-                <a 
-                  href="#about" 
-                  className="text-sm font-medium text-slate-600 hover:text-[#0B4DBB] transition-colors"
-                  data-testid="nav-about"
-                >
-                  About
-                </a>
-              </>
+              <a 
+                href="#services" 
+                className="text-sm font-medium text-slate-600 hover:text-[#0B4DBB] transition-colors"
+                data-testid="nav-services"
+              >
+                Services
+              </a>
             )}
+            <Link 
+              to="/about" 
+              className={`text-sm font-medium transition-colors ${
+                isAbout ? 'text-[#0B4DBB]' : 'text-slate-600 hover:text-[#0B4DBB]'
+              }`}
+              data-testid="nav-about"
+            >
+              About
+            </Link>
             <Link 
               to="/pricing" 
               className={`text-sm font-medium transition-colors ${
