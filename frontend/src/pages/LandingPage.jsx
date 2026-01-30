@@ -365,8 +365,98 @@ const LandingPage = () => {
         </div>
       </section>
 
+      {/* ECONOMIC IMPACT SECTION */}
+      <section id="economic-impact" className="py-20 md:py-28 bg-white" data-testid="economic-impact-section">
+        <div className="max-w-[900px] mx-auto px-6 md:px-12 text-center">
+          {/* Title */}
+          <motion.h2
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            viewport={{ once: true }}
+            className="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-slate-900 mb-3"
+          >
+            This is not just a number.
+          </motion.h2>
+
+          {/* Subline */}
+          <motion.p
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.1 }}
+            viewport={{ once: true }}
+            className="text-lg text-slate-500 mb-12"
+          >
+            Your valuation defines your outcome.
+          </motion.p>
+
+          {/* Body intro */}
+          <motion.p
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.2 }}
+            viewport={{ once: true }}
+            className="text-xl text-slate-700 mb-8"
+          >
+            Your valuation determines:
+          </motion.p>
+
+          {/* Bullet list */}
+          <motion.ul
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.3 }}
+            viewport={{ once: true }}
+            className="space-y-4 mb-12 max-w-md mx-auto text-left"
+          >
+            {[
+              'How much equity you give away',
+              'How strong your negotiating position is',
+              'When selling actually makes sense',
+              'How much money you keep'
+            ].map((item, i) => (
+              <li key={i} className="text-lg text-slate-800 font-medium pl-6 relative">
+                <span className="absolute left-0 top-[0.6rem] w-2 h-2 rounded-full bg-slate-900" />
+                {item}
+              </li>
+            ))}
+          </motion.ul>
+
+          {/* Divider */}
+          <div className="w-16 h-px bg-slate-200 mx-auto my-12" />
+
+          {/* Impact sentence */}
+          <motion.p
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.4 }}
+            viewport={{ once: true }}
+            className="text-xl md:text-2xl font-bold text-slate-900 mb-10"
+          >
+            A 10–20% valuation gap can mean hundreds of thousands lost.
+          </motion.p>
+
+          {/* CTA */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.5 }}
+            viewport={{ once: true }}
+          >
+            <Button
+              onClick={login}
+              size="lg"
+              className="bg-[#0B4DBB] hover:bg-[#093c96] text-white px-10 py-6 text-lg font-semibold shadow-xl shadow-blue-900/20 hover:shadow-2xl hover:shadow-blue-900/30 transition-all"
+              data-testid="economic-impact-cta"
+            >
+              Know my number
+            </Button>
+          </motion.div>
+        </div>
+      </section>
+
       {/* Services Section */}
-      <section id="services" className="py-20 md:py-32 bg-white" data-testid="services-section">
+      <section id="services" className="py-20 md:py-32 bg-[#F8FAFC]" data-testid="services-section">
         <div className="max-w-7xl mx-auto px-6 md:px-12 lg:px-24">
           <div className="text-center mb-16">
             <h2 className="text-3xl md:text-4xl font-semibold tracking-tight text-slate-900 mb-4">
