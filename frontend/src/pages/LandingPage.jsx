@@ -95,7 +95,7 @@ const LandingPage = () => {
     <div className="min-h-screen bg-white" data-testid="landing-page">
       <Navbar />
 
-      {/* HERO SECTION - Conversion Focused */}
+      {/* HERO SECTION - Centered Layout */}
       <section className="relative min-h-[90vh] pt-24 md:pt-32 overflow-hidden" data-testid="hero-section">
         {/* Background gradient */}
         <div className="absolute inset-0 bg-gradient-to-br from-white via-[#F8FAFC] to-[#E8F0FE]" />
@@ -108,120 +108,73 @@ const LandingPage = () => {
           }}
         />
 
-        <div className="relative max-w-7xl mx-auto px-6 md:px-12 lg:px-24">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center min-h-[70vh]">
-            {/* Left Content */}
-            <div className="space-y-8">
-              {/* Main Headlines */}
-              <div className="space-y-4">
-                <motion.h1 
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.5 }}
-                  className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-slate-900 leading-[1.1]"
-                >
-                  Know your real<br />business value.
-                </motion.h1>
-                <motion.h1 
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.5, delay: 0.1 }}
-                  className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-[#0B4DBB] leading-[1.1]"
-                >
-                  Plan your exit<br />with confidence.
-                </motion.h1>
-              </div>
+        <div className="relative max-w-4xl mx-auto px-6 md:px-12 flex flex-col items-center justify-center min-h-[70vh] text-center">
+          {/* Centered V Logo - Standalone */}
+          <motion.div
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            className="mb-8"
+          >
+            <VLogo size="lg" />
+          </motion.div>
 
-              {/* Subheadline */}
-              <motion.p 
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: 0.2 }}
-                className="text-lg md:text-xl text-slate-600 max-w-lg"
-              >
-                AI-powered valuation for founders who want leverage, not guesses.
-              </motion.p>
-
-              {/* Animated Sentence */}
-              <motion.div 
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ duration: 0.5, delay: 0.4 }}
-                className="h-8"
-              >
-                {showTypewriter && (
-                  <p className="text-lg font-medium text-[#0B4DBB]">
-                    <TypewriterText 
-                      text="Exit your startup for life-changing money." 
-                      delay={40}
-                    />
-                  </p>
-                )}
-              </motion.div>
-
-              {/* CTAs */}
-              <motion.div 
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: 0.5 }}
-                className="flex flex-col sm:flex-row items-start gap-4 pt-4"
-              >
-                <Button 
-                  onClick={login}
-                  size="lg"
-                  className="bg-[#0B4DBB] hover:bg-[#093c96] text-white px-8 py-6 text-lg font-semibold shadow-xl shadow-blue-900/20 hover:shadow-2xl hover:shadow-blue-900/30 transition-all"
-                  data-testid="hero-cta-primary"
-                >
-                  Get my valuation
-                </Button>
-                <Button 
-                  variant="ghost"
-                  size="lg"
-                  onClick={() => document.getElementById('services').scrollIntoView({ behavior: 'smooth' })}
-                  className="text-slate-700 hover:text-[#0B4DBB] px-6 py-6 text-lg font-medium group"
-                  data-testid="hero-cta-secondary"
-                >
-                  See how it works
-                  <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
-                </Button>
-              </motion.div>
-
-              {/* Trust Line */}
-              <motion.p 
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ duration: 0.5, delay: 0.7 }}
-                className="text-sm text-slate-500 pt-4 max-w-md"
-              >
-                Used by startup & online business founders preparing exits, fundraising & negotiations.
-              </motion.p>
-            </div>
-
-            {/* Right Side - Reserved for future visual */}
-            <motion.div 
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.6, delay: 0.3 }}
-              className="hidden lg:flex items-center justify-center"
+          {/* Main Headlines - Centered */}
+          <div className="space-y-2 mb-6">
+            <motion.h1 
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.1 }}
+              className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-slate-900 leading-[1.1]"
             >
-              <div className="relative w-full aspect-square max-w-lg">
-                {/* Placeholder visual - abstract valuation graphic */}
-                <div className="absolute inset-0 bg-gradient-to-br from-[#0B4DBB]/5 to-[#0B4DBB]/10 rounded-3xl" />
-                <div className="absolute inset-4 border-2 border-dashed border-[#0B4DBB]/20 rounded-2xl flex items-center justify-center">
-                  <div className="text-center space-y-4">
-                    <VLogo size="xl" />
-                    <div className="space-y-2">
-                      <div className="h-3 w-32 bg-[#0B4DBB]/10 rounded mx-auto" />
-                      <div className="h-3 w-24 bg-[#0B4DBB]/10 rounded mx-auto" />
-                    </div>
-                  </div>
-                </div>
-                {/* Decorative elements */}
-                <div className="absolute -top-4 -right-4 w-24 h-24 bg-[#DCEAFF] rounded-2xl -z-10" />
-                <div className="absolute -bottom-4 -left-4 w-32 h-32 bg-[#0B4DBB]/5 rounded-2xl -z-10" />
-              </div>
-            </motion.div>
+              Know your value.
+            </motion.h1>
+            <motion.h1 
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.2 }}
+              className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-[#0B4DBB] leading-[1.1]"
+            >
+              Plan your exit.
+            </motion.h1>
           </div>
+
+          {/* Subheadline - Centered */}
+          <motion.p 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.3 }}
+            className="text-lg md:text-xl text-slate-600 max-w-2xl mb-10"
+          >
+            AI-powered startup valuation & exit modeling for founders and investors.
+          </motion.p>
+
+          {/* CTAs - Centered */}
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.4 }}
+            className="flex flex-col sm:flex-row items-center justify-center gap-4"
+          >
+            <Button 
+              onClick={login}
+              size="lg"
+              className="bg-[#0B4DBB] hover:bg-[#093c96] text-white px-8 py-6 text-lg font-semibold shadow-xl shadow-blue-900/20 hover:shadow-2xl hover:shadow-blue-900/30 transition-all"
+              data-testid="hero-cta-primary"
+            >
+              Get Valued
+              <ArrowRight className="w-5 h-5 ml-2" />
+            </Button>
+            <Button 
+              variant="outline"
+              size="lg"
+              onClick={() => document.getElementById('services').scrollIntoView({ behavior: 'smooth' })}
+              className="border-slate-300 text-slate-700 hover:text-[#0B4DBB] hover:border-[#0B4DBB] px-8 py-6 text-lg font-medium"
+              data-testid="hero-cta-secondary"
+            >
+              How it Works
+            </Button>
+          </motion.div>
         </div>
 
         {/* Bottom wave */}
