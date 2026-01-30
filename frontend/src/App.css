@@ -245,3 +245,34 @@ button:active {
 .fade-in {
   animation: fadeIn 0.3s ease-out forwards;
 }
+
+/* Typewriter animation for Founder Leverage section */
+.typewriter-container {
+  display: inline-block;
+}
+
+.typewriter-text {
+  display: inline-block;
+  overflow: hidden;
+  border-right: 2px solid #0B4DBB;
+  white-space: nowrap;
+  animation: 
+    typewriter 2.5s steps(44) 0.5s 1 normal both,
+    blink-caret 0.75s step-end infinite,
+    hide-caret 0s 3.5s forwards;
+  width: 0;
+}
+
+@keyframes typewriter {
+  from { width: 0; }
+  to { width: 100%; }
+}
+
+@keyframes blink-caret {
+  from, to { border-color: transparent; }
+  50% { border-color: #0B4DBB; }
+}
+
+@keyframes hide-caret {
+  to { border-color: transparent; }
+}
