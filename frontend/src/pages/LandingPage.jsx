@@ -716,8 +716,134 @@ const LandingPage = () => {
         </div>
       </section>
 
+      {/* FAQ Section */}
+      <section id="faq" className="py-20 md:py-28 bg-white" data-testid="faq-section">
+        <div className="max-w-[1100px] mx-auto px-6 md:px-12">
+          <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-slate-900 text-center mb-16">
+            FAQ
+          </h2>
+
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-12 lg:gap-16">
+            {/* FAQ Accordion - Left */}
+            <div className="lg:col-span-2 space-y-4">
+              {/* Q1 - Open by default */}
+              <details open className="group border border-slate-200 rounded-xl overflow-hidden">
+                <summary className="flex items-center justify-between p-5 cursor-pointer bg-white hover:bg-slate-50 transition-colors">
+                  <span className="text-lg font-semibold text-slate-900">Is Ventura accurate?</span>
+                  <span className="text-slate-400 group-open:rotate-180 transition-transform">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <polyline points="6 9 12 15 18 9"></polyline>
+                    </svg>
+                  </span>
+                </summary>
+                <div className="px-5 pb-5 text-slate-600 leading-relaxed border-t border-slate-100 pt-4">
+                  Ventura uses real-world valuation logic and benchmarks.<br />
+                  It's not a promise — it's decision intelligence.
+                </div>
+              </details>
+
+              {/* Q2 - Open by default */}
+              <details open className="group border border-slate-200 rounded-xl overflow-hidden">
+                <summary className="flex items-center justify-between p-5 cursor-pointer bg-white hover:bg-slate-50 transition-colors">
+                  <span className="text-lg font-semibold text-slate-900">Is this a replacement for an M&A advisor?</span>
+                  <span className="text-slate-400 group-open:rotate-180 transition-transform">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <polyline points="6 9 12 15 18 9"></polyline>
+                    </svg>
+                  </span>
+                </summary>
+                <div className="px-5 pb-5 text-slate-600 leading-relaxed border-t border-slate-100 pt-4">
+                  No. It's what you should use before talking to one.
+                </div>
+              </details>
+
+              {/* Q3 */}
+              <details className="group border border-slate-200 rounded-xl overflow-hidden">
+                <summary className="flex items-center justify-between p-5 cursor-pointer bg-white hover:bg-slate-50 transition-colors">
+                  <span className="text-lg font-semibold text-slate-900">What type of businesses is this for?</span>
+                  <span className="text-slate-400 group-open:rotate-180 transition-transform">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <polyline points="6 9 12 15 18 9"></polyline>
+                    </svg>
+                  </span>
+                </summary>
+                <div className="px-5 pb-5 text-slate-600 leading-relaxed border-t border-slate-100 pt-4">
+                  SaaS, e-commerce, online businesses, startups.<br />
+                  From $10k to $50M valuation.
+                </div>
+              </details>
+
+              {/* Q4 */}
+              <details className="group border border-slate-200 rounded-xl overflow-hidden">
+                <summary className="flex items-center justify-between p-5 cursor-pointer bg-white hover:bg-slate-50 transition-colors">
+                  <span className="text-lg font-semibold text-slate-900">Is my data secure?</span>
+                  <span className="text-slate-400 group-open:rotate-180 transition-transform">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <polyline points="6 9 12 15 18 9"></polyline>
+                    </svg>
+                  </span>
+                </summary>
+                <div className="px-5 pb-5 text-slate-600 leading-relaxed border-t border-slate-100 pt-4">
+                  Yes. Data is encrypted and never shared.
+                </div>
+              </details>
+
+              {/* Q5 */}
+              <details className="group border border-slate-200 rounded-xl overflow-hidden">
+                <summary className="flex items-center justify-between p-5 cursor-pointer bg-white hover:bg-slate-50 transition-colors">
+                  <span className="text-lg font-semibold text-slate-900">How long does it take?</span>
+                  <span className="text-slate-400 group-open:rotate-180 transition-transform">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <polyline points="6 9 12 15 18 9"></polyline>
+                    </svg>
+                  </span>
+                </summary>
+                <div className="px-5 pb-5 text-slate-600 leading-relaxed border-t border-slate-100 pt-4">
+                  ~5 minutes.
+                </div>
+              </details>
+            </div>
+
+            {/* Reassurance Panel - Right */}
+            <div className="lg:col-span-1">
+              <div className="bg-[#F8FAFC] border border-slate-200 rounded-xl p-6 sticky top-28">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-10 h-10 rounded-lg bg-[#0B4DBB]/10 flex items-center justify-center">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#0B4DBB" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                      <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                    </svg>
+                  </div>
+                  <h3 className="text-lg font-semibold text-slate-900">Private by default</h3>
+                </div>
+                <ul className="space-y-3">
+                  <li className="flex items-center gap-3 text-slate-600">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#0B4DBB" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <polyline points="20 6 9 17 4 12"></polyline>
+                    </svg>
+                    <span>Encrypted inputs</span>
+                  </li>
+                  <li className="flex items-center gap-3 text-slate-600">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#0B4DBB" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <polyline points="20 6 9 17 4 12"></polyline>
+                    </svg>
+                    <span>No data resale</span>
+                  </li>
+                  <li className="flex items-center gap-3 text-slate-600">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#0B4DBB" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <polyline points="20 6 9 17 4 12"></polyline>
+                    </svg>
+                    <span>No commitment</span>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Contact Section */}
-      <section id="contact" className="py-20 md:py-32 bg-white" data-testid="contact-section">
+      <section id="contact" className="py-20 md:py-32 bg-[#F8FAFC]" data-testid="contact-section">
         <div className="max-w-7xl mx-auto px-6 md:px-12 lg:px-24">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16">
             <motion.div
