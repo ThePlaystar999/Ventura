@@ -110,6 +110,7 @@ const AppRouter = () => {
       <Route path="/" element={<LandingPage />} />
       <Route path="/about" element={<AboutPage />} />
       <Route path="/pricing" element={<PricingPage />} />
+      <Route path="/valuation" element={<ValuationPage />} />
       <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
       <Route path="/valuation/new" element={<ProtectedRoute><CreateValuation /></ProtectedRoute>} />
       <Route path="/valuation/new/:projectId" element={<ProtectedRoute><CreateValuation /></ProtectedRoute>} />
