@@ -11,6 +11,7 @@ const Navbar = ({ transparent = false }) => {
   const isLanding = location.pathname === '/';
   const isPricing = location.pathname === '/pricing';
   const isAbout = location.pathname === '/about';
+  const isValuation = location.pathname === '/valuation';
 
   return (
     <nav 
@@ -31,15 +32,15 @@ const Navbar = ({ transparent = false }) => {
 
           {/* Navigation Links - Show for all users */}
           <div className="hidden md:flex items-center gap-8">
-            {isLanding && (
-              <a 
-                href="#services" 
-                className="text-sm font-medium text-slate-600 hover:text-[#0B4DBB] transition-colors"
-                data-testid="nav-services"
-              >
-                Services
-              </a>
-            )}
+            <Link 
+              to="/valuation" 
+              className={`text-sm font-medium transition-colors ${
+                isValuation ? 'text-[#0B4DBB]' : 'text-slate-600 hover:text-[#0B4DBB]'
+              }`}
+              data-testid="nav-valuation"
+            >
+              Valuation
+            </Link>
             <Link 
               to="/about" 
               className={`text-sm font-medium transition-colors ${
