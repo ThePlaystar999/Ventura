@@ -950,6 +950,44 @@ const LandingPage = () => {
         </div>
       </section>
 
+      {/* Moment of Truth Section */}
+      <section id="moment-of-truth" className="py-24 md:py-32 bg-gradient-to-b from-white to-[#F8FAFC] border-t border-slate-100" data-testid="moment-of-truth-section">
+        <div className="max-w-[900px] mx-auto px-6 md:px-12 text-center">
+          {/* Headline */}
+          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-slate-900 leading-[1.2] mb-12">
+            Your business is worth more than you think.<br />
+            <span className="text-slate-500">Or less.</span><br />
+            You deserve to know.
+          </h2>
+
+          {/* CTA */}
+          <Button
+            onClick={login}
+            size="lg"
+            className="bg-[#0B4DBB] hover:bg-[#093c96] text-white px-12 py-7 text-lg font-semibold shadow-2xl shadow-blue-900/25 hover:shadow-blue-900/35 hover:scale-[1.02] transition-all duration-200"
+            data-testid="moment-of-truth-cta"
+          >
+            Get my valuation now
+          </Button>
+
+          {/* Trust elements */}
+          <div className="flex flex-wrap items-center justify-center gap-6 mt-8 text-sm text-slate-500">
+            <span className="flex items-center gap-2">
+              <span className="w-1 h-1 rounded-full bg-slate-400" />
+              No commitment
+            </span>
+            <span className="flex items-center gap-2">
+              <span className="w-1 h-1 rounded-full bg-slate-400" />
+              Cancel anytime
+            </span>
+            <span className="flex items-center gap-2">
+              <span className="w-1 h-1 rounded-full bg-slate-400" />
+              Built for founders
+            </span>
+          </div>
+        </div>
+      </section>
+
       <Footer />
     </div>
   );
