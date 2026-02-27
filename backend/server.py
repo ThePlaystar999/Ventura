@@ -213,6 +213,31 @@ class ExitReadinessResult(BaseModel):
     percentile_estimate: int
     improvement_suggestions: List[str] = []
 
+# ============ BUYER FIT MODELS ============
+
+class BuyerFitResult(BaseModel):
+    solo_operator_fit: float
+    solo_operator_factors: List[dict]
+    micro_pe_fit: float
+    micro_pe_factors: List[dict]
+
+# ============ OPTIMIZATION ROADMAP MODELS ============
+
+class OptimizationAction(BaseModel):
+    action: str
+    description: str
+    impact_score: int  # Points added to ERS
+    impact_multiple: float  # Multiple increase estimate
+    difficulty: str  # Low, Medium, High
+    time_estimate: str
+    category: str
+    priority: int  # 1-10, higher = more important
+
+class OptimizationRoadmapResult(BaseModel):
+    actions: List[OptimizationAction]
+    total_potential_score_gain: int
+    total_potential_multiple_gain: float
+
 # ============ AUTH HELPERS ============
 
 async def get_current_user(request: Request) -> UserBase:
