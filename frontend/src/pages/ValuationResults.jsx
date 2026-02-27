@@ -10,8 +10,7 @@ import { Button } from '../components/ui/button';
 import { Slider } from '../components/ui/slider';
 import { toast } from 'sonner';
 import { 
-  ArrowLeft, Download, Share2, Copy, Check, Building2, TrendingUp, 
-  Users, Briefcase, Target, AlertTriangle, CheckCircle, Info,
+  ArrowLeft, Download, Share2, Copy, Check, TrendingUp, Info,
   ChevronDown, ChevronUp
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
