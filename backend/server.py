@@ -1619,19 +1619,26 @@ class VenturaPDF(FPDF):
         self.cell(0, 8, str(value), ln=True)
 
 def generate_valuation_pdf(valuation_data: dict) -> bytes:
-    """Generate PDF report for a valuation"""
+    """Generate comprehensive PDF report for a valuation including Exit OS insights"""
     pdf = VenturaPDF()
     pdf.add_page()
     
     company = valuation_data.get("company_info", {})
-    metrics = valuation_data.get("metrics", {})
+    metrics_dict = valuation_data.get("metrics", {})
     result = valuation_data.get("result", {})
     exit_scenarios = valuation_data.get("exit_scenarios", [])
+    
+    # Create metric objects for calculations
+    metrics = ValuationMetrics(**metrics_dict) if metrics_dict else None
+    exit_inputs = ExitReadinessInputs()  # Use defaults for PDF
     
     # Company name
     pdf.set_font('Helvetica', 'B', 18)
     pdf.set_text_color(15, 23, 42)
     pdf.cell(0, 10, company.get("company_name", ""), align='C', ln=True)
+    pdf.set_font('Helvetica', '', 10)
+    pdf.set_text_color(100, 116, 139)
+    pdf.cell(0, 6, "Exit Intelligence Report", align='C', ln=True)
     pdf.ln(10)
     
     # Valuation hero
@@ -1645,59 +1652,196 @@ def generate_valuation_pdf(valuation_data: dict) -> bytes:
     pdf.cell(0, 8, "ESTIMATED VALUATION", align='C', ln=True)
     pdf.ln(15)
     
-    # Company Information
+    # ============ EXIT READINESS SCORE ============
+    if metrics:
+        ers_result = calculate_exit_readiness_score(metrics, exit_inputs)
+        
+        pdf.section_title("Exit Readiness Score")
+        
+        # Score display
+        pdf.set_font('Helvetica', 'B', 24)
+        score_color = (139, 92, 246) if ers_result.total_score >= 85 else \
+                      (16, 185, 129) if ers_result.total_score >= 70 else \
+                      (245, 158, 11) if ers_result.total_score >= 40 else (239, 68, 68)
+        pdf.set_text_color(*score_color)
+        pdf.cell(40, 15, f"{ers_result.total_score:.0f}/100")
+        
+        pdf.set_font('Helvetica', 'B', 12)
+        pdf.cell(0, 15, ers_result.status_label, ln=True)
+        
+        pdf.set_font('Helvetica', '', 9)
+        pdf.set_text_color(100, 116, 139)
+        pdf.cell(0, 6, f"Top {100 - ers_result.percentile_estimate}% of businesses in your ARR range", ln=True)
+        pdf.ln(5)
+        
+        # Category breakdown
+        for cat in ers_result.category_scores:
+            pdf.set_font('Helvetica', '', 9)
+            pdf.set_text_color(15, 23, 42)
+            pct = cat.percentage
+            bar_color = (16, 185, 129) if pct >= 70 else (245, 158, 11) if pct >= 40 else (239, 68, 68)
+            pdf.cell(70, 6, f"{cat.category}")
+            pdf.set_font('Helvetica', 'B', 9)
+            pdf.cell(30, 6, f"{cat.score:.0f}/{cat.max_score:.0f}")
+            # Draw mini progress bar
+            pdf.set_fill_color(226, 232, 240)
+            pdf.rect(pdf.get_x(), pdf.get_y() + 1, 60, 4, 'F')
+            pdf.set_fill_color(*bar_color)
+            pdf.rect(pdf.get_x(), pdf.get_y() + 1, 60 * (pct/100), 4, 'F')
+            pdf.ln(8)
+        pdf.ln(5)
+    
+    # ============ BUYER FIT ANALYSIS ============
+    if metrics:
+        bf_result = calculate_buyer_fit(metrics, exit_inputs)
+        
+        pdf.section_title("Buyer Fit Analysis")
+        
+        # Solo Operator
+        pdf.set_font('Helvetica', 'B', 11)
+        pdf.set_text_color(15, 23, 42)
+        pdf.cell(90, 8, "Solo Operator Fit:")
+        solo_color = (16, 185, 129) if bf_result.solo_operator_fit >= 70 else \
+                     (245, 158, 11) if bf_result.solo_operator_fit >= 40 else (239, 68, 68)
+        pdf.set_text_color(*solo_color)
+        pdf.cell(0, 8, f"{bf_result.solo_operator_fit:.0f}%", ln=True)
+        
+        # Micro PE
+        pdf.set_font('Helvetica', 'B', 11)
+        pdf.set_text_color(15, 23, 42)
+        pdf.cell(90, 8, "Micro PE Fit:")
+        pe_color = (16, 185, 129) if bf_result.micro_pe_fit >= 70 else \
+                   (245, 158, 11) if bf_result.micro_pe_fit >= 40 else (239, 68, 68)
+        pdf.set_text_color(*pe_color)
+        pdf.cell(0, 8, f"{bf_result.micro_pe_fit:.0f}%", ln=True)
+        
+        pdf.set_font('Helvetica', '', 8)
+        pdf.set_text_color(100, 116, 139)
+        pdf.cell(0, 6, "Solo: MRR $500-$1.2K, <$30K price | PE: ARR $300K+, B2B, NRR >100%", ln=True)
+        pdf.ln(5)
+    
+    # ============ DEAL KILLER FLAGS ============
+    if metrics:
+        dk_result = detect_deal_killers(metrics, exit_inputs)
+        
+        pdf.section_title("Risk Assessment")
+        
+        if dk_result.total_issues == 0:
+            pdf.set_font('Helvetica', 'B', 10)
+            pdf.set_text_color(16, 185, 129)
+            pdf.cell(0, 8, "✓ No Deal Killers Detected", ln=True)
+            pdf.set_font('Helvetica', '', 9)
+            pdf.set_text_color(100, 116, 139)
+            pdf.cell(0, 6, "Your business has no critical issues that would block an exit.", ln=True)
+        else:
+            pdf.set_font('Helvetica', 'B', 10)
+            if dk_result.has_critical:
+                pdf.set_text_color(239, 68, 68)
+                pdf.cell(0, 8, f"⚠ {dk_result.total_issues} Potential Deal Killer(s) - CRITICAL", ln=True)
+            else:
+                pdf.set_text_color(245, 158, 11)
+                pdf.cell(0, 8, f"⚠ {dk_result.total_issues} Issue(s) Requiring Attention", ln=True)
+            
+            for dk in dk_result.deal_killers:
+                pdf.set_font('Helvetica', 'B', 9)
+                severity_color = (239, 68, 68) if dk.severity == "Critical" else (245, 158, 11)
+                pdf.set_text_color(*severity_color)
+                pdf.cell(0, 6, f"• {dk.flag} ({dk.severity})", ln=True)
+                pdf.set_font('Helvetica', '', 8)
+                pdf.set_text_color(100, 116, 139)
+                pdf.multi_cell(0, 4, f"  {dk.description}")
+                pdf.ln(2)
+        pdf.ln(5)
+    
+    # ============ OPTIMIZATION ROADMAP ============
+    if metrics:
+        opt_result = generate_optimization_roadmap(metrics, exit_inputs)
+        
+        if opt_result.actions:
+            pdf.section_title("Optimization Roadmap")
+            
+            pdf.set_font('Helvetica', '', 9)
+            pdf.set_text_color(11, 77, 187)
+            pdf.cell(0, 6, f"Potential Gains: +{opt_result.total_potential_score_gain} ERS points | +{opt_result.total_potential_multiple_gain}x multiple", ln=True)
+            pdf.ln(3)
+            
+            # Top 5 actions
+            for i, action in enumerate(opt_result.actions[:5]):
+                pdf.set_font('Helvetica', 'B', 9)
+                pdf.set_text_color(15, 23, 42)
+                pdf.cell(0, 6, f"{i+1}. {action.action}", ln=True)
+                
+                pdf.set_font('Helvetica', '', 8)
+                pdf.set_text_color(100, 116, 139)
+                pdf.cell(60, 5, f"Impact: +{action.impact_score} pts / +{action.impact_multiple}x")
+                pdf.cell(40, 5, f"Difficulty: {action.difficulty}")
+                pdf.cell(0, 5, f"Timeline: {action.time_estimate}", ln=True)
+                pdf.ln(2)
+        pdf.ln(5)
+    
+    # ============ COMPANY INFORMATION ============
     pdf.section_title("Company Information")
     pdf.info_row("Company", company.get("company_name", ""))
     pdf.info_row("Industry", company.get("industry", ""))
     pdf.info_row("Stage", company.get("stage", ""))
+    pdf.info_row("Business Model", company.get("business_model", ""))
     pdf.info_row("Country", company.get("country", ""))
-    pdf.info_row("Team Size", f"{metrics.get('team_size', 0)} employees")
-    pdf.ln(10)
+    pdf.info_row("Team Size", f"{metrics_dict.get('team_size', 0)} employees")
+    pdf.ln(5)
     
-    # Financial Metrics
+    # ============ FINANCIAL METRICS ============
     pdf.section_title("Financial Metrics")
-    arr = metrics.get("arr", 0) or (metrics.get("mrr", 0) * 12)
+    arr = metrics_dict.get("arr", 0) or (metrics_dict.get("mrr", 0) * 12)
     pdf.info_row("Annual Recurring Revenue", f"${arr:,.0f}")
-    pdf.info_row("Growth Rate", f"{metrics.get('growth_rate', 0)}%")
-    pdf.info_row("Gross Margin", f"{metrics.get('gross_margin', 0)}%")
+    pdf.info_row("Monthly Recurring Revenue", f"${metrics_dict.get('mrr', 0):,.0f}")
+    pdf.info_row("Growth Rate (YoY)", f"{metrics_dict.get('growth_rate', 0)}%")
+    pdf.info_row("Gross Margin", f"{metrics_dict.get('gross_margin', 0)}%")
+    pdf.info_row("Net Revenue Retention", f"{metrics_dict.get('nrr', 100)}%")
     pdf.info_row("Valuation Multiple", f"{result.get('multiple_used', 0)}x Revenue")
-    pdf.ln(10)
+    pdf.ln(5)
     
-    # Valuation Range
+    # ============ VALUATION RANGE ============
     pdf.section_title("Valuation Range")
     low_val = result.get("low", 0)
     high_val = result.get("high", 0)
-    pdf.info_row("Conservative", f"${low_val:,.0f}")
+    pdf.info_row("Conservative (Low)", f"${low_val:,.0f}")
     pdf.info_row("Base Case", f"${base_val:,.0f}")
-    pdf.info_row("Optimistic", f"${high_val:,.0f}")
-    pdf.ln(10)
+    pdf.info_row("Optimistic (High)", f"${high_val:,.0f}")
+    pdf.ln(5)
     
-    # Exit Scenarios
-    pdf.section_title("Exit Scenarios")
-    for scenario in exit_scenarios:
-        pdf.set_font('Helvetica', 'B', 12)
-        pdf.set_text_color(11, 77, 187)
-        pdf.cell(0, 8, scenario.get("name", ""), ln=True)
+    # ============ EXIT SCENARIOS ============
+    if exit_scenarios:
+        pdf.add_page()
+        pdf.section_title("Exit Scenarios")
         
-        pdf.set_font('Helvetica', 'B', 14)
-        pdf.set_text_color(15, 23, 42)
-        est_val = scenario.get("estimated_value", 0)
-        pdf.cell(0, 8, f"${est_val:,.0f}", ln=True)
-        
-        pdf.set_font('Helvetica', '', 9)
-        pdf.set_text_color(100, 116, 139)
-        pdf.multi_cell(0, 5, scenario.get("description", ""))
-        
-        pdf.set_font('Helvetica', '', 8)
-        pdf.cell(50, 6, f"Probability: {scenario.get('probability', '')}")
-        pdf.cell(0, 6, f"Timeline: {scenario.get('timeline', '')}", ln=True)
-        pdf.ln(5)
+        for scenario in exit_scenarios:
+            pdf.set_font('Helvetica', 'B', 12)
+            pdf.set_text_color(11, 77, 187)
+            pdf.cell(0, 8, scenario.get("name", ""), ln=True)
+            
+            pdf.set_font('Helvetica', 'B', 14)
+            pdf.set_text_color(15, 23, 42)
+            est_val = scenario.get("estimated_value", 0)
+            pdf.cell(0, 8, f"${est_val:,.0f}", ln=True)
+            
+            pdf.set_font('Helvetica', '', 9)
+            pdf.set_text_color(100, 116, 139)
+            pdf.multi_cell(0, 5, scenario.get("description", ""))
+            
+            pdf.set_font('Helvetica', '', 8)
+            pdf.cell(50, 6, f"Probability: {scenario.get('probability', '')}")
+            pdf.cell(0, 6, f"Timeline: {scenario.get('timeline', '')}", ln=True)
+            pdf.ln(5)
     
-    # Disclaimer
+    # ============ DISCLAIMER ============
     pdf.ln(10)
     pdf.set_font('Helvetica', 'I', 8)
     pdf.set_text_color(100, 116, 139)
-    pdf.multi_cell(0, 4, "This report is for informational purposes only and does not constitute financial advice. Actual valuations may vary based on market conditions and other factors.")
+    pdf.multi_cell(0, 4, "This Exit Intelligence Report is generated by Ventura's AI-powered valuation engine. It is for informational purposes only and does not constitute financial, legal, or investment advice. Actual valuations may vary based on market conditions, buyer interest, and negotiation outcomes. We recommend consulting with qualified M&A advisors before making any exit decisions.")
+    
+    pdf.ln(5)
+    pdf.set_font('Helvetica', 'B', 8)
+    pdf.cell(0, 5, f"Report Generated: {datetime.now(timezone.utc).strftime('%B %d, %Y at %H:%M UTC')}", align='C', ln=True)
     
     return pdf.output()
 
