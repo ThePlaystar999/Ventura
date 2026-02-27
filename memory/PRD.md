@@ -3,10 +3,13 @@
 ## Product Requirements Document
 
 ### Latest Update: February 27, 2026
-- **Dashboard Refactor Complete**: ValuationResults page restructured with 2-column grid layout
-  - Main content left (Hero → Exit Readiness → Deal Killers → Buyer Fit → Roadmap → What-if → Exit Scenarios → Valuation Range → Summary)
-  - Sticky sidebar right with: Quick Snapshot, Buyer Filters (colored badges), Company Details, Assumptions, Quick Actions
-  - Mobile: Collapsible cards below Hero
+- **Visual Priority Hierarchy**: Applied to ValuationResults dashboard
+  - PRIMARY blocks (Sections 2-5): Blue left border (#0B4DBB) + enhanced shadow
+  - SECONDARY blocks (Sections 6-7): Standard shadow
+  - INFORMATIONAL blocks (Section 8+): Minimal styling
+  - Consistent vertical rhythm between sections
+- **Dashboard Refactor**: 2-column grid layout with sticky sidebar
+- **PDF Fix**: Replaced Unicode emoji with ASCII text for font compatibility
 - **Previous**: Hero Section Redesign (January 30, 2026)
 
 ## Original Problem Statement
