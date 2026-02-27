@@ -2,8 +2,12 @@
 
 ## Product Requirements Document
 
-### Latest Update: January 30, 2026
-- **Hero Section Redesign**: Updated to centered layout with standalone V logo, new headline structure ("Know your value." / "Plan your exit."), and centered CTAs
+### Latest Update: February 27, 2026
+- **Dashboard Refactor Complete**: ValuationResults page restructured with 2-column grid layout
+  - Main content left (Hero → Exit Readiness → Deal Killers → Buyer Fit → Roadmap → What-if → Exit Scenarios → Valuation Range → Summary)
+  - Sticky sidebar right with: Quick Snapshot, Buyer Filters (colored badges), Company Details, Assumptions, Quick Actions
+  - Mobile: Collapsible cards below Hero
+- **Previous**: Hero Section Redesign (January 30, 2026)
 
 ## Original Problem Statement
 Build Ventura, a B2B SaaS web app that estimates startup valuation and exit scenarios using AI. Clean, corporate, premium, tech/finance/consulting-grade design similar to McKinsey/BCG/Goldman Sachs SaaS tools. White-first UI with fluid blue wave gradients.
