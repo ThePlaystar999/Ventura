@@ -291,7 +291,6 @@ const ExitReadinessCard = ({ metrics, valuationId }) => {
       improvement_suggestions: improvementSuggestions.slice(0, 5)
     };
   };
-  };
 
   const getStatusColor = (color) => {
     switch (color) {
