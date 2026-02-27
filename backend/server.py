@@ -1373,6 +1373,37 @@ async def delete_valuation(valuation_id: str, user: UserBase = Depends(get_curre
     
     return {"message": "Valuation deleted"}
 
+# ============ EXIT READINESS SCORE ROUTES ============
+
+@api_router.post("/exit-readiness/calculate", response_model=ExitReadinessResult)
+async def calculate_exit_readiness(
+    metrics: ValuationMetrics,
+    exit_inputs: ExitReadinessInputs,
+    user: UserBase = Depends(get_current_user)
+):
+    """Calculate Exit Readiness Score based on metrics and operational inputs"""
+    result = calculate_exit_readiness_score(metrics, exit_inputs)
+    return result
+
+@api_router.post("/exit-readiness/calculate-from-valuation/{valuation_id}", response_model=ExitReadinessResult)
+async def calculate_exit_readiness_from_valuation(
+    valuation_id: str,
+    exit_inputs: ExitReadinessInputs,
+    user: UserBase = Depends(get_current_user)
+):
+    """Calculate Exit Readiness Score using existing valuation metrics"""
+    valuation = await db.valuations.find_one({
+        "valuation_id": valuation_id,
+        "user_id": user.user_id
+    }, {"_id": 0})
+    
+    if not valuation:
+        raise HTTPException(status_code=404, detail="Valuation not found")
+    
+    metrics = ValuationMetrics(**valuation.get("metrics", {}))
+    result = calculate_exit_readiness_score(metrics, exit_inputs)
+    return result
+
 # ============ SHARE ROUTES ============
 
 @api_router.get("/share/{share_token}")
