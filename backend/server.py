@@ -165,6 +165,54 @@ class ContactMessageCreate(BaseModel):
     email: str
     message: str
 
+# ============ EXIT READINESS SCORE MODELS ============
+
+class ExitReadinessInputs(BaseModel):
+    """Extended inputs for Exit Readiness Score calculation"""
+    # Financial Quality
+    arr: float = 0
+    growth_rate: float = 0
+    churn_rate: float = 5  # Monthly churn %
+    nrr: float = 100  # Net Revenue Retention %
+    
+    # Revenue Predictability
+    recurring_revenue_pct: float = 80  # % of revenue that's recurring
+    has_annual_contracts: bool = False
+    max_customer_concentration: float = 20  # % revenue from largest customer
+    has_stripe_verified: bool = False
+    
+    # Operational Transferability
+    founder_hours_per_week: float = 40
+    has_documented_sops: bool = False
+    tech_stack: str = "Other"  # Rails, Node, Python, Laravel, PHP, Other
+    has_automated_support: bool = False
+    
+    # Market Attractiveness
+    is_b2b: bool = True
+    has_clear_icp: bool = False
+    has_tam_documented: bool = False
+    low_fragmentation_risk: bool = True
+    
+    # Risk Factors
+    seo_traffic_pct: float = 30  # % of traffic from SEO
+    has_legal_docs: bool = True
+    has_12mo_financials: bool = True
+
+class CategoryScore(BaseModel):
+    category: str
+    score: float
+    max_score: float
+    percentage: float
+    breakdown: List[dict] = []
+
+class ExitReadinessResult(BaseModel):
+    total_score: float
+    status_label: str
+    status_color: str
+    category_scores: List[CategoryScore]
+    percentile_estimate: int
+    improvement_suggestions: List[str] = []
+
 # ============ AUTH HELPERS ============
 
 async def get_current_user(request: Request) -> UserBase:
