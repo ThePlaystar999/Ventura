@@ -80,13 +80,11 @@ SaaS, AI/ML, FinTech, HealthTech, EdTech, CleanTech, Cybersecurity, MarTech, E-C
 - [x] Auth callback handling
 - [x] Dashboard with project cards
 - [x] **4-Step Valuation Wizard** (Company → Financials → Qualitative → Analysis)
-- [x] Results page with:
-  - Valuation range (Low/Base/High)
-  - Adjustments breakdown (expandable)
-  - Exit scenarios with rationale
-  - AI Commentary with strengths/risks
-  - Assumptions transparency
-  - Scenario sliders for live adjustments
+- [x] **Results page** with 2-column layout:
+  - Main content: Hero, Exit Readiness, Deal Killers, Buyer Fit, Optimization Roadmap, What-if Simulator, Exit Scenarios, Valuation Range, Executive Summary
+  - Sticky sidebar: Quick Snapshot (ARR, Growth, Gross Margin, NRR, Multiple), Buyer Filters (colored badges), Company Details, Assumptions, Quick Actions
+  - Mobile: Collapsible cards below Hero
+  - Scenario sliders for live valuation adjustments
 - [x] Shared valuation view
 - [x] PDF download functionality
 
