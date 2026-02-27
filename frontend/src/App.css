@@ -300,3 +300,44 @@ button:active {
 .scrollbar-thin::-webkit-scrollbar-thumb:hover {
   background-color: #CBD5E1;
 }
+
+
+/* ═══════════════════════════════════════════════════════════════
+   VISUAL PRIORITY HIERARCHY - Valuation Results Dashboard
+═══════════════════════════════════════════════════════════════ */
+
+/* Primary Strategic Blocks (Sections 2-5)
+   Enhanced shadow + subtle left border accent for visual priority */
+.primary-strategic-block {
+  position: relative;
+}
+
+.primary-strategic-block > div,
+.primary-strategic-block > section {
+  box-shadow: 0 4px 12px -2px rgba(11, 77, 187, 0.08), 0 2px 6px -2px rgba(0, 0, 0, 0.04);
+  border-left: 3px solid #0B4DBB;
+}
+
+/* Secondary Strategic Blocks (Sections 6-7) - Standard styling */
+.secondary-strategic-block {
+  position: relative;
+}
+
+.secondary-strategic-block > div {
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05);
+}
+
+/* Informational Blocks (Section 8 and supporting content) - Minimal styling */
+.informational-block {
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.03);
+}
+
+/* Consistent vertical rhythm */
+.primary-strategic-block,
+.secondary-strategic-block {
+  margin-bottom: 1.5rem;
+}
+
+.primary-strategic-block:last-of-type {
+  margin-bottom: 2rem;
+}
