@@ -1992,6 +1992,36 @@ async def generate_roadmap(
     result = generate_optimization_roadmap(metrics, exit_inputs)
     return result
 
+@api_router.post("/deal-killers/detect", response_model=DealKillerResult)
+async def detect_deal_killers_endpoint(
+    metrics: ValuationMetrics,
+    exit_inputs: ExitReadinessInputs,
+    user: UserBase = Depends(get_current_user)
+):
+    """Detect potential deal killers that could derail an exit"""
+    result = detect_deal_killers(metrics, exit_inputs)
+    return result
+
+class SimulatorRequest(BaseModel):
+    metrics: ValuationMetrics
+    exit_inputs: ExitReadinessInputs
+    current_multiple: float
+    scenarios: List[str]
+
+@api_router.post("/simulator/impact", response_model=SimulatorResult)
+async def simulate_impact(
+    request: SimulatorRequest,
+    user: UserBase = Depends(get_current_user)
+):
+    """Simulate the impact of improvements on valuation multiple"""
+    result = simulate_multiple_impact(
+        request.metrics,
+        request.exit_inputs,
+        request.current_multiple,
+        request.scenarios
+    )
+    return result
+
 # ============ SHARE ROUTES ============
 
 @api_router.get("/share/{share_token}")
