@@ -192,6 +192,14 @@ const ValuationResults = () => {
           </div>
         </motion.div>
 
+        {/* Exit Readiness Score Card - Below Hero */}
+        <div className="mb-8">
+          <ExitReadinessCard 
+            metrics={valuation.metrics} 
+            valuationId={valuationId}
+          />
+        </div>
+
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Left Column - Main Results */}
           <div className="lg:col-span-2 space-y-6">
