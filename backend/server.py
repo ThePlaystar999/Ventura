@@ -1114,6 +1114,183 @@ def generate_optimization_roadmap(
         total_potential_multiple_gain=round(total_multiple_gain, 2)
     )
 
+# ============ DEAL KILLER DETECTION ENGINE ============
+
+def detect_deal_killers(
+    metrics: ValuationMetrics,
+    exit_inputs: ExitReadinessInputs
+) -> DealKillerResult:
+    """
+    Detect potential deal killers that could derail an exit.
+    """
+    deal_killers = []
+    
+    # Revenue concentration >40%
+    if exit_inputs.max_customer_concentration > 40:
+        deal_killers.append(DealKiller(
+            flag="Revenue Concentration",
+            description=f"Your largest customer represents {exit_inputs.max_customer_concentration}% of revenue. Most buyers consider >40% a critical risk.",
+            severity="Critical",
+            recommendation="Aggressively diversify customer base before going to market. Consider delaying exit 6-12 months to reduce concentration."
+        ))
+    elif exit_inputs.max_customer_concentration > 30:
+        deal_killers.append(DealKiller(
+            flag="Revenue Concentration Warning",
+            description=f"Your largest customer represents {exit_inputs.max_customer_concentration}% of revenue. This will be flagged in due diligence.",
+            severity="High",
+            recommendation="Focus on acquiring new customers to reduce concentration below 25% before exit."
+        ))
+    
+    # No verified payments (Stripe)
+    if not exit_inputs.has_stripe_verified:
+        deal_killers.append(DealKiller(
+            flag="Unverified Revenue",
+            description="Revenue is not verified through a payment processor. Buyers require proof of revenue.",
+            severity="High",
+            recommendation="Connect Stripe, PayPal, or equivalent to provide verifiable transaction history."
+        ))
+    
+    # No 12 months history
+    if not exit_inputs.has_12mo_financials:
+        deal_killers.append(DealKiller(
+            flag="Insufficient Financial History",
+            description="Less than 12 months of financial records. Most buyers require 12-24 months minimum.",
+            severity="Critical",
+            recommendation="Wait until you have at least 12 months of documented financials before pursuing exit."
+        ))
+    
+    # Churn >10%
+    if exit_inputs.churn_rate > 10:
+        deal_killers.append(DealKiller(
+            flag="Excessive Churn",
+            description=f"Monthly churn of {exit_inputs.churn_rate}% is unsustainable. Buyers will see this as a failing business.",
+            severity="Critical",
+            recommendation="Pause exit plans. Focus entirely on retention: improve onboarding, add customer success, identify churn causes."
+        ))
+    elif exit_inputs.churn_rate > 8:
+        deal_killers.append(DealKiller(
+            flag="High Churn Warning",
+            description=f"Monthly churn of {exit_inputs.churn_rate}% is above acceptable levels for most buyers.",
+            severity="High",
+            recommendation="Implement retention strategies before going to market. Target <5% monthly churn."
+        ))
+    
+    # Founder dependency >40h/week
+    if exit_inputs.founder_hours_per_week > 40:
+        deal_killers.append(DealKiller(
+            flag="Founder Dependency",
+            description=f"Founder works {exit_inputs.founder_hours_per_week}+ hours/week. Business is not transferable in current state.",
+            severity="Critical",
+            recommendation="Hire key roles, document all processes, automate operations. Reduce to <20 hours before exit."
+        ))
+    elif exit_inputs.founder_hours_per_week > 30:
+        deal_killers.append(DealKiller(
+            flag="High Founder Involvement",
+            description=f"Founder works {exit_inputs.founder_hours_per_week} hours/week. Many buyers will see this as too risky.",
+            severity="High",
+            recommendation="Delegate responsibilities and create SOPs. Target <20 hours for attractive exit."
+        ))
+    
+    # No legal documentation
+    if not exit_inputs.has_legal_docs:
+        deal_killers.append(DealKiller(
+            flag="Missing Legal Documentation",
+            description="Critical legal documents are missing. This will halt any serious acquisition process.",
+            severity="High",
+            recommendation="Ensure you have: Terms of Service, Privacy Policy, IP assignments, employee/contractor agreements."
+        ))
+    
+    # Determine overall severity
+    critical_count = sum(1 for dk in deal_killers if dk.severity == "Critical")
+    high_count = sum(1 for dk in deal_killers if dk.severity == "High")
+    
+    if critical_count > 0:
+        severity_level = "Critical"
+    elif high_count > 0:
+        severity_level = "Warning"
+    else:
+        severity_level = "None"
+    
+    return DealKillerResult(
+        deal_killers=deal_killers,
+        severity_level=severity_level,
+        has_critical=critical_count > 0,
+        total_issues=len(deal_killers)
+    )
+
+# ============ MULTIPLE IMPACT SIMULATOR ENGINE ============
+
+def simulate_multiple_impact(
+    metrics: ValuationMetrics,
+    exit_inputs: ExitReadinessInputs,
+    current_multiple: float,
+    scenarios: List[str]  # List of enabled scenario IDs
+) -> SimulatorResult:
+    """
+    Simulate the impact of improvements on valuation multiple.
+    """
+    arr = metrics.arr if metrics.arr > 0 else metrics.mrr * 12
+    current_valuation = arr * current_multiple
+    
+    projected_multiple = current_multiple
+    active_scenarios = []
+    
+    # Scenario: Churn reduced to 3%
+    if "churn_3pct" in scenarios and exit_inputs.churn_rate > 3:
+        improvement = min(0.5, (exit_inputs.churn_rate - 3) * 0.1)
+        projected_multiple += improvement
+        active_scenarios.append("churn_3pct")
+    
+    # Scenario: NRR increased to 110%
+    nrr = metrics.nrr if metrics.nrr else exit_inputs.nrr
+    if "nrr_110" in scenarios and nrr < 110:
+        improvement = min(0.6, (110 - nrr) * 0.03)
+        projected_multiple += improvement
+        active_scenarios.append("nrr_110")
+    
+    # Scenario: ARR reaches next tier
+    if "arr_next_tier" in scenarios:
+        if arr < 100000:
+            projected_multiple += 0.8  # Reaching $100K ARR
+        elif arr < 500000:
+            projected_multiple += 0.5  # Reaching $500K ARR
+        elif arr < 1000000:
+            projected_multiple += 0.4  # Reaching $1M ARR
+        else:
+            projected_multiple += 0.3  # Reaching next tier
+        active_scenarios.append("arr_next_tier")
+    
+    # Scenario: Founder hours reduced to <20
+    if "founder_20h" in scenarios and exit_inputs.founder_hours_per_week > 20:
+        improvement = min(0.5, (exit_inputs.founder_hours_per_week - 20) * 0.015)
+        projected_multiple += improvement
+        active_scenarios.append("founder_20h")
+    
+    # Scenario: Annual contracts implemented
+    if "annual_contracts" in scenarios and not exit_inputs.has_annual_contracts:
+        projected_multiple += 0.3
+        active_scenarios.append("annual_contracts")
+    
+    # Scenario: Customer concentration reduced to <20%
+    if "concentration_20" in scenarios and exit_inputs.max_customer_concentration > 20:
+        improvement = min(0.4, (exit_inputs.max_customer_concentration - 20) * 0.015)
+        projected_multiple += improvement
+        active_scenarios.append("concentration_20")
+    
+    projected_valuation = arr * projected_multiple
+    delta_value = projected_valuation - current_valuation
+    delta_percentage = ((projected_valuation - current_valuation) / current_valuation) * 100 if current_valuation > 0 else 0
+    
+    return SimulatorResult(
+        current_multiple=round(current_multiple, 2),
+        projected_multiple=round(projected_multiple, 2),
+        current_valuation=round(current_valuation, 2),
+        projected_valuation=round(projected_valuation, 2),
+        delta_value=round(delta_value, 2),
+        delta_percentage=round(delta_percentage, 1),
+        active_scenarios=active_scenarios
+    )
+
 def calculate_valuation(
     company_info: CompanyInfo, 
     metrics: ValuationMetrics,
