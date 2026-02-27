@@ -408,92 +408,136 @@ const ValuationResults = () => {
             )}
           </div>
 
-          {/* Right Column - Company Info & Assumptions */}
+          {/* Right Column - Sidebar (Buyer's Cheat Sheet) */}
           <div className="space-y-6">
-            {/* Company Info Card */}
-            <div className="bg-white rounded-xl border border-[#EEF2F7] p-6">
-              <h3 className="text-lg font-semibold text-slate-900 mb-4">Company Details</h3>
+            {/* QUICK SNAPSHOT — Investor Memo Side Panel */}
+            <div className="bg-[#FAFBFC] rounded-xl border border-[#EEF2F7] p-5" data-testid="quick-snapshot">
+              <h3 className="text-sm font-semibold text-slate-500 uppercase tracking-wider mb-4">Quick Snapshot</h3>
               
-              <div className="space-y-4">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-lg bg-[#F0F7FF] flex items-center justify-center">
-                    <Building2 className="w-5 h-5 text-[#0B4DBB]" strokeWidth={1.5} />
-                  </div>
-                  <div>
-                    <p className="text-xs text-slate-500">Company</p>
-                    <p className="font-medium text-slate-900">{valuation.company_info?.company_name}</p>
-                  </div>
+              <div className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <span className="text-sm text-slate-500">ARR</span>
+                  <span className="text-base font-bold text-slate-900">{formatCurrency(result?.arr_used)}</span>
                 </div>
-
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-lg bg-[#F0F7FF] flex items-center justify-center">
-                    <Briefcase className="w-5 h-5 text-[#0B4DBB]" strokeWidth={1.5} />
-                  </div>
-                  <div>
-                    <p className="text-xs text-slate-500">Industry / Model</p>
-                    <p className="font-medium text-slate-900">{valuation.company_info?.industry} / {valuation.company_info?.business_model}</p>
-                  </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-sm text-slate-500">Growth</span>
+                  <span className="text-base font-bold text-slate-900">{valuation.metrics?.growth_rate}%</span>
                 </div>
-
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-lg bg-[#F0F7FF] flex items-center justify-center">
-                    <Target className="w-5 h-5 text-[#0B4DBB]" strokeWidth={1.5} />
-                  </div>
-                  <div>
-                    <p className="text-xs text-slate-500">Stage</p>
-                    <p className="font-medium text-slate-900">{valuation.company_info?.stage}</p>
-                  </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-sm text-slate-500">Gross Margin</span>
+                  <span className="text-base font-bold text-slate-900">{valuation.metrics?.gross_margin}%</span>
                 </div>
-
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-lg bg-[#F0F7FF] flex items-center justify-center">
-                    <Users className="w-5 h-5 text-[#0B4DBB]" strokeWidth={1.5} />
+                <div className="flex items-center justify-between">
+                  <span className="text-sm text-slate-500">NRR</span>
+                  <span className="text-base font-bold text-slate-900">{valuation.metrics?.nrr}%</span>
+                </div>
+                {valuation.metrics?.churn_rate !== undefined && (
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-slate-500">Churn</span>
+                    <span className="text-base font-bold text-slate-900">{valuation.metrics?.churn_rate || (100 - (valuation.metrics?.nrr || 100))}%</span>
                   </div>
-                  <div>
-                    <p className="text-xs text-slate-500">Team Size</p>
-                    <p className="font-medium text-slate-900">{valuation.metrics?.team_size} employees</p>
-                  </div>
+                )}
+                <div className="flex items-center justify-between pt-2 border-t border-[#EEF2F7]">
+                  <span className="text-sm text-slate-500">Multiple Used</span>
+                  <span className="text-base font-bold text-[#0B4DBB]">{result?.multiple_used}x</span>
                 </div>
               </div>
             </div>
 
-            {/* Metrics Card */}
-            <div className="bg-white rounded-xl border border-[#EEF2F7] p-6">
-              <h3 className="text-lg font-semibold text-slate-900 mb-4">Financial Metrics</h3>
+            {/* BUYER FILTERS — Pre-Due-Diligence Checklist */}
+            <div className="bg-[#FAFBFC] rounded-xl border border-[#EEF2F7] p-5" data-testid="buyer-filters">
+              <h3 className="text-sm font-semibold text-slate-500 uppercase tracking-wider mb-4">Buyer Filters</h3>
               
-              <div className="space-y-4">
-                <div className="flex items-center justify-between py-2 border-b border-[#EEF2F7]">
-                  <span className="text-slate-600">ARR</span>
-                  <span className="font-semibold text-slate-900">{formatCurrency(result?.arr_used)}</span>
+              <div className="space-y-3">
+                {/* Stripe Verified */}
+                <div className="flex items-center justify-between">
+                  <span className="text-sm text-slate-600">Stripe Verified</span>
+                  <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${
+                    valuation.metrics?.stripe_verified 
+                      ? 'bg-green-100 text-green-700' 
+                      : 'bg-slate-100 text-slate-500'
+                  }`}>
+                    {valuation.metrics?.stripe_verified ? 'Yes' : 'No'}
+                  </span>
                 </div>
-                <div className="flex items-center justify-between py-2 border-b border-[#EEF2F7]">
-                  <span className="text-slate-600">Growth Rate</span>
-                  <span className="font-semibold text-slate-900">{valuation.metrics?.growth_rate}%</span>
+                
+                {/* 12-Month History */}
+                <div className="flex items-center justify-between">
+                  <span className="text-sm text-slate-600">12-Month History</span>
+                  <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${
+                    valuation.metrics?.has_12_month_history 
+                      ? 'bg-green-100 text-green-700' 
+                      : 'bg-amber-100 text-amber-700'
+                  }`}>
+                    {valuation.metrics?.has_12_month_history ? 'Yes' : 'No'}
+                  </span>
                 </div>
-                <div className="flex items-center justify-between py-2 border-b border-[#EEF2F7]">
-                  <span className="text-slate-600">Gross Margin</span>
-                  <span className="font-semibold text-slate-900">{valuation.metrics?.gross_margin}%</span>
+                
+                {/* Founder Involvement */}
+                <div className="flex items-center justify-between">
+                  <span className="text-sm text-slate-600">Founder Involvement</span>
+                  <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${
+                    (valuation.metrics?.founder_hours_per_week || 40) <= 10 
+                      ? 'bg-green-100 text-green-700' 
+                      : (valuation.metrics?.founder_hours_per_week || 40) <= 25 
+                        ? 'bg-amber-100 text-amber-700' 
+                        : 'bg-red-100 text-red-700'
+                  }`}>
+                    {valuation.metrics?.founder_hours_per_week || '40'}h/wk
+                  </span>
                 </div>
-                <div className="flex items-center justify-between py-2 border-b border-[#EEF2F7]">
-                  <span className="text-slate-600">NRR</span>
-                  <span className="font-semibold text-slate-900">{valuation.metrics?.nrr}%</span>
-                </div>
-                <div className="flex items-center justify-between py-2">
-                  <span className="text-slate-600">Multiple Used</span>
-                  <span className="font-semibold text-[#0B4DBB]">{result?.multiple_used}x</span>
+                
+                {/* Revenue Concentration */}
+                <div className="flex items-center justify-between">
+                  <span className="text-sm text-slate-600">Revenue Concentration &gt;30%</span>
+                  <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${
+                    (valuation.metrics?.top_customer_concentration || 0) > 30 
+                      ? 'bg-red-100 text-red-700' 
+                      : 'bg-green-100 text-green-700'
+                  }`}>
+                    {(valuation.metrics?.top_customer_concentration || 0) > 30 ? 'Yes' : 'No'}
+                  </span>
                 </div>
               </div>
             </div>
 
-            {/* Assumptions Card */}
+            {/* Company Details - Condensed */}
+            <div className="bg-white rounded-xl border border-[#EEF2F7] p-5">
+              <h3 className="text-sm font-semibold text-slate-500 uppercase tracking-wider mb-4">Company Details</h3>
+              
+              <div className="space-y-3 text-sm">
+                <div className="flex items-center justify-between">
+                  <span className="text-slate-500">Company</span>
+                  <span className="font-medium text-slate-900">{valuation.company_info?.company_name}</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-slate-500">Industry</span>
+                  <span className="font-medium text-slate-900">{valuation.company_info?.industry}</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-slate-500">Model</span>
+                  <span className="font-medium text-slate-900">{valuation.company_info?.business_model}</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-slate-500">Stage</span>
+                  <span className="font-medium text-slate-900">{valuation.company_info?.stage}</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-slate-500">Team</span>
+                  <span className="font-medium text-slate-900">{valuation.metrics?.team_size} people</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Assumptions Card - Collapsible */}
             {assumptions && (
               <div className="bg-white rounded-xl border border-[#EEF2F7] overflow-hidden">
                 <button
                   onClick={() => setShowAssumptions(!showAssumptions)}
-                  className="w-full px-6 py-4 flex items-center justify-between hover:bg-slate-50 transition-colors"
+                  className="w-full px-5 py-4 flex items-center justify-between hover:bg-slate-50 transition-colors"
                 >
-                  <h3 className="text-lg font-semibold text-slate-900">Assumptions</h3>
-                  {showAssumptions ? <ChevronUp className="w-5 h-5" /> : <ChevronDown className="w-5 h-5" />}
+                  <h3 className="text-sm font-semibold text-slate-500 uppercase tracking-wider">Assumptions</h3>
+                  {showAssumptions ? <ChevronUp className="w-4 h-4 text-slate-400" /> : <ChevronDown className="w-4 h-4 text-slate-400" />}
                 </button>
                 
                 <AnimatePresence>
@@ -504,34 +548,32 @@ const ValuationResults = () => {
                       exit={{ height: 0 }}
                       className="overflow-hidden"
                     >
-                      <div className="px-6 pb-6 space-y-4 text-sm">
+                      <div className="px-5 pb-5 space-y-3 text-sm">
                         <div>
-                          <p className="font-medium text-slate-700">Multiple Source</p>
-                          <p className="text-slate-600">{assumptions.base_multiple_source}</p>
+                          <p className="text-slate-500">Multiple Source</p>
+                          <p className="text-slate-700">{assumptions.base_multiple_source}</p>
                         </div>
                         <div>
-                          <p className="font-medium text-slate-700">Growth Assumption</p>
-                          <p className="text-slate-600">{assumptions.growth_assumption}</p>
+                          <p className="text-slate-500">Growth</p>
+                          <p className="text-slate-700">{assumptions.growth_assumption}</p>
                         </div>
                         <div>
-                          <p className="font-medium text-slate-700">Margin Assumption</p>
-                          <p className="text-slate-600">{assumptions.margin_assumption}</p>
+                          <p className="text-slate-500">Margin</p>
+                          <p className="text-slate-700">{assumptions.margin_assumption}</p>
                         </div>
-                        <div>
-                          <p className="font-medium text-slate-700">Market</p>
-                          <p className="text-slate-600">{assumptions.market_assumption}</p>
-                        </div>
-                        <div>
-                          <p className="font-medium text-amber-700">Risk Factors</p>
-                          <ul className="mt-1 space-y-1">
-                            {assumptions.risk_factors?.map((risk, i) => (
-                              <li key={i} className="text-slate-600 flex items-start gap-2">
-                                <span className="w-1.5 h-1.5 rounded-full bg-amber-500 mt-1.5 flex-shrink-0"></span>
-                                {risk}
-                              </li>
-                            ))}
-                          </ul>
-                        </div>
+                        {assumptions.risk_factors?.length > 0 && (
+                          <div>
+                            <p className="text-amber-600 font-medium">Risks</p>
+                            <ul className="mt-1 space-y-1">
+                              {assumptions.risk_factors?.slice(0, 3).map((risk, i) => (
+                                <li key={i} className="text-slate-600 flex items-start gap-2">
+                                  <span className="w-1 h-1 rounded-full bg-amber-500 mt-2 flex-shrink-0"></span>
+                                  {risk}
+                                </li>
+                              ))}
+                            </ul>
+                          </div>
+                        )}
                       </div>
                     </motion.div>
                   )}
@@ -540,21 +582,22 @@ const ValuationResults = () => {
             )}
 
             {/* Quick Actions */}
-            <div className="bg-gradient-to-br from-[#F0F7FF] to-white rounded-xl border border-[#DCEAFF] p-6">
-              <h4 className="font-semibold text-slate-900 mb-4">Quick Actions</h4>
-              <div className="space-y-3">
+            <div className="bg-gradient-to-br from-[#F0F7FF] to-white rounded-xl border border-[#DCEAFF] p-5">
+              <h4 className="text-sm font-semibold text-slate-500 uppercase tracking-wider mb-3">Quick Actions</h4>
+              <div className="space-y-2">
                 <Link to={`/valuation/new/${valuation.project_id}`}>
-                  <Button variant="outline" className="w-full justify-start border-[#EEF2F7] hover:bg-white">
-                    <TrendingUp className="w-4 h-4 mr-2" />
+                  <Button variant="outline" size="sm" className="w-full justify-start border-[#EEF2F7] hover:bg-white text-sm">
+                    <TrendingUp className="w-3.5 h-3.5 mr-2" />
                     New Valuation
                   </Button>
                 </Link>
                 <Button 
                   variant="outline" 
+                  size="sm"
                   onClick={copyShareLink}
-                  className="w-full justify-start border-[#EEF2F7] hover:bg-white"
+                  className="w-full justify-start border-[#EEF2F7] hover:bg-white text-sm"
                 >
-                  <Copy className="w-4 h-4 mr-2" />
+                  <Copy className="w-3.5 h-3.5 mr-2" />
                   Copy Investor Link
                 </Button>
               </div>
