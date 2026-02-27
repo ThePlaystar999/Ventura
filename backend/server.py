@@ -748,6 +748,339 @@ def calculate_exit_readiness_score(
         improvement_suggestions=improvement_suggestions[:5]  # Top 5 suggestions
     )
 
+# ============ BUYER FIT ENGINE ============
+
+def calculate_buyer_fit(
+    metrics: ValuationMetrics,
+    exit_inputs: ExitReadinessInputs
+) -> BuyerFitResult:
+    """
+    Calculate fit scores for different buyer profiles.
+    Solo Operator and Micro PE profiles.
+    """
+    arr = metrics.arr if metrics.arr > 0 else metrics.mrr * 12
+    mrr = metrics.mrr if metrics.mrr > 0 else arr / 12
+    
+    # ===== PROFILE 1: SOLO OPERATOR =====
+    solo_score = 0.0
+    solo_factors = []
+    
+    # MRR 500-1,200 (25 pts)
+    if 500 <= mrr <= 1200:
+        solo_score += 25
+        solo_factors.append({"factor": "MRR in sweet spot ($500-$1,200)", "points": 25, "positive": True})
+    elif mrr < 500:
+        points = max(0, 15 - (500 - mrr) / 50)
+        solo_score += points
+        solo_factors.append({"factor": f"MRR below target (${mrr:.0f})", "points": round(points, 1), "positive": False})
+    elif mrr <= 3000:
+        points = max(0, 20 - (mrr - 1200) / 100)
+        solo_score += points
+        solo_factors.append({"factor": f"MRR above ideal but manageable (${mrr:.0f})", "points": round(points, 1), "positive": True})
+    else:
+        solo_factors.append({"factor": "MRR too high for solo operation", "points": 0, "positive": False})
+    
+    # Price < 30k (20 pts) - estimate based on 2-3x ARR
+    estimated_price = arr * 2.5
+    if estimated_price < 30000:
+        solo_score += 20
+        solo_factors.append({"factor": "Affordable price point", "points": 20, "positive": True})
+    elif estimated_price < 50000:
+        solo_score += 10
+        solo_factors.append({"factor": "Price slightly high but reachable", "points": 10, "positive": True})
+    else:
+        solo_factors.append({"factor": "Price likely too high for solos", "points": 0, "positive": False})
+    
+    # Churn <5% (20 pts)
+    churn = exit_inputs.churn_rate
+    if churn < 5:
+        solo_score += 20
+        solo_factors.append({"factor": "Low churn (manageable)", "points": 20, "positive": True})
+    elif churn < 8:
+        solo_score += 10
+        solo_factors.append({"factor": "Moderate churn", "points": 10, "positive": True})
+    else:
+        solo_factors.append({"factor": "High churn (risky for solos)", "points": 0, "positive": False})
+    
+    # Simple tech stack (15 pts)
+    simple_stacks = ["Rails", "Node", "Python", "Laravel", "PHP"]
+    if exit_inputs.tech_stack in simple_stacks:
+        solo_score += 15
+        solo_factors.append({"factor": f"Simple tech stack ({exit_inputs.tech_stack})", "points": 15, "positive": True})
+    else:
+        solo_score += 5
+        solo_factors.append({"factor": "Complex tech stack", "points": 5, "positive": False})
+    
+    # Niche focused / low founder hours (20 pts)
+    if exit_inputs.founder_hours_per_week < 25:
+        solo_score += 20
+        solo_factors.append({"factor": "Low time commitment required", "points": 20, "positive": True})
+    elif exit_inputs.founder_hours_per_week < 35:
+        solo_score += 10
+        solo_factors.append({"factor": "Moderate time commitment", "points": 10, "positive": True})
+    else:
+        solo_factors.append({"factor": "High time commitment (challenging)", "points": 0, "positive": False})
+    
+    solo_fit = min(100, solo_score)
+    
+    # ===== PROFILE 2: MICRO PE =====
+    pe_score = 0.0
+    pe_factors = []
+    
+    # ARR >300k (25 pts)
+    if arr >= 300000:
+        pe_score += 25
+        pe_factors.append({"factor": "ARR meets PE threshold ($300k+)", "points": 25, "positive": True})
+    elif arr >= 200000:
+        pe_score += 15
+        pe_factors.append({"factor": "ARR approaching PE range", "points": 15, "positive": True})
+    elif arr >= 100000:
+        pe_score += 8
+        pe_factors.append({"factor": "ARR below PE ideal but growing", "points": 8, "positive": False})
+    else:
+        pe_factors.append({"factor": "ARR too low for PE interest", "points": 0, "positive": False})
+    
+    # 12+ months stable (20 pts)
+    if exit_inputs.has_12mo_financials:
+        pe_score += 20
+        pe_factors.append({"factor": "12+ months financial history", "points": 20, "positive": True})
+    else:
+        pe_score += 5
+        pe_factors.append({"factor": "Limited financial history", "points": 5, "positive": False})
+    
+    # B2B (20 pts)
+    if exit_inputs.is_b2b:
+        pe_score += 20
+        pe_factors.append({"factor": "B2B business model", "points": 20, "positive": True})
+    else:
+        pe_score += 8
+        pe_factors.append({"factor": "B2C model (less PE interest)", "points": 8, "positive": False})
+    
+    # NRR >100% (20 pts)
+    nrr = metrics.nrr if metrics.nrr else exit_inputs.nrr
+    if nrr > 100:
+        pe_score += 20
+        pe_factors.append({"factor": f"Strong NRR ({nrr}%)", "points": 20, "positive": True})
+    elif nrr >= 95:
+        pe_score += 12
+        pe_factors.append({"factor": f"Acceptable NRR ({nrr}%)", "points": 12, "positive": True})
+    else:
+        pe_factors.append({"factor": f"Low NRR ({nrr}%)", "points": 0, "positive": False})
+    
+    # Predictable growth (15 pts)
+    growth = metrics.growth_rate
+    if 15 <= growth <= 50:
+        pe_score += 15
+        pe_factors.append({"factor": "Predictable, sustainable growth", "points": 15, "positive": True})
+    elif growth > 50:
+        pe_score += 10
+        pe_factors.append({"factor": "High growth (may be unstable)", "points": 10, "positive": True})
+    elif growth >= 5:
+        pe_score += 8
+        pe_factors.append({"factor": "Modest growth", "points": 8, "positive": False})
+    else:
+        pe_factors.append({"factor": "Flat or declining growth", "points": 0, "positive": False})
+    
+    pe_fit = min(100, pe_score)
+    
+    return BuyerFitResult(
+        solo_operator_fit=round(solo_fit, 1),
+        solo_operator_factors=solo_factors,
+        micro_pe_fit=round(pe_fit, 1),
+        micro_pe_factors=pe_factors
+    )
+
+# ============ OPTIMIZATION ROADMAP ENGINE ============
+
+def generate_optimization_roadmap(
+    metrics: ValuationMetrics,
+    exit_inputs: ExitReadinessInputs
+) -> OptimizationRoadmapResult:
+    """
+    Generate dynamic improvement suggestions with impact estimates.
+    """
+    actions = []
+    arr = metrics.arr if metrics.arr > 0 else metrics.mrr * 12
+    
+    # Churn optimization
+    if exit_inputs.churn_rate > 5:
+        impact = 5 if exit_inputs.churn_rate > 8 else 3
+        actions.append(OptimizationAction(
+            action="Reduce Customer Churn",
+            description=f"Current churn is {exit_inputs.churn_rate}%. Implement retention strategies: onboarding improvements, proactive support, and customer success programs.",
+            impact_score=impact,
+            impact_multiple=0.3 if exit_inputs.churn_rate > 8 else 0.15,
+            difficulty="Medium",
+            time_estimate="3-6 months",
+            category="Financial Quality",
+            priority=9 if exit_inputs.churn_rate > 8 else 7
+        ))
+    
+    # Founder hours optimization
+    if exit_inputs.founder_hours_per_week > 30:
+        actions.append(OptimizationAction(
+            action="Reduce Founder Dependency",
+            description=f"Currently {exit_inputs.founder_hours_per_week}h/week. Hire key roles, document processes, and automate repetitive tasks.",
+            impact_score=6,
+            impact_multiple=0.4,
+            difficulty="High",
+            time_estimate="6-12 months",
+            category="Operational Transferability",
+            priority=8
+        ))
+    elif exit_inputs.founder_hours_per_week > 20:
+        actions.append(OptimizationAction(
+            action="Further Reduce Founder Involvement",
+            description=f"Currently {exit_inputs.founder_hours_per_week}h/week. Target <20 hours through delegation and automation.",
+            impact_score=3,
+            impact_multiple=0.2,
+            difficulty="Medium",
+            time_estimate="3-6 months",
+            category="Operational Transferability",
+            priority=5
+        ))
+    
+    # Annual contracts
+    if not exit_inputs.has_annual_contracts:
+        actions.append(OptimizationAction(
+            action="Introduce Annual Contracts",
+            description="Offer annual pricing with discount incentive (15-20% off). Improves revenue predictability and cash flow.",
+            impact_score=5,
+            impact_multiple=0.25,
+            difficulty="Low",
+            time_estimate="1-2 months",
+            category="Revenue Predictability",
+            priority=8
+        ))
+    
+    # ARR growth
+    if arr < 25000:
+        actions.append(OptimizationAction(
+            action="Achieve $25K ARR Milestone",
+            description=f"Current ARR: ${arr:,.0f}. Focus on customer acquisition and pricing optimization to reach minimum viable scale.",
+            impact_score=6,
+            impact_multiple=0.5,
+            difficulty="High",
+            time_estimate="6-12 months",
+            category="Financial Quality",
+            priority=10
+        ))
+    elif arr < 100000:
+        actions.append(OptimizationAction(
+            action="Scale to $100K ARR",
+            description=f"Current ARR: ${arr:,.0f}. Expand marketing channels and optimize conversion funnel.",
+            impact_score=4,
+            impact_multiple=0.3,
+            difficulty="Medium",
+            time_estimate="6-12 months",
+            category="Financial Quality",
+            priority=7
+        ))
+    
+    # SOP documentation
+    if not exit_inputs.has_documented_sops:
+        actions.append(OptimizationAction(
+            action="Document Standard Operating Procedures",
+            description="Create comprehensive SOPs for all critical processes: customer support, onboarding, billing, development.",
+            impact_score=5,
+            impact_multiple=0.2,
+            difficulty="Medium",
+            time_estimate="2-4 months",
+            category="Operational Transferability",
+            priority=7
+        ))
+    
+    # Customer concentration
+    if exit_inputs.max_customer_concentration > 30:
+        actions.append(OptimizationAction(
+            action="Reduce Customer Concentration",
+            description=f"Largest customer is {exit_inputs.max_customer_concentration}% of revenue. Diversify customer base to reduce risk.",
+            impact_score=4,
+            impact_multiple=0.25,
+            difficulty="High",
+            time_estimate="6-12 months",
+            category="Risk Profile",
+            priority=8
+        ))
+    
+    # NRR improvement
+    nrr = metrics.nrr if metrics.nrr else exit_inputs.nrr
+    if nrr < 100:
+        actions.append(OptimizationAction(
+            action="Improve Net Revenue Retention",
+            description=f"Current NRR: {nrr}%. Implement upsell paths, usage-based pricing tiers, and expansion revenue strategies.",
+            impact_score=6,
+            impact_multiple=0.35,
+            difficulty="Medium",
+            time_estimate="3-6 months",
+            category="Financial Quality",
+            priority=9
+        ))
+    
+    # Recurring revenue
+    if exit_inputs.recurring_revenue_pct < 90:
+        actions.append(OptimizationAction(
+            action="Increase Recurring Revenue",
+            description=f"Currently {exit_inputs.recurring_revenue_pct}% recurring. Convert one-time services to subscriptions.",
+            impact_score=3,
+            impact_multiple=0.2,
+            difficulty="Medium",
+            time_estimate="3-6 months",
+            category="Revenue Predictability",
+            priority=6
+        ))
+    
+    # SEO dependency
+    if exit_inputs.seo_traffic_pct >= 50:
+        actions.append(OptimizationAction(
+            action="Diversify Traffic Sources",
+            description=f"SEO accounts for {exit_inputs.seo_traffic_pct}% of traffic. Build paid, referral, and direct channels.",
+            impact_score=4,
+            impact_multiple=0.2,
+            difficulty="Medium",
+            time_estimate="4-8 months",
+            category="Risk Profile",
+            priority=6
+        ))
+    
+    # ICP definition
+    if not exit_inputs.has_clear_icp:
+        actions.append(OptimizationAction(
+            action="Define Ideal Customer Profile",
+            description="Document your ICP with demographics, firmographics, pain points, and buying behavior.",
+            impact_score=4,
+            impact_multiple=0.15,
+            difficulty="Low",
+            time_estimate="2-4 weeks",
+            category="Market Attractiveness",
+            priority=5
+        ))
+    
+    # Legal documentation
+    if not exit_inputs.has_legal_docs:
+        actions.append(OptimizationAction(
+            action="Complete Legal Documentation",
+            description="Ensure all contracts, IP assignments, privacy policies, and terms of service are in place.",
+            impact_score=3,
+            impact_multiple=0.1,
+            difficulty="Low",
+            time_estimate="2-4 weeks",
+            category="Risk Profile",
+            priority=9
+        ))
+    
+    # Sort by priority
+    actions.sort(key=lambda x: x.priority, reverse=True)
+    
+    total_score_gain = sum(a.impact_score for a in actions)
+    total_multiple_gain = sum(a.impact_multiple for a in actions)
+    
+    return OptimizationRoadmapResult(
+        actions=actions,
+        total_potential_score_gain=total_score_gain,
+        total_potential_multiple_gain=round(total_multiple_gain, 2)
+    )
+
 def calculate_valuation(
     company_info: CompanyInfo, 
     metrics: ValuationMetrics,
