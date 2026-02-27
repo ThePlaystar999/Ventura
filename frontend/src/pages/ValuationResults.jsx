@@ -4,6 +4,8 @@ import Navbar from '../components/Navbar';
 import ExitReadinessCard from '../components/ExitReadinessCard';
 import BuyerFitSection from '../components/BuyerFitSection';
 import OptimizationRoadmap from '../components/OptimizationRoadmap';
+import DealKillerAlert from '../components/DealKillerAlert';
+import MultipleImpactSimulator from '../components/MultipleImpactSimulator';
 import { Button } from '../components/ui/button';
 import { Slider } from '../components/ui/slider';
 import { toast } from 'sonner';
