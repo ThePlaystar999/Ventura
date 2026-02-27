@@ -204,9 +204,22 @@ const ValuationResults = () => {
           />
         </div>
 
+        {/* Deal Killer Alert */}
+        <div className="mb-8">
+          <DealKillerAlert metrics={valuation.metrics} />
+        </div>
+
         {/* Buyer Fit Analysis */}
         <div className="mb-8">
           <BuyerFitSection metrics={valuation.metrics} />
+        </div>
+
+        {/* Multiple Impact Simulator */}
+        <div className="mb-8">
+          <MultipleImpactSimulator 
+            metrics={valuation.metrics} 
+            currentMultiple={valuation.results?.base_multiple || 3.0}
+          />
         </div>
 
         {/* Optimization Roadmap */}
