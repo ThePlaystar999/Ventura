@@ -34,35 +34,263 @@ const ExitReadinessCard = ({ metrics, valuationId }) => {
   };
 
   useEffect(() => {
-    calculateScore();
+    if (metrics) {
+      calculateScore();
+    }
   }, [metrics, valuationId]);
 
   const calculateScore = async () => {
     setLoading(true);
     try {
-      const endpoint = valuationId 
-        ? `${API}/exit-readiness/calculate-from-valuation/${valuationId}`
-        : `${API}/exit-readiness/calculate`;
-      
-      const body = valuationId 
-        ? defaultExitInputs 
-        : { metrics, exit_inputs: defaultExitInputs };
-
-      const response = await fetch(endpoint, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
-        body: JSON.stringify(valuationId ? defaultExitInputs : body)
-      });
-
-      if (response.ok) {
-        const data = await response.json();
-        setScore(data);
-      }
+      // Use client-side calculation for immediate feedback
+      const result = calculateScoreLocally(metrics, defaultExitInputs);
+      setScore(result);
     } catch (error) {
       console.error('Failed to calculate exit readiness:', error);
     }
     setLoading(false);
+  };
+
+  // Client-side calculation mirrors backend logic
+  const calculateScoreLocally = (metrics, exitInputs) => {
+    let totalScore = 0;
+    const categoryScores = [];
+    const improvementSuggestions = [];
+
+    // CATEGORY A — Financial Quality (30 pts max)
+    let financialScore = 0;
+    const financialBreakdown = [];
+    const arr = metrics?.arr || (metrics?.mrr || 0) * 12;
+
+    if (arr >= 25000) {
+      financialScore += 10;
+      financialBreakdown.push({ item: "ARR >= $25k", points: 10 });
+    } else if (arr >= 10000) {
+      financialScore += 7;
+      financialBreakdown.push({ item: "ARR $10-25k", points: 7 });
+    } else if (arr >= 1000) {
+      financialScore += 4;
+      financialBreakdown.push({ item: "ARR $1-10k", points: 4 });
+    } else {
+      financialScore += 1;
+      financialBreakdown.push({ item: "ARR < $1k", points: 1 });
+      improvementSuggestions.push("Increase ARR to $25k+ for maximum financial score");
+    }
+
+    const growth = metrics?.growth_rate || 0;
+    if (growth > 50) {
+      financialScore += 6;
+      financialBreakdown.push({ item: "Growth > 50%", points: 6 });
+    } else if (growth >= 20) {
+      financialScore += 4;
+      financialBreakdown.push({ item: "Growth 20-50%", points: 4 });
+    } else {
+      financialScore += 2;
+      financialBreakdown.push({ item: "Growth < 20%", points: 2 });
+      improvementSuggestions.push("Accelerate growth rate to 50%+ for premium positioning");
+    }
+
+    const churn = exitInputs.churn_rate || 5;
+    if (churn < 5) {
+      financialScore += 6;
+      financialBreakdown.push({ item: "Churn < 5%", points: 6 });
+    } else if (churn <= 8) {
+      financialScore += 4;
+      financialBreakdown.push({ item: "Churn 5-8%", points: 4 });
+    } else {
+      financialScore += 1;
+      financialBreakdown.push({ item: "Churn > 8%", points: 1 });
+      improvementSuggestions.push("Reduce churn below 5% to improve retention metrics");
+    }
+
+    const nrr = metrics?.nrr || exitInputs.nrr || 100;
+    if (nrr > 110) {
+      financialScore += 8;
+      financialBreakdown.push({ item: "NRR > 110%", points: 8 });
+    } else if (nrr >= 100) {
+      financialScore += 6;
+      financialBreakdown.push({ item: "NRR 100-110%", points: 6 });
+    } else {
+      financialScore += 2;
+      financialBreakdown.push({ item: "NRR < 100%", points: 2 });
+      improvementSuggestions.push("Improve NRR to 110%+ through upsells and expansion");
+    }
+
+    financialScore = Math.min(financialScore, 30);
+    categoryScores.push({
+      category: "Financial Quality",
+      score: financialScore,
+      max_score: 30,
+      percentage: Math.round((financialScore / 30) * 100 * 10) / 10,
+      breakdown: financialBreakdown
+    });
+    totalScore += financialScore;
+
+    // CATEGORY B — Revenue Predictability (20 pts max)
+    let predictabilityScore = 0;
+    const predictabilityBreakdown = [];
+
+    if (exitInputs.recurring_revenue_pct > 90) {
+      predictabilityScore += 8;
+      predictabilityBreakdown.push({ item: "Recurring > 90%", points: 8 });
+    } else if (exitInputs.recurring_revenue_pct > 70) {
+      predictabilityScore += 5;
+      predictabilityBreakdown.push({ item: "Recurring 70-90%", points: 5 });
+    } else {
+      predictabilityScore += 2;
+      predictabilityBreakdown.push({ item: "Recurring < 70%", points: 2 });
+    }
+
+    if (exitInputs.has_annual_contracts) {
+      predictabilityScore += 5;
+      predictabilityBreakdown.push({ item: "Annual contracts", points: 5 });
+    }
+
+    if (exitInputs.max_customer_concentration <= 30) {
+      predictabilityScore += 4;
+      predictabilityBreakdown.push({ item: "No customer > 30%", points: 4 });
+    }
+
+    predictabilityScore = Math.min(predictabilityScore, 20);
+    categoryScores.push({
+      category: "Revenue Predictability",
+      score: predictabilityScore,
+      max_score: 20,
+      percentage: Math.round((predictabilityScore / 20) * 100 * 10) / 10,
+      breakdown: predictabilityBreakdown
+    });
+    totalScore += predictabilityScore;
+
+    // CATEGORY C — Operational Transferability (20 pts max)
+    let operationalScore = 0;
+    const operationalBreakdown = [];
+
+    if (exitInputs.founder_hours_per_week < 20) {
+      operationalScore += 8;
+      operationalBreakdown.push({ item: "Founder < 20h/week", points: 8 });
+    } else if (exitInputs.founder_hours_per_week < 30) {
+      operationalScore += 5;
+      operationalBreakdown.push({ item: "Founder 20-30h/week", points: 5 });
+    } else {
+      operationalScore += 2;
+      operationalBreakdown.push({ item: "Founder > 30h/week", points: 2 });
+      improvementSuggestions.push("Reduce founder dependency to < 20 hours/week");
+    }
+
+    if (exitInputs.has_documented_sops) {
+      operationalScore += 5;
+      operationalBreakdown.push({ item: "SOPs documented", points: 5 });
+    }
+
+    operationalScore = Math.min(operationalScore, 20);
+    categoryScores.push({
+      category: "Operational Transferability",
+      score: operationalScore,
+      max_score: 20,
+      percentage: Math.round((operationalScore / 20) * 100 * 10) / 10,
+      breakdown: operationalBreakdown
+    });
+    totalScore += operationalScore;
+
+    // CATEGORY D — Market Attractiveness (15 pts max)
+    let marketScore = 0;
+    const marketBreakdown = [];
+
+    if (exitInputs.is_b2b) {
+      marketScore += 6;
+      marketBreakdown.push({ item: "B2B model", points: 6 });
+    } else {
+      marketScore += 3;
+      marketBreakdown.push({ item: "B2C model", points: 3 });
+    }
+
+    if (exitInputs.has_clear_icp) {
+      marketScore += 4;
+      marketBreakdown.push({ item: "Clear ICP defined", points: 4 });
+    }
+
+    marketScore = Math.min(marketScore, 15);
+    categoryScores.push({
+      category: "Market Attractiveness",
+      score: marketScore,
+      max_score: 15,
+      percentage: Math.round((marketScore / 15) * 100 * 10) / 10,
+      breakdown: marketBreakdown
+    });
+    totalScore += marketScore;
+
+    // CATEGORY E — Risk Profile (15 pts max)
+    let riskScore = 15;
+    const riskBreakdown = [];
+
+    if (exitInputs.seo_traffic_pct >= 50) {
+      riskScore -= 4;
+      riskBreakdown.push({ item: "SEO traffic > 50%", points: -4 });
+    }
+
+    if (!exitInputs.has_legal_docs) {
+      riskScore -= 3;
+      riskBreakdown.push({ item: "Missing legal docs", points: -3 });
+    }
+
+    if (!exitInputs.has_12mo_financials) {
+      riskScore -= 2;
+      riskBreakdown.push({ item: "No 12mo financials", points: -2 });
+    }
+
+    if (riskBreakdown.length === 0) {
+      riskBreakdown.push({ item: "No major risks", points: 0 });
+    }
+
+    riskScore = Math.max(riskScore, 0);
+    categoryScores.push({
+      category: "Risk Profile",
+      score: riskScore,
+      max_score: 15,
+      percentage: Math.round((riskScore / 15) * 100 * 10) / 10,
+      breakdown: riskBreakdown
+    });
+    totalScore += riskScore;
+
+    // Clamp and classify
+    totalScore = Math.max(0, Math.min(100, totalScore));
+
+    let statusLabel, statusColor;
+    if (totalScore >= 85) {
+      statusLabel = "Premium Exit Candidate";
+      statusColor = "purple";
+    } else if (totalScore >= 70) {
+      statusLabel = "Attractive Asset";
+      statusColor = "green";
+    } else if (totalScore >= 40) {
+      statusLabel = "Needs Optimization";
+      statusColor = "yellow";
+    } else {
+      statusLabel = "High Risk Asset";
+      statusColor = "red";
+    }
+
+    // Percentile estimate
+    let percentileEstimate;
+    if (arr >= 100000) {
+      percentileEstimate = Math.min(95, Math.floor(totalScore * 0.95));
+    } else if (arr >= 50000) {
+      percentileEstimate = Math.min(85, Math.floor(totalScore * 0.85));
+    } else if (arr >= 25000) {
+      percentileEstimate = Math.min(75, Math.floor(totalScore * 0.75));
+    } else {
+      percentileEstimate = Math.min(60, Math.floor(totalScore * 0.6));
+    }
+
+    return {
+      total_score: Math.round(totalScore * 10) / 10,
+      status_label: statusLabel,
+      status_color: statusColor,
+      category_scores: categoryScores,
+      percentile_estimate: percentileEstimate,
+      improvement_suggestions: improvementSuggestions.slice(0, 5)
+    };
+  };
   };
 
   const getStatusColor = (color) => {
