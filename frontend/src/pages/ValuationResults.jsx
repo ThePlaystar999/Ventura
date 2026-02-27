@@ -494,29 +494,49 @@ const ValuationResults = () => {
               <SidebarContent isMobile={true} />
             </div>
 
+            {/* ═══════════════════════════════════════════════════════════════
+                PRIMARY STRATEGIC BLOCKS (Sections 2-5)
+                Enhanced shadow + subtle background for visual priority
+            ═══════════════════════════════════════════════════════════════ */}
+            
             {/* SECTION 2 — EXIT READINESS SCORE */}
-            <ExitReadinessCard 
-              metrics={valuation.metrics} 
-              valuationId={valuationId}
-            />
+            <div className="primary-strategic-block">
+              <ExitReadinessCard 
+                metrics={valuation.metrics} 
+                valuationId={valuationId}
+              />
+            </div>
 
             {/* SECTION 3 — RISK & DEAL KILLERS */}
-            <DealKillerAlert metrics={valuation.metrics} />
+            <div className="primary-strategic-block">
+              <DealKillerAlert metrics={valuation.metrics} />
+            </div>
 
             {/* SECTION 4 — BUYER FIT ANALYSIS */}
-            <BuyerFitSection metrics={valuation.metrics} />
+            <div className="primary-strategic-block">
+              <BuyerFitSection metrics={valuation.metrics} />
+            </div>
 
             {/* SECTION 5 — EXIT OPTIMIZATION ROADMAP */}
-            <OptimizationRoadmap metrics={valuation.metrics} />
+            <div className="primary-strategic-block">
+              <OptimizationRoadmap metrics={valuation.metrics} />
+            </div>
+
+            {/* ═══════════════════════════════════════════════════════════════
+                SECONDARY STRATEGIC BLOCKS (Sections 6-7)
+                Standard styling
+            ═══════════════════════════════════════════════════════════════ */}
 
             {/* SECTION 6 — WHAT-IF SIMULATOR */}
-            <MultipleImpactSimulator 
-              metrics={valuation.metrics} 
-              currentMultiple={valuation.results?.base_multiple || 3.0}
-            />
+            <div className="secondary-strategic-block">
+              <MultipleImpactSimulator 
+                metrics={valuation.metrics} 
+                currentMultiple={valuation.results?.base_multiple || 3.0}
+              />
+            </div>
 
             {/* SECTION 7 — EXIT SCENARIOS */}
-            <div className="bg-white rounded-xl border border-[#EEF2F7] p-6">
+            <div className="secondary-strategic-block bg-white rounded-xl border border-[#EEF2F7] p-6">
               <div className="mb-6">
                 <p className="text-xs text-slate-500 uppercase tracking-wider mb-1">Realistic Exit Pathways Based on Current Metrics</p>
                 <h3 className="text-lg font-semibold text-slate-900">Exit Scenarios</h3>
