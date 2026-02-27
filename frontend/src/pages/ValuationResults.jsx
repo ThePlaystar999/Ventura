@@ -202,6 +202,16 @@ const ValuationResults = () => {
           />
         </div>
 
+        {/* Buyer Fit Analysis */}
+        <div className="mb-8">
+          <BuyerFitSection metrics={valuation.metrics} />
+        </div>
+
+        {/* Optimization Roadmap */}
+        <div className="mb-8">
+          <OptimizationRoadmap metrics={valuation.metrics} />
+        </div>
+
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Left Column - Main Results */}
           <div className="lg:col-span-2 space-y-6">
