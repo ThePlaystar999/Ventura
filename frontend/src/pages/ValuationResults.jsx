@@ -581,7 +581,6 @@ const ValuationResults = () => {
                 ))}
               </div>
             </div>
-            </div>
 
             {/* ═══════════════════════════════════════════════════════════════
                 INFORMATIONAL BLOCKS (Valuation Range, Adjustments, Summary)
