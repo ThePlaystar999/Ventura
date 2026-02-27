@@ -1737,10 +1737,10 @@ def generate_valuation_pdf(valuation_data: dict) -> bytes:
             pdf.set_font('Helvetica', 'B', 10)
             if dk_result.has_critical:
                 pdf.set_text_color(239, 68, 68)
-                pdf.cell(0, 8, f"⚠ {dk_result.total_issues} Potential Deal Killer(s) - CRITICAL", ln=True)
+                pdf.cell(0, 8, f"[!] {dk_result.total_issues} Potential Deal Killer(s) - CRITICAL", ln=True)
             else:
                 pdf.set_text_color(245, 158, 11)
-                pdf.cell(0, 8, f"⚠ {dk_result.total_issues} Issue(s) Requiring Attention", ln=True)
+                pdf.cell(0, 8, f"[!] {dk_result.total_issues} Issue(s) Requiring Attention", ln=True)
             
             for dk in dk_result.deal_killers:
                 pdf.set_font('Helvetica', 'B', 9)
