@@ -169,7 +169,7 @@ const ValuationResults = () => {
           </div>
         </div>
 
-        {/* Main Valuation Card */}
+        {/* SECTION 1 — HERO SNAPSHOT */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -193,10 +193,13 @@ const ValuationResults = () => {
                 Final Multiple: {result?.multiple_used}x
               </span>
             </div>
+            <p className="text-white/60 text-sm mt-4">
+              Exit intelligence dashboard for bootstrapped SaaS founders.
+            </p>
           </div>
         </motion.div>
 
-        {/* Exit Readiness Score Card - Below Hero */}
+        {/* SECTION 2 — EXIT READINESS SCORE */}
         <div className="mb-8">
           <ExitReadinessCard 
             metrics={valuation.metrics} 
@@ -204,17 +207,22 @@ const ValuationResults = () => {
           />
         </div>
 
-        {/* Deal Killer Alert */}
+        {/* SECTION 3 — RISK & DEAL KILLERS */}
         <div className="mb-8">
           <DealKillerAlert metrics={valuation.metrics} />
         </div>
 
-        {/* Buyer Fit Analysis */}
+        {/* SECTION 4 — BUYER FIT ANALYSIS */}
         <div className="mb-8">
           <BuyerFitSection metrics={valuation.metrics} />
         </div>
 
-        {/* Multiple Impact Simulator */}
+        {/* SECTION 5 — EXIT OPTIMIZATION ROADMAP */}
+        <div className="mb-8">
+          <OptimizationRoadmap metrics={valuation.metrics} />
+        </div>
+
+        {/* SECTION 6 — WHAT-IF SIMULATOR */}
         <div className="mb-8">
           <MultipleImpactSimulator 
             metrics={valuation.metrics} 
@@ -222,9 +230,51 @@ const ValuationResults = () => {
           />
         </div>
 
-        {/* Optimization Roadmap */}
-        <div className="mb-8">
-          <OptimizationRoadmap metrics={valuation.metrics} />
+        {/* SECTION 7 — EXIT SCENARIOS */}
+        <div className="bg-white rounded-xl border border-[#EEF2F7] p-6 mb-8">
+          <div className="mb-6">
+            <p className="text-xs text-slate-500 uppercase tracking-wider mb-1">Realistic Exit Pathways Based on Current Metrics</p>
+            <h3 className="text-lg font-semibold text-slate-900">Exit Scenarios</h3>
+          </div>
+          
+          <div className="space-y-4">
+            {exit_scenarios?.map((scenario, index) => (
+              <motion.div
+                key={scenario.scenario_type}
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: index * 0.1 }}
+                className="exit-card p-5"
+                data-testid={`exit-scenario-${index}`}
+              >
+                <div className="flex items-start justify-between mb-3">
+                  <div>
+                    <h4 className="font-semibold text-slate-900">{scenario.name}</h4>
+                    <p className="text-2xl font-bold text-[#0B4DBB] mt-1">
+                      {formatCurrency(scenario.estimated_value * (growthAdjustment[0] / 100) * (multipleAdjustment[0] / 100))}
+                    </p>
+                    <p className="text-sm text-slate-500 mt-1">{scenario.multiple}x multiple</p>
+                  </div>
+                  <div className="flex flex-col items-end gap-2">
+                    <span className={`text-xs font-medium px-2 py-1 rounded ${
+                      scenario.probability === 'High' ? 'bg-green-100 text-green-700' :
+                      scenario.probability === 'Medium' ? 'bg-yellow-100 text-yellow-700' :
+                      'bg-slate-100 text-slate-600'
+                    }`}>
+                      {scenario.probability} Probability
+                    </span>
+                    <span className="text-xs font-medium px-2 py-1 rounded bg-[#F0F7FF] text-[#0B4DBB]">
+                      {scenario.timeline}
+                    </span>
+                  </div>
+                </div>
+                <p className="text-sm text-slate-600 mb-2">{scenario.description}</p>
+                <p className="text-xs text-slate-500 italic border-t border-slate-100 pt-2 mt-2">
+                  {scenario.rationale}
+                </p>
+              </motion.div>
+            ))}
+          </div>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
