@@ -238,6 +238,39 @@ class OptimizationRoadmapResult(BaseModel):
     total_potential_score_gain: int
     total_potential_multiple_gain: float
 
+# ============ DEAL KILLER MODELS ============
+
+class DealKiller(BaseModel):
+    flag: str
+    description: str
+    severity: str  # Critical, High, Medium
+    recommendation: str
+
+class DealKillerResult(BaseModel):
+    deal_killers: List[DealKiller]
+    severity_level: str  # None, Warning, Critical
+    has_critical: bool
+    total_issues: int
+
+# ============ MULTIPLE IMPACT SIMULATOR MODELS ============
+
+class SimulatorScenario(BaseModel):
+    scenario_id: str
+    label: str
+    description: str
+    enabled: bool = False
+    multiple_impact: float
+    category: str
+
+class SimulatorResult(BaseModel):
+    current_multiple: float
+    projected_multiple: float
+    current_valuation: float
+    projected_valuation: float
+    delta_value: float
+    delta_percentage: float
+    active_scenarios: List[str]
+
 # ============ AUTH HELPERS ============
 
 async def get_current_user(request: Request) -> UserBase:
