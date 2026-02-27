@@ -581,9 +581,14 @@ const ValuationResults = () => {
                 ))}
               </div>
             </div>
+            </div>
+
+            {/* ═══════════════════════════════════════════════════════════════
+                INFORMATIONAL BLOCKS (Valuation Range, Adjustments, Summary)
+            ═══════════════════════════════════════════════════════════════ */}
 
             {/* Valuation Range with Sliders */}
-            <div className="bg-white rounded-xl border border-[#EEF2F7] p-6">
+            <div className="informational-block bg-white rounded-xl border border-[#EEF2F7] p-6">
               <h3 className="text-lg font-semibold text-slate-900 mb-6">Valuation Range</h3>
               
               <div className="grid grid-cols-3 gap-4 mb-6">
