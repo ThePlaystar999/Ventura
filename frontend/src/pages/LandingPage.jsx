@@ -111,7 +111,7 @@ const LandingPage = () => {
             transition={{ duration: 0.5, delay: 0.3 }}
             className="text-lg md:text-xl text-slate-600 max-w-2xl mb-10"
           >
-            AI-powered startup valuation & exit modeling for founders and investors.
+            Ventura is the AI-powered Exit OS that models your valuation, growth scenarios and strategic exit path — in minutes.
           </motion.p>
 
           {/* CTAs - Centered */}
