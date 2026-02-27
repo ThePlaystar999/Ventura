@@ -376,98 +376,33 @@ const ValuationResults = () => {
               </div>
             )}
 
-            {/* Exit Scenarios */}
-            <div className="bg-white rounded-xl border border-[#EEF2F7] p-6">
-              <h3 className="text-lg font-semibold text-slate-900 mb-6">Exit Scenarios</h3>
-              
-              <div className="space-y-4">
-                {exit_scenarios?.map((scenario, index) => (
-                  <motion.div
-                    key={scenario.scenario_type}
-                    initial={{ opacity: 0, x: -20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: index * 0.1 }}
-                    className="exit-card p-5"
-                    data-testid={`exit-scenario-${index}`}
-                  >
-                    <div className="flex items-start justify-between mb-3">
-                      <div>
-                        <h4 className="font-semibold text-slate-900">{scenario.name}</h4>
-                        <p className="text-2xl font-bold text-[#0B4DBB] mt-1">
-                          {formatCurrency(scenario.estimated_value * (growthAdjustment[0] / 100) * (multipleAdjustment[0] / 100))}
-                        </p>
-                        <p className="text-sm text-slate-500 mt-1">{scenario.multiple}x multiple</p>
-                      </div>
-                      <div className="flex flex-col items-end gap-2">
-                        <span className={`text-xs font-medium px-2 py-1 rounded ${
-                          scenario.probability === 'High' ? 'bg-green-100 text-green-700' :
-                          scenario.probability === 'Medium' ? 'bg-yellow-100 text-yellow-700' :
-                          'bg-slate-100 text-slate-600'
-                        }`}>
-                          {scenario.probability} Probability
-                        </span>
-                        <span className="text-xs font-medium px-2 py-1 rounded bg-[#F0F7FF] text-[#0B4DBB]">
-                          {scenario.timeline}
-                        </span>
-                      </div>
-                    </div>
-                    <p className="text-sm text-slate-600 mb-2">{scenario.description}</p>
-                    <p className="text-xs text-slate-500 italic border-t border-slate-100 pt-2 mt-2">
-                      {scenario.rationale}
-                    </p>
-                  </motion.div>
-                ))}
-              </div>
-            </div>
-
-            {/* AI Commentary */}
+            {/* SECTION 8 — ANALYSIS SUMMARY (Investor Memo Style) */}
             {ai_commentary && (
               <div className="bg-white rounded-xl border border-[#EEF2F7] p-6">
-                <h3 className="text-lg font-semibold text-slate-900 mb-6">Analysis Summary</h3>
-                
-                <p className="text-slate-600 leading-relaxed mb-6">{ai_commentary.summary}</p>
-                
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  {/* Strengths */}
-                  <div>
-                    <h4 className="font-medium text-green-700 flex items-center gap-2 mb-3">
-                      <CheckCircle className="w-4 h-4" />
-                      Key Strengths
-                    </h4>
-                    <ul className="space-y-2">
-                      {ai_commentary.key_strengths?.map((strength, i) => (
-                        <li key={i} className="text-sm text-slate-600 flex items-start gap-2">
-                          <span className="w-1.5 h-1.5 rounded-full bg-green-500 mt-1.5 flex-shrink-0"></span>
-                          {strength}
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                  
-                  {/* Risks */}
-                  <div>
-                    <h4 className="font-medium text-amber-700 flex items-center gap-2 mb-3">
-                      <AlertTriangle className="w-4 h-4" />
-                      Key Risks
-                    </h4>
-                    <ul className="space-y-2">
-                      {ai_commentary.key_risks?.map((risk, i) => (
-                        <li key={i} className="text-sm text-slate-600 flex items-start gap-2">
-                          <span className="w-1.5 h-1.5 rounded-full bg-amber-500 mt-1.5 flex-shrink-0"></span>
-                          {risk}
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
+                <div className="flex items-center gap-2 mb-4">
+                  <Info className="w-4 h-4 text-[#0B4DBB]" />
+                  <h3 className="text-lg font-semibold text-slate-900">Executive Summary</h3>
                 </div>
                 
-                {/* Exit Readiness */}
-                <div className="mt-6 p-4 bg-[#F0F7FF] rounded-lg">
-                  <h4 className="font-medium text-[#0B4DBB] flex items-center gap-2 mb-2">
-                    <Info className="w-4 h-4" />
-                    Exit Readiness Assessment
-                  </h4>
-                  <p className="text-sm text-slate-700">{ai_commentary.exit_readiness}</p>
+                <div className="space-y-4 text-sm text-slate-700 leading-relaxed">
+                  {/* Concise Summary - 4-6 lines max */}
+                  <p>{ai_commentary.summary?.split('.').slice(0, 2).join('.')}.</p>
+                  
+                  <div className="flex gap-4 pt-3 border-t border-slate-100">
+                    <div className="flex-1">
+                      <span className="text-xs font-semibold text-green-600 uppercase">Strengths</span>
+                      <p className="text-slate-600 mt-1">{ai_commentary.key_strengths?.slice(0, 2).join('. ')}.</p>
+                    </div>
+                    <div className="flex-1">
+                      <span className="text-xs font-semibold text-amber-600 uppercase">Risks</span>
+                      <p className="text-slate-600 mt-1">{ai_commentary.key_risks?.slice(0, 2).join('. ')}.</p>
+                    </div>
+                  </div>
+                  
+                  <div className="p-3 bg-[#F0F7FF] rounded-lg">
+                    <span className="text-xs font-semibold text-[#0B4DBB] uppercase">Exit Readiness</span>
+                    <p className="text-slate-700 mt-1">{ai_commentary.exit_readiness?.split('.').slice(0, 1).join('.')}.</p>
+                  </div>
                 </div>
               </div>
             )}
