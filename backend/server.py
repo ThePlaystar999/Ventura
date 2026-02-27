@@ -448,6 +448,281 @@ def calculate_qualitative_adjustment(qualitative: QualitativeScores) -> tuple:
     
     return total_adj, "; ".join(reasons) if reasons else "Standard qualitative assessment"
 
+# ============ EXIT READINESS SCORE ENGINE ============
+
+def calculate_exit_readiness_score(
+    metrics: ValuationMetrics,
+    exit_inputs: ExitReadinessInputs
+) -> ExitReadinessResult:
+    """
+    Calculate Exit Readiness Score (0-100) with weighted categories.
+    Deterministic and explainable scoring.
+    """
+    category_scores = []
+    total_score = 0.0
+    improvement_suggestions = []
+    
+    # CATEGORY A — Financial Quality (30 pts max)
+    financial_score = 0.0
+    financial_breakdown = []
+    
+    # ARR scoring
+    arr = metrics.arr if metrics.arr > 0 else metrics.mrr * 12
+    if arr >= 25000:
+        financial_score += 10
+        financial_breakdown.append({"item": "ARR >= $25k", "points": 10})
+    elif arr >= 10000:
+        financial_score += 7
+        financial_breakdown.append({"item": "ARR $10-25k", "points": 7})
+    elif arr >= 1000:
+        financial_score += 4
+        financial_breakdown.append({"item": "ARR $1-10k", "points": 4})
+    else:
+        financial_score += 1
+        financial_breakdown.append({"item": "ARR < $1k", "points": 1})
+        improvement_suggestions.append("Increase ARR to $25k+ for maximum financial score")
+    
+    # Growth scoring
+    growth = metrics.growth_rate
+    if growth > 50:
+        financial_score += 6
+        financial_breakdown.append({"item": "Growth > 50%", "points": 6})
+    elif growth >= 20:
+        financial_score += 4
+        financial_breakdown.append({"item": "Growth 20-50%", "points": 4})
+    else:
+        financial_score += 2
+        financial_breakdown.append({"item": "Growth < 20%", "points": 2})
+        improvement_suggestions.append("Accelerate growth rate to 50%+ for premium positioning")
+    
+    # Churn scoring
+    churn = exit_inputs.churn_rate
+    if churn < 5:
+        financial_score += 6
+        financial_breakdown.append({"item": "Churn < 5%", "points": 6})
+    elif churn <= 8:
+        financial_score += 4
+        financial_breakdown.append({"item": "Churn 5-8%", "points": 4})
+    else:
+        financial_score += 1
+        financial_breakdown.append({"item": "Churn > 8%", "points": 1})
+        improvement_suggestions.append("Reduce churn below 5% to improve retention metrics")
+    
+    # NRR scoring
+    nrr = exit_inputs.nrr if exit_inputs.nrr else metrics.nrr
+    if nrr > 110:
+        financial_score += 8
+        financial_breakdown.append({"item": "NRR > 110%", "points": 8})
+    elif nrr >= 100:
+        financial_score += 6
+        financial_breakdown.append({"item": "NRR 100-110%", "points": 6})
+    else:
+        financial_score += 2
+        financial_breakdown.append({"item": "NRR < 100%", "points": 2})
+        improvement_suggestions.append("Improve NRR to 110%+ through upsells and expansion")
+    
+    financial_score = min(financial_score, 30)  # Cap at 30
+    category_scores.append(CategoryScore(
+        category="Financial Quality",
+        score=financial_score,
+        max_score=30,
+        percentage=round((financial_score / 30) * 100, 1),
+        breakdown=financial_breakdown
+    ))
+    total_score += financial_score
+    
+    # CATEGORY B — Revenue Predictability (20 pts max)
+    predictability_score = 0.0
+    predictability_breakdown = []
+    
+    if exit_inputs.recurring_revenue_pct > 90:
+        predictability_score += 8
+        predictability_breakdown.append({"item": "Recurring > 90%", "points": 8})
+    elif exit_inputs.recurring_revenue_pct > 70:
+        predictability_score += 5
+        predictability_breakdown.append({"item": "Recurring 70-90%", "points": 5})
+    else:
+        predictability_score += 2
+        predictability_breakdown.append({"item": "Recurring < 70%", "points": 2})
+        improvement_suggestions.append("Increase recurring revenue to 90%+ for predictable income")
+    
+    if exit_inputs.has_annual_contracts:
+        predictability_score += 5
+        predictability_breakdown.append({"item": "Annual contracts", "points": 5})
+    else:
+        improvement_suggestions.append("Offer annual contracts to lock in revenue")
+    
+    if exit_inputs.max_customer_concentration <= 30:
+        predictability_score += 4
+        predictability_breakdown.append({"item": "No customer > 30%", "points": 4})
+    else:
+        predictability_breakdown.append({"item": "Customer concentration risk", "points": 0})
+        improvement_suggestions.append("Reduce customer concentration below 30%")
+    
+    if exit_inputs.has_stripe_verified:
+        predictability_score += 3
+        predictability_breakdown.append({"item": "Stripe verified", "points": 3})
+    
+    predictability_score = min(predictability_score, 20)
+    category_scores.append(CategoryScore(
+        category="Revenue Predictability",
+        score=predictability_score,
+        max_score=20,
+        percentage=round((predictability_score / 20) * 100, 1),
+        breakdown=predictability_breakdown
+    ))
+    total_score += predictability_score
+    
+    # CATEGORY C — Operational Transferability (20 pts max)
+    operational_score = 0.0
+    operational_breakdown = []
+    
+    if exit_inputs.founder_hours_per_week < 20:
+        operational_score += 8
+        operational_breakdown.append({"item": "Founder < 20h/week", "points": 8})
+    elif exit_inputs.founder_hours_per_week < 30:
+        operational_score += 5
+        operational_breakdown.append({"item": "Founder 20-30h/week", "points": 5})
+    else:
+        operational_score += 2
+        operational_breakdown.append({"item": "Founder > 30h/week", "points": 2})
+        improvement_suggestions.append("Reduce founder dependency to < 20 hours/week")
+    
+    if exit_inputs.has_documented_sops:
+        operational_score += 5
+        operational_breakdown.append({"item": "SOPs documented", "points": 5})
+    else:
+        improvement_suggestions.append("Document standard operating procedures")
+    
+    clean_stacks = ["Rails", "Node", "Python", "Laravel", "PHP"]
+    if exit_inputs.tech_stack in clean_stacks:
+        operational_score += 4
+        operational_breakdown.append({"item": f"Clean tech stack ({exit_inputs.tech_stack})", "points": 4})
+    else:
+        operational_score += 2
+        operational_breakdown.append({"item": "Non-standard tech stack", "points": 2})
+    
+    if exit_inputs.has_automated_support:
+        operational_score += 3
+        operational_breakdown.append({"item": "Automated support", "points": 3})
+    
+    operational_score = min(operational_score, 20)
+    category_scores.append(CategoryScore(
+        category="Operational Transferability",
+        score=operational_score,
+        max_score=20,
+        percentage=round((operational_score / 20) * 100, 1),
+        breakdown=operational_breakdown
+    ))
+    total_score += operational_score
+    
+    # CATEGORY D — Market Attractiveness (15 pts max)
+    market_score = 0.0
+    market_breakdown = []
+    
+    if exit_inputs.is_b2b:
+        market_score += 6
+        market_breakdown.append({"item": "B2B model", "points": 6})
+    else:
+        market_score += 3
+        market_breakdown.append({"item": "B2C model", "points": 3})
+    
+    if exit_inputs.has_clear_icp:
+        market_score += 4
+        market_breakdown.append({"item": "Clear ICP defined", "points": 4})
+    else:
+        improvement_suggestions.append("Define clear Ideal Customer Profile (ICP)")
+    
+    if exit_inputs.has_tam_documented:
+        market_score += 3
+        market_breakdown.append({"item": "TAM documented", "points": 3})
+    
+    if exit_inputs.low_fragmentation_risk:
+        market_score += 2
+        market_breakdown.append({"item": "Low fragmentation risk", "points": 2})
+    
+    market_score = min(market_score, 15)
+    category_scores.append(CategoryScore(
+        category="Market Attractiveness",
+        score=market_score,
+        max_score=15,
+        percentage=round((market_score / 15) * 100, 1),
+        breakdown=market_breakdown
+    ))
+    total_score += market_score
+    
+    # CATEGORY E — Risk Profile (15 pts max, starts at 15 and subtracts)
+    risk_score = 15.0
+    risk_breakdown = []
+    
+    if exit_inputs.seo_traffic_pct >= 50:
+        risk_score -= 4
+        risk_breakdown.append({"item": "SEO traffic > 50%", "points": -4})
+        improvement_suggestions.append("Diversify traffic sources beyond SEO")
+    
+    if exit_inputs.max_customer_concentration >= 40:
+        risk_score -= 6
+        risk_breakdown.append({"item": "Customer > 40% revenue", "points": -6})
+    
+    if not exit_inputs.has_legal_docs:
+        risk_score -= 3
+        risk_breakdown.append({"item": "Missing legal docs", "points": -3})
+        improvement_suggestions.append("Ensure all legal documentation is in place")
+    
+    if not exit_inputs.has_12mo_financials:
+        risk_score -= 2
+        risk_breakdown.append({"item": "No 12mo financials", "points": -2})
+        improvement_suggestions.append("Maintain 12+ months of financial records")
+    
+    if not risk_breakdown:
+        risk_breakdown.append({"item": "No major risks", "points": 0})
+    
+    risk_score = max(risk_score, 0)
+    category_scores.append(CategoryScore(
+        category="Risk Profile",
+        score=risk_score,
+        max_score=15,
+        percentage=round((risk_score / 15) * 100, 1),
+        breakdown=risk_breakdown
+    ))
+    total_score += risk_score
+    
+    # Clamp total score
+    total_score = max(0, min(100, total_score))
+    
+    # Classification
+    if total_score >= 85:
+        status_label = "Premium Exit Candidate"
+        status_color = "purple"
+    elif total_score >= 70:
+        status_label = "Attractive Asset"
+        status_color = "green"
+    elif total_score >= 40:
+        status_label = "Needs Optimization"
+        status_color = "yellow"
+    else:
+        status_label = "High Risk Asset"
+        status_color = "red"
+    
+    # Percentile estimate based on ARR bucket
+    if arr >= 100000:
+        percentile_estimate = min(95, int(total_score * 0.95))
+    elif arr >= 50000:
+        percentile_estimate = min(85, int(total_score * 0.85))
+    elif arr >= 25000:
+        percentile_estimate = min(75, int(total_score * 0.75))
+    else:
+        percentile_estimate = min(60, int(total_score * 0.6))
+    
+    return ExitReadinessResult(
+        total_score=round(total_score, 1),
+        status_label=status_label,
+        status_color=status_color,
+        category_scores=category_scores,
+        percentile_estimate=percentile_estimate,
+        improvement_suggestions=improvement_suggestions[:5]  # Top 5 suggestions
+    )
+
 def calculate_valuation(
     company_info: CompanyInfo, 
     metrics: ValuationMetrics,
