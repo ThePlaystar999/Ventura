@@ -1762,6 +1762,26 @@ async def calculate_exit_readiness_from_valuation(
     result = calculate_exit_readiness_score(metrics, exit_inputs)
     return result
 
+@api_router.post("/buyer-fit/calculate", response_model=BuyerFitResult)
+async def calculate_buyer_fit_score(
+    metrics: ValuationMetrics,
+    exit_inputs: ExitReadinessInputs,
+    user: UserBase = Depends(get_current_user)
+):
+    """Calculate Buyer Fit scores for Solo Operator and Micro PE profiles"""
+    result = calculate_buyer_fit(metrics, exit_inputs)
+    return result
+
+@api_router.post("/optimization-roadmap/generate", response_model=OptimizationRoadmapResult)
+async def generate_roadmap(
+    metrics: ValuationMetrics,
+    exit_inputs: ExitReadinessInputs,
+    user: UserBase = Depends(get_current_user)
+):
+    """Generate optimization roadmap with actionable improvements"""
+    result = generate_optimization_roadmap(metrics, exit_inputs)
+    return result
+
 # ============ SHARE ROUTES ============
 
 @api_router.get("/share/{share_token}")
