@@ -11,6 +11,7 @@ import AuthCallback from "./pages/AuthCallback";
 import PricingPage from "./pages/PricingPage";
 import AboutPage from "./pages/AboutPage";
 import ValuationPage from "./pages/ValuationPage";
+import ExitOSDashboard from "./pages/ExitOSDashboard";
 import "./App.css";
 
 const API = process.env.REACT_APP_BACKEND_URL + "/api";
