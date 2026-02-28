@@ -342,41 +342,238 @@ button:active {
 
 
 /* ═══════════════════════════════════════════════════════════════
-   VISUAL PRIORITY HIERARCHY - Valuation Results Dashboard
+   GLOBAL VISUAL HIERARCHY - Ventura Exit OS Dashboard
+   Stripe/Linear/Vercel-level premium design system
 ═══════════════════════════════════════════════════════════════ */
 
-/* Primary Strategic Blocks (Sections 2-5)
-   Enhanced shadow + subtle left border accent for visual priority */
+/* =========================
+   TIER 1 - Primary Strategic Blocks
+   (Exit Readiness, Deal Killers, Buyer Fit, Roadmap)
+   Highest visual importance
+========================= */
+.tier-1-block {
+  position: relative;
+  margin-bottom: 2rem;
+}
+
+.tier-1-block > div,
+.tier-1-block > section {
+  background: linear-gradient(180deg, #FFFFFF 0%, #FAFBFD 100%);
+  box-shadow: 
+    0 0 0 1px rgba(11, 77, 187, 0.08),
+    0 4px 16px -4px rgba(11, 77, 187, 0.12),
+    0 8px 24px -8px rgba(0, 0, 0, 0.08);
+  border-radius: 16px;
+  border: none;
+}
+
+.tier-1-block > div::before,
+.tier-1-block > section::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, #0B4DBB 0%, #1E6AE1 100%);
+  border-radius: 16px 16px 0 0;
+}
+
+/* =========================
+   TIER 2 - Secondary Strategic Blocks  
+   (What-If Simulator, Exit Scenarios)
+   Standard importance
+========================= */
+.tier-2-block {
+  position: relative;
+  margin-bottom: 1.5rem;
+}
+
+.tier-2-block > div {
+  background: #FFFFFF;
+  box-shadow: 
+    0 0 0 1px rgba(0, 0, 0, 0.04),
+    0 2px 8px -2px rgba(0, 0, 0, 0.06);
+  border-radius: 16px;
+  border: none;
+}
+
+/* =========================
+   TIER 3 - Informational Blocks
+   (Analysis Summary, Assumptions, Valuation Range)
+   Compact, minimal
+========================= */
+.tier-3-block {
+  position: relative;
+  margin-bottom: 1.25rem;
+}
+
+.tier-3-block > div {
+  background: #FFFFFF;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+  border-radius: 12px;
+  border: none;
+}
+
+/* Tier 3 - reduced padding */
+.tier-3-block .p-6 {
+  padding: 1.25rem;
+}
+
+/* =========================
+   SIDEBAR - Refined Styling
+========================= */
+
+/* Quick Snapshot - Investor Style */
+.sidebar-snapshot {
+  background: linear-gradient(180deg, #F8FAFC 0%, #F1F5F9 100%);
+  border: none;
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.04);
+  border-radius: 12px;
+}
+
+.sidebar-snapshot .metric-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.5rem 0;
+}
+
+.sidebar-snapshot .metric-label {
+  font-size: 0.8125rem;
+  color: #64748B;
+  font-weight: 400;
+}
+
+.sidebar-snapshot .metric-value {
+  font-size: 0.9375rem;
+  color: #0F172A;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Buyer Filters - Checklist Style */
+.sidebar-filters {
+  background: #FFFFFF;
+  border: none;
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.04);
+  border-radius: 12px;
+}
+
+.sidebar-filters .filter-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.625rem 0;
+  border-bottom: 1px solid #F1F5F9;
+}
+
+.sidebar-filters .filter-row:last-child {
+  border-bottom: none;
+}
+
+/* =========================
+   INTERACTION STATES
+   Subtle hover lifts
+========================= */
+
+/* Roadmap items */
+.roadmap-item {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.roadmap-item:hover {
+  transform: translateY(-2px);
+  box-shadow: 
+    0 4px 12px -4px rgba(0, 0, 0, 0.12),
+    0 0 0 1px rgba(0, 0, 0, 0.04);
+}
+
+/* What-if toggle items */
+.whatif-toggle {
+  transition: transform 0.15s ease, box-shadow 0.15s ease, background-color 0.15s ease;
+}
+
+.whatif-toggle:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px -4px rgba(11, 77, 187, 0.15);
+}
+
+/* Buyer fit cards */
+.buyer-fit-card {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.buyer-fit-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 
+    0 8px 20px -8px rgba(0, 0, 0, 0.15),
+    0 0 0 1px rgba(0, 0, 0, 0.04);
+}
+
+/* =========================
+   CARD CONSISTENCY
+   Unified border radius and shadows
+========================= */
+.card-consistent {
+  border-radius: 16px;
+  border: none;
+  overflow: hidden;
+}
+
+/* Remove grey borders globally for dashboard cards */
+.dashboard-card {
+  border: none !important;
+  box-shadow: 
+    0 0 0 1px rgba(0, 0, 0, 0.04),
+    0 2px 8px -2px rgba(0, 0, 0, 0.06);
+}
+
+/* =========================
+   VERTICAL RHYTHM
+   Structured spacing
+========================= */
+.section-gap-lg {
+  margin-bottom: 2.5rem;
+}
+
+.section-gap-md {
+  margin-bottom: 2rem;
+}
+
+.section-gap-sm {
+  margin-bottom: 1.5rem;
+}
+
+/* Legacy compatibility - keep old classes working */
 .primary-strategic-block {
   position: relative;
+  margin-bottom: 2rem;
 }
 
 .primary-strategic-block > div,
 .primary-strategic-block > section {
-  box-shadow: 0 4px 12px -2px rgba(11, 77, 187, 0.08), 0 2px 6px -2px rgba(0, 0, 0, 0.04);
-  border-left: 3px solid #0B4DBB;
+  box-shadow: 
+    0 0 0 1px rgba(11, 77, 187, 0.08),
+    0 4px 16px -4px rgba(11, 77, 187, 0.12),
+    0 8px 24px -8px rgba(0, 0, 0, 0.08);
+  border-left: none;
+  border-radius: 16px;
 }
 
-/* Secondary Strategic Blocks (Sections 6-7) - Standard styling */
 .secondary-strategic-block {
   position: relative;
-}
-
-.secondary-strategic-block > div {
-  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05);
-}
-
-/* Informational Blocks (Section 8 and supporting content) - Minimal styling */
-.informational-block {
-  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.03);
-}
-
-/* Consistent vertical rhythm */
-.primary-strategic-block,
-.secondary-strategic-block {
   margin-bottom: 1.5rem;
 }
 
-.primary-strategic-block:last-of-type {
-  margin-bottom: 2rem;
+.secondary-strategic-block > div {
+  box-shadow: 
+    0 0 0 1px rgba(0, 0, 0, 0.04),
+    0 2px 8px -2px rgba(0, 0, 0, 0.06);
+  border-radius: 16px;
+}
+
+.informational-block {
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+  border-radius: 12px;
 }
