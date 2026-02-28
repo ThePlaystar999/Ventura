@@ -1449,7 +1449,7 @@ def generate_exit_scenarios(
             multiple=round(secondary_multiple, 2),
             probability="High",
             timeline="1-2 years",
-            rationale=f"Secondary transactions typically occur at 10-20% discount to primary valuations for liquidity. This provides near-term liquidity for founders and early investors while maintaining company trajectory."
+            rationale="Secondary transactions typically occur at 10-20% discount to primary valuations for liquidity. This provides near-term liquidity for founders and early investors while maintaining company trajectory."
         )
     ]
     
