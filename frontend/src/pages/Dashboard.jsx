@@ -11,7 +11,7 @@ import { Button } from '../components/ui/button';
 import { Input } from '../components/ui/input';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '../components/ui/dialog';
 import { toast } from 'sonner';
-import { Plus, FolderOpen, TrendingUp, Calendar, Trash2, FileText, ExternalLink, ChevronDown, Sparkles, ArrowRight } from 'lucide-react';
+import { Plus, FolderOpen, TrendingUp, FileText, ChevronDown, Sparkles, ArrowRight } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 const API = process.env.REACT_APP_BACKEND_URL + "/api";
