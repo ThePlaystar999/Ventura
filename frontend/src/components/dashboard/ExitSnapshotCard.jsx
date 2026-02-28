@@ -2,10 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '../ui/button';
 import { Input } from '../ui/input';
-import { TrendingUp, TrendingDown, Target, ArrowRight, Edit3, Check, X } from 'lucide-react';
+import { TrendingUp, TrendingDown, ArrowRight, Edit3, Check, X } from 'lucide-react';
 import { motion } from 'framer-motion';
-
-const API = process.env.REACT_APP_BACKEND_URL + "/api";
 
 const ExitSnapshotCard = ({ 
   projects, 
