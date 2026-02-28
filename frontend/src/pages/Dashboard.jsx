@@ -6,6 +6,7 @@ import ExitSnapshotCard from '../components/dashboard/ExitSnapshotCard';
 import ValuationOverTimeChart from '../components/dashboard/ValuationOverTimeChart';
 import ValuationBoostOpportunities from '../components/dashboard/ValuationBoostOpportunities';
 import ProjectCard from '../components/dashboard/ProjectCard';
+import BenchmarkBanner from '../components/dashboard/BenchmarkBanner';
 import { Button } from '../components/ui/button';
 import { Input } from '../components/ui/input';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '../components/ui/dialog';
