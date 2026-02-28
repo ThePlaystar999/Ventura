@@ -4,6 +4,27 @@
 
 ### Latest Update: February 28, 2026
 
+- **Exit OS Dashboard Route**: NEW
+  - New route: `/projects/:projectId/exit-os`
+  - Page: `ExitOSDashboard.jsx` with:
+    - Project header with breadcrumb navigation
+    - Quick stats grid (Current Valuation, Exit Readiness, Valuations Count, Last Updated)
+    - Valuation history list with links to detailed reports
+    - "Coming Soon" placeholders for Exit Readiness Tracker and Optimization Insights
+    - Responsive design for mobile/desktop
+
+- **Open Exit OS Entry Points**:
+  - **Global**: Project selector dropdown + "Open Exit OS" button in dashboard header
+    - Button is primary (filled blue) when project has valuations
+    - Button is secondary (outline) when no valuations
+  - **Per Project Card**: 
+    - Entire card header area is clickable → leads to Exit OS
+    - Primary CTA: "Open Exit OS" (when has valuations)
+    - Secondary CTA: "Update Valuation" icon button
+    - "Start Valuation" remains primary when no valuations
+
+- **Backend**: Added `GET /api/projects/{project_id}` endpoint
+
 - **Code Cleanup Pass**: 
   - Removed unused imports across all dashboard components
   - Fixed Python linting issues (unused variable, f-string without placeholders)
