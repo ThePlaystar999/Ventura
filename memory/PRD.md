@@ -3,14 +3,15 @@
 ## Product Requirements Document
 
 ### Latest Update: February 28, 2026
-- **Premium Hero Upgrade**: Stripe/Linear/Vercel-level design
-  - Rich vertical gradient (#0842A0 → #0B4DBB → #1E6AE1)
-  - Radial glow effect behind valuation, subtle noise texture overlay
-  - Typography hierarchy: ultra bold valuation, medium weight subtitle
-  - Multiple display with delta indicator (+Xx premium / -Xx discount)
-  - Micro KPI strip (ARR · Growth · Gross Margin · NRR)
-  - Confidence badge (top-right with metric count)
-- **Previous**: Visual Priority Hierarchy, Dashboard Refactor (February 27, 2026)
+- **Global Visual Hierarchy Refinement**: 3-tier premium system
+  - TIER 1 (Exit Readiness, Deal Killers, Buyer Fit, Roadmap): Gradient bg + strongest shadow + top border accent
+  - TIER 2 (What-If, Exit Scenarios): Neutral white + standard shadow
+  - TIER 3 (Valuation Range, Adjustments, Summary): Compact + minimal shadow
+  - Sidebar: Quick Snapshot (investor style, tabular-nums), Buyer Filters (checklist style, ring badges)
+  - Hover lift effects: roadmap items, what-if toggles, buyer fit cards
+  - Consistent border radius (16px main, 12px compact, 20px hero)
+- **Premium Hero Upgrade**: Stripe/Linear/Vercel-level design (February 28, 2026)
+- **Previous**: Dashboard Refactor (February 27, 2026)
 
 ## Original Problem Statement
 Build Ventura, a B2B SaaS web app that estimates startup valuation and exit scenarios using AI. Clean, corporate, premium, tech/finance/consulting-grade design similar to McKinsey/BCG/Goldman Sachs SaaS tools. White-first UI with fluid blue wave gradients.
