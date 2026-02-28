@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { ChevronDown, ChevronUp, Info, TrendingUp, Shield, Target, Building2, AlertTriangle } from 'lucide-react';
+import { ChevronDown, ChevronUp, Info, TrendingUp, Shield, Target, Building2, AlertTriangle, AlertCircle } from 'lucide-react';
 
 const API = process.env.REACT_APP_BACKEND_URL + "/api";
 
@@ -9,6 +9,7 @@ const ExitReadinessCard = ({ metrics, valuationId }) => {
   const [loading, setLoading] = useState(true);
   const [expanded, setExpanded] = useState(false);
   const [showTooltip, setShowTooltip] = useState(null);
+  const [animateScore, setAnimateScore] = useState(false);
 
   // Default exit inputs - can be extended to allow user customization
   const defaultExitInputs = {
@@ -39,10 +40,16 @@ const ExitReadinessCard = ({ metrics, valuationId }) => {
     }
   }, [metrics, valuationId]);
 
+  useEffect(() => {
+    if (score) {
+      // Trigger animation after score is set
+      setTimeout(() => setAnimateScore(true), 100);
+    }
+  }, [score]);
+
   const calculateScore = async () => {
     setLoading(true);
     try {
-      // Use client-side calculation for immediate feedback
       const result = calculateScoreLocally(metrics, defaultExitInputs);
       setScore(result);
     } catch (error) {
@@ -255,19 +262,28 @@ const ExitReadinessCard = ({ metrics, valuationId }) => {
     // Clamp and classify
     totalScore = Math.max(0, Math.min(100, totalScore));
 
-    let statusLabel, statusColor;
+    // Updated classification labels
+    let statusLabel, statusColor, readinessLabel;
     if (totalScore >= 85) {
       statusLabel = "Premium Exit Candidate";
       statusColor = "purple";
+      readinessLabel = "Highly Exit-Ready";
     } else if (totalScore >= 70) {
       statusLabel = "Attractive Asset";
       statusColor = "green";
+      readinessLabel = "Exit-Ready";
+    } else if (totalScore >= 55) {
+      statusLabel = "Moderate Candidate";
+      statusColor = "blue";
+      readinessLabel = "Moderately Exit-Ready";
     } else if (totalScore >= 40) {
-      statusLabel = "Needs Optimization";
+      statusLabel = "Needs Preparation";
       statusColor = "yellow";
+      readinessLabel = "Partially Exit-Ready";
     } else {
       statusLabel = "High Risk Asset";
       statusColor = "red";
+      readinessLabel = "Not Exit-Ready";
     }
 
     // Percentile estimate
@@ -282,34 +298,38 @@ const ExitReadinessCard = ({ metrics, valuationId }) => {
       percentileEstimate = Math.min(60, Math.floor(totalScore * 0.6));
     }
 
+    // Find primary bottleneck (lowest scoring category)
+    const sortedCategories = [...categoryScores].sort((a, b) => a.percentage - b.percentage);
+    const primaryBottleneck = sortedCategories[0];
+
     return {
       total_score: Math.round(totalScore * 10) / 10,
       status_label: statusLabel,
       status_color: statusColor,
+      readiness_label: readinessLabel,
       category_scores: categoryScores,
       percentile_estimate: percentileEstimate,
-      improvement_suggestions: improvementSuggestions.slice(0, 5)
+      improvement_suggestions: improvementSuggestions.slice(0, 5),
+      primary_bottleneck: primaryBottleneck
     };
-  };
-
-  const getStatusColor = (color) => {
-    switch (color) {
-      case 'purple': return 'bg-purple-500';
-      case 'green': return 'bg-emerald-500';
-      case 'yellow': return 'bg-amber-500';
-      case 'red': return 'bg-red-500';
-      default: return 'bg-slate-400';
-    }
   };
 
   const getStatusBgColor = (color) => {
     switch (color) {
-      case 'purple': return 'bg-purple-50 text-purple-700 border-purple-200';
-      case 'green': return 'bg-emerald-50 text-emerald-700 border-emerald-200';
-      case 'yellow': return 'bg-amber-50 text-amber-700 border-amber-200';
-      case 'red': return 'bg-red-50 text-red-700 border-red-200';
-      default: return 'bg-slate-50 text-slate-700 border-slate-200';
+      case 'purple': return 'bg-purple-50 text-purple-700 ring-1 ring-purple-200';
+      case 'green': return 'bg-emerald-50 text-emerald-700 ring-1 ring-emerald-200';
+      case 'blue': return 'bg-blue-50 text-blue-700 ring-1 ring-blue-200';
+      case 'yellow': return 'bg-amber-50 text-amber-700 ring-1 ring-amber-200';
+      case 'red': return 'bg-red-50 text-red-700 ring-1 ring-red-200';
+      default: return 'bg-slate-50 text-slate-700 ring-1 ring-slate-200';
     }
+  };
+
+  const getScoreGradient = (score) => {
+    if (score >= 70) return { start: '#10B981', end: '#34D399' }; // Emerald
+    if (score >= 55) return { start: '#F59E0B', end: '#FBBF24' }; // Amber/Gold
+    if (score >= 40) return { start: '#F97316', end: '#FB923C' }; // Orange
+    return { start: '#EF4444', end: '#F87171' }; // Red
   };
 
   const getCategoryIcon = (category) => {
@@ -323,6 +343,13 @@ const ExitReadinessCard = ({ metrics, valuationId }) => {
     }
   };
 
+  const getCategoryBarGradient = (percentage) => {
+    if (percentage >= 80) return 'from-emerald-400 to-emerald-500';
+    if (percentage >= 60) return 'from-blue-400 to-blue-500';
+    if (percentage >= 40) return 'from-amber-400 to-amber-500';
+    return 'from-red-400 to-red-500';
+  };
+
   const tooltipContent = {
     'Financial Quality': 'ARR, growth rate, churn, and net revenue retention metrics',
     'Revenue Predictability': 'Recurring revenue %, contract length, customer concentration',
@@ -331,11 +358,22 @@ const ExitReadinessCard = ({ metrics, valuationId }) => {
     'Risk Profile': 'Traffic sources, concentration risk, legal & financial documentation'
   };
 
+  // Calculate ARR tier label
+  const getArrTierLabel = () => {
+    const arr = metrics?.arr || (metrics?.mrr || 0) * 12;
+    if (arr >= 1000000) return '$1M+';
+    if (arr >= 500000) return '$500K-$1M';
+    if (arr >= 100000) return '$100K-$500K';
+    if (arr >= 50000) return '$50K-$100K';
+    if (arr >= 25000) return '$25K-$50K';
+    return '<$25K';
+  };
+
   if (loading) {
     return (
-      <div className="bg-white border border-slate-200 rounded-xl p-6 animate-pulse">
+      <div className="bg-white rounded-2xl p-6 animate-pulse" style={{ boxShadow: '0 0 0 1px rgba(11, 77, 187, 0.08), 0 8px 24px -8px rgba(11, 77, 187, 0.15)' }}>
         <div className="h-6 bg-slate-200 rounded w-1/3 mb-4"></div>
-        <div className="h-20 bg-slate-200 rounded mb-4"></div>
+        <div className="h-32 bg-slate-200 rounded mb-4"></div>
         <div className="space-y-2">
           <div className="h-4 bg-slate-200 rounded"></div>
           <div className="h-4 bg-slate-200 rounded w-3/4"></div>
@@ -346,66 +384,109 @@ const ExitReadinessCard = ({ metrics, valuationId }) => {
 
   if (!score) return null;
 
+  const gradient = getScoreGradient(score.total_score);
+  const circumference = 2 * Math.PI * 52; // radius = 52
+  const strokeDashoffset = circumference - (score.total_score / 100) * circumference;
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      className="bg-white border border-slate-200 rounded-xl overflow-hidden"
+      className="bg-white rounded-2xl overflow-hidden"
+      style={{ 
+        boxShadow: '0 0 0 1px rgba(11, 77, 187, 0.08), 0 8px 24px -8px rgba(11, 77, 187, 0.15), 0 4px 12px -4px rgba(0, 0, 0, 0.08)'
+      }}
       data-testid="exit-readiness-card"
     >
       {/* Header */}
-      <div className="p-6 border-b border-slate-100">
-        <div className="flex items-center justify-between mb-4">
-          <h3 className="text-lg font-semibold text-slate-900">Exit Readiness Score</h3>
-          <span className={`text-xs font-medium px-3 py-1.5 rounded-full border ${getStatusBgColor(score.status_color)}`}>
+      <div className="p-6 pb-0">
+        <div className="flex items-center justify-between mb-6">
+          <div>
+            <h3 className="text-lg font-semibold text-slate-900">Exit Readiness Score</h3>
+            <p className="text-xs text-slate-400 mt-0.5">Financial intelligence assessment</p>
+          </div>
+          <span className={`text-xs font-medium px-3 py-1.5 rounded-full ${getStatusBgColor(score.status_color)}`}>
             {score.status_label}
           </span>
         </div>
 
-        {/* Large Score Display */}
-        <div className="flex items-center gap-6">
-          <div className="relative">
-            <svg className="w-28 h-28 transform -rotate-90">
+        {/* Score Display Section */}
+        <div className="flex items-center gap-8 pb-6">
+          {/* Gradient Progress Ring */}
+          <div className="relative flex-shrink-0">
+            <svg className="w-32 h-32 transform -rotate-90" viewBox="0 0 120 120">
+              {/* Background circle */}
               <circle
-                cx="56"
-                cy="56"
-                r="48"
+                cx="60"
+                cy="60"
+                r="52"
                 fill="none"
-                stroke="#E2E8F0"
-                strokeWidth="8"
+                stroke="#F1F5F9"
+                strokeWidth="10"
               />
-              <circle
-                cx="56"
-                cy="56"
-                r="48"
+              {/* Gradient definition */}
+              <defs>
+                <linearGradient id="scoreGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                  <stop offset="0%" stopColor={gradient.start} />
+                  <stop offset="100%" stopColor={gradient.end} />
+                </linearGradient>
+              </defs>
+              {/* Animated progress circle */}
+              <motion.circle
+                cx="60"
+                cy="60"
+                r="52"
                 fill="none"
-                stroke={score.status_color === 'purple' ? '#8B5CF6' : 
-                       score.status_color === 'green' ? '#10B981' :
-                       score.status_color === 'yellow' ? '#F59E0B' : '#EF4444'}
-                strokeWidth="8"
+                stroke="url(#scoreGradient)"
+                strokeWidth="10"
                 strokeLinecap="round"
-                strokeDasharray={`${(score.total_score / 100) * 301.6} 301.6`}
-                className="transition-all duration-1000 ease-out"
+                strokeDasharray={circumference}
+                initial={{ strokeDashoffset: circumference }}
+                animate={{ strokeDashoffset: animateScore ? strokeDashoffset : circumference }}
+                transition={{ duration: 1.2, ease: "easeOut" }}
               />
             </svg>
-            <div className="absolute inset-0 flex items-center justify-center">
-              <span className="text-3xl font-bold text-slate-900">{Math.round(score.total_score)}</span>
+            {/* Score text inside circle */}
+            <div className="absolute inset-0 flex flex-col items-center justify-center">
+              <div className="text-center">
+                <span className="text-3xl font-bold text-slate-900 tabular-nums">{Math.round(score.total_score)}</span>
+                <span className="text-sm text-slate-400 font-medium">/100</span>
+              </div>
+              <span className="text-xs text-slate-500 mt-0.5 font-medium">{score.readiness_label}</span>
             </div>
           </div>
           
-          <div className="flex-1">
-            <p className="text-sm text-slate-500 mb-1">Percentile Estimate</p>
-            <p className="text-2xl font-semibold text-slate-900">Top {100 - score.percentile_estimate}%</p>
-            <p className="text-xs text-slate-400 mt-1">of businesses in your ARR range</p>
+          {/* Percentile & Bottleneck Info */}
+          <div className="flex-1 space-y-4">
+            {/* Percentile - Data intelligent style */}
+            <div>
+              <div className="flex items-baseline gap-1.5">
+                <span className="text-2xl font-bold text-slate-900 tabular-nums">Top {100 - score.percentile_estimate}%</span>
+              </div>
+              <p className="text-xs text-slate-500 mt-0.5">
+                of SaaS in your ARR range <span className="text-slate-400">({getArrTierLabel()})</span>
+              </p>
+            </div>
+
+            {/* Primary Bottleneck - Warning style */}
+            {score.primary_bottleneck && score.primary_bottleneck.percentage < 50 && (
+              <div className="flex items-start gap-2 p-2.5 bg-amber-50 rounded-lg ring-1 ring-amber-200/60">
+                <AlertCircle className="w-4 h-4 text-amber-500 flex-shrink-0 mt-0.5" />
+                <div>
+                  <p className="text-xs font-medium text-amber-800">Primary Bottleneck</p>
+                  <p className="text-xs text-amber-700">{score.primary_bottleneck.category}</p>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </div>
 
       {/* Category Breakdown */}
-      <div className="p-6">
+      <div className="px-6 pb-6">
         <button
           onClick={() => setExpanded(!expanded)}
-          className="flex items-center justify-between w-full text-sm font-medium text-slate-700 mb-4"
+          className="flex items-center justify-between w-full text-sm font-medium text-slate-600 mb-4 hover:text-slate-900 transition-colors"
         >
           <span>Category Breakdown</span>
           {expanded ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
@@ -414,41 +495,47 @@ const ExitReadinessCard = ({ metrics, valuationId }) => {
         <div className="space-y-4">
           {score.category_scores.map((category, index) => {
             const Icon = getCategoryIcon(category.category);
+            const isCritical = category.percentage < 30;
+            
             return (
               <div key={index} className="relative">
-                <div className="flex items-center justify-between mb-1.5">
+                <div className="flex items-center justify-between mb-2">
                   <div 
                     className="flex items-center gap-2 cursor-help"
                     onMouseEnter={() => setShowTooltip(category.category)}
                     onMouseLeave={() => setShowTooltip(null)}
                   >
                     <Icon className="w-4 h-4 text-slate-400" />
-                    <span className="text-sm text-slate-700">{category.category}</span>
-                    <Info className="w-3 h-3 text-slate-300" />
+                    <span className="text-sm text-slate-700 font-medium">{category.category}</span>
+                    {isCritical && (
+                      <span className="text-[10px] font-medium px-1.5 py-0.5 rounded bg-red-100 text-red-600 ring-1 ring-red-200">
+                        Critical Area
+                      </span>
+                    )}
                   </div>
-                  <span className="text-sm font-medium text-slate-900">
-                    {category.score}/{category.max_score}
+                  <span className="text-sm font-semibold text-slate-900 tabular-nums">
+                    {category.score}<span className="text-slate-400 font-normal">/{category.max_score}</span>
                   </span>
                 </div>
                 
-                {/* Progress Bar */}
-                <div className="h-2 bg-slate-100 rounded-full overflow-hidden">
+                {/* Premium Progress Bar with Gradient */}
+                <div className="h-2.5 bg-slate-100 rounded-full overflow-hidden">
                   <motion.div
                     initial={{ width: 0 }}
                     animate={{ width: `${category.percentage}%` }}
                     transition={{ duration: 0.8, delay: index * 0.1 }}
-                    className={`h-full rounded-full ${
-                      category.percentage >= 80 ? 'bg-emerald-500' :
-                      category.percentage >= 60 ? 'bg-[#0B4DBB]' :
-                      category.percentage >= 40 ? 'bg-amber-500' : 'bg-red-500'
-                    }`}
+                    className={`h-full rounded-full bg-gradient-to-r ${getCategoryBarGradient(category.percentage)}`}
+                    style={{ 
+                      boxShadow: category.percentage >= 60 ? '0 1px 2px rgba(0,0,0,0.1)' : 'none'
+                    }}
                   />
                 </div>
 
                 {/* Tooltip */}
                 {showTooltip === category.category && (
-                  <div className="absolute left-0 top-full mt-1 z-10 bg-slate-900 text-white text-xs px-3 py-2 rounded-lg shadow-lg max-w-xs">
+                  <div className="absolute left-0 top-full mt-2 z-10 bg-slate-900 text-white text-xs px-3 py-2 rounded-lg shadow-xl max-w-xs">
                     {tooltipContent[category.category]}
+                    <div className="absolute -top-1 left-4 w-2 h-2 bg-slate-900 rotate-45"></div>
                   </div>
                 )}
 
@@ -458,12 +545,12 @@ const ExitReadinessCard = ({ metrics, valuationId }) => {
                     initial={{ opacity: 0, height: 0 }}
                     animate={{ opacity: 1, height: 'auto' }}
                     exit={{ opacity: 0, height: 0 }}
-                    className="mt-2 pl-6 space-y-1"
+                    className="mt-2 ml-6 space-y-1 border-l-2 border-slate-100 pl-3"
                   >
                     {category.breakdown.map((item, i) => (
-                      <div key={i} className="flex items-center justify-between text-xs">
+                      <div key={i} className="flex items-center justify-between text-xs py-0.5">
                         <span className="text-slate-500">{item.item}</span>
-                        <span className={`font-medium ${item.points >= 0 ? 'text-emerald-600' : 'text-red-600'}`}>
+                        <span className={`font-medium tabular-nums ${item.points >= 0 ? 'text-emerald-600' : 'text-red-500'}`}>
                           {item.points > 0 ? '+' : ''}{item.points} pts
                         </span>
                       </div>
@@ -476,15 +563,15 @@ const ExitReadinessCard = ({ metrics, valuationId }) => {
         </div>
       </div>
 
-      {/* Improvement Suggestions */}
+      {/* Improvement Suggestions - Compact */}
       {score.improvement_suggestions.length > 0 && (
         <div className="px-6 pb-6">
-          <div className="bg-amber-50 border border-amber-100 rounded-lg p-4">
-            <p className="text-sm font-medium text-amber-800 mb-2">Top Improvements</p>
+          <div className="bg-gradient-to-r from-slate-50 to-slate-100/50 rounded-xl p-4 ring-1 ring-slate-200/60">
+            <p className="text-xs font-semibold text-slate-700 uppercase tracking-wider mb-2">Priority Improvements</p>
             <ul className="space-y-1.5">
               {score.improvement_suggestions.slice(0, 3).map((suggestion, index) => (
-                <li key={index} className="text-xs text-amber-700 flex items-start gap-2">
-                  <span className="text-amber-500 mt-0.5">•</span>
+                <li key={index} className="text-xs text-slate-600 flex items-start gap-2">
+                  <span className="w-1 h-1 rounded-full bg-slate-400 mt-1.5 flex-shrink-0"></span>
                   {suggestion}
                 </li>
               ))}
