@@ -255,101 +255,16 @@ const Dashboard = () => {
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {projects.map((project, index) => {
-              const latestVal = getLatestValuation(project.project_id);
-              const projectVals = getProjectValuations(project.project_id);
-
-              return (
-                <motion.div
-                  key={project.project_id}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.3, delay: index * 0.05 }}
-                  className="dashboard-card overflow-hidden group"
-                  data-testid={`project-card-${project.project_id}`}
-                >
-                  <div className="p-6">
-                    <div className="flex items-start justify-between mb-4">
-                      <h3 className="text-lg font-semibold text-slate-900 group-hover:text-[#0B4DBB] transition-colors">
-                        {project.name}
-                      </h3>
-                      <button 
-                        onClick={() => deleteProject(project.project_id)}
-                        className="p-2 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors"
-                        data-testid={`delete-project-${project.project_id}`}
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </button>
-                    </div>
-
-                    {latestVal ? (
-                      <div className="mb-4">
-                        <p className="text-sm text-slate-500 mb-1">Latest Valuation</p>
-                        <p className="text-2xl font-bold text-[#0B4DBB]">
-                          {formatCurrency(latestVal.result?.base || 0)}
-                        </p>
-                        <p className="text-sm text-slate-500 mt-1">
-                          {latestVal.company_info?.company_name}
-                        </p>
-                      </div>
-                    ) : (
-                      <div className="mb-4">
-                        <p className="text-sm text-slate-500">No valuations yet</p>
-                      </div>
-                    )}
-
-                    <div className="flex items-center gap-4 text-sm text-slate-500 mb-4">
-                      <span className="flex items-center gap-1">
-                        <Calendar className="w-4 h-4" />
-                        {formatDate(project.updated_at || project.created_at)}
-                      </span>
-                      <span>{projectVals.length} valuation{projectVals.length !== 1 ? 's' : ''}</span>
-                    </div>
-
-                    <div className="flex gap-2">
-                      <Link to={`/valuation/new/${project.project_id}`} className="flex-1">
-                        <Button 
-                          variant="outline" 
-                          className="w-full border-[#EEF2F7] hover:bg-[#F0F7FF] hover:border-[#A7C8FF]"
-                        >
-                          <Plus className="w-4 h-4 mr-2" />
-                          New
-                        </Button>
-                      </Link>
-                      {latestVal && (
-                        <Link to={`/valuation/${latestVal.valuation_id}`}>
-                          <Button 
-                            variant="outline"
-                            className="border-[#EEF2F7] hover:bg-[#F0F7FF] hover:border-[#A7C8FF]"
-                          >
-                            <ExternalLink className="w-4 h-4" />
-                          </Button>
-                        </Link>
-                      )}
-                    </div>
-                  </div>
-
-                  {/* Valuation history */}
-                  {projectVals.length > 0 && (
-                    <div className="border-t border-[#EEF2F7] bg-[#F8FAFC] px-6 py-3">
-                      <p className="text-xs font-medium text-slate-500 uppercase tracking-wider mb-2">Recent</p>
-                      <div className="space-y-1">
-                        {projectVals.slice(0, 3).map((val) => (
-                          <Link 
-                            key={val.valuation_id}
-                            to={`/valuation/${val.valuation_id}`}
-                            className="flex items-center justify-between py-1 hover:text-[#0B4DBB] transition-colors"
-                          >
-                            <span className="text-sm text-slate-600 truncate">{val.company_info?.company_name}</span>
-                            <span className="text-sm font-medium">{formatCurrency(val.result?.base || 0)}</span>
-                          </Link>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-                </motion.div>
-              );
-            })}
+            {projects.map((project, index) => (
+              <ProjectCard
+                key={project.project_id}
+                project={project}
+                valuations={valuations}
+                onDelete={deleteProject}
+                formatCurrency={formatCurrency}
+                formatDate={formatDate}
+              />
+            ))}
           </div>
         )}
 
