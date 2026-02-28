@@ -351,6 +351,16 @@ const Dashboard = () => {
             })}
           </div>
         )}
+
+        {/* Valuation Over Time Chart - After Projects */}
+        {projects.length > 0 && (
+          <div className="mt-8">
+            <ValuationOverTimeChart
+              valuations={valuations}
+              selectedProjectId={selectedProjectId}
+            />
+          </div>
+        )}
       </main>
     </div>
   );
