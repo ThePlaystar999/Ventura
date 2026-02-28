@@ -217,7 +217,7 @@ const BuyerFitSection = ({ metrics }) => {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {/* Solo Operator Card */}
           <div 
-            className={`border rounded-xl p-5 cursor-pointer transition-all hover:shadow-md ${getFitBgColor(result.solo_operator_fit)}`}
+            className={`buyer-fit-card border rounded-xl p-5 cursor-pointer ${getFitBgColor(result.solo_operator_fit)}`}
             onClick={() => setExpandedProfile(expandedProfile === 'solo' ? null : 'solo')}
           >
             <div className="flex items-center justify-between mb-3">
