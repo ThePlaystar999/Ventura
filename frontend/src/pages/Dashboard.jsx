@@ -185,19 +185,9 @@ const Dashboard = () => {
               onProjectSelect={setSelectedProjectId}
             />
           )}
-
-          {/* Valuation Over Time Chart */}
-          {projects.length > 0 && (
-            <div className="mt-6">
-              <ValuationOverTimeChart
-                valuations={valuations}
-                selectedProjectId={selectedProjectId}
-              />
-            </div>
-          )}
         </div>
 
-        {/* Stats Overview - Only show when no projects or as secondary info */}
+        {/* Stats Overview - Only show when no projects */}
         {projects.length === 0 && (
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
           <div className="dashboard-card p-6">
@@ -240,7 +230,7 @@ const Dashboard = () => {
 
         {/* Projects Section Header - Only show when projects exist */}
         {projects.length > 0 && (
-          <div className="mb-6">
+          <div className="mb-6 mt-8">
             <h2 className="text-lg font-semibold text-slate-900">Your Projects</h2>
             <p className="text-sm text-slate-500">Manage and track valuations for each project</p>
           </div>
