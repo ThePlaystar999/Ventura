@@ -149,53 +149,53 @@ const ExitSnapshotCard = ({
         {/* Main metrics grid */}
         <div className="grid grid-cols-2 lg:grid-cols-5 gap-4 md:gap-6">
           {/* Current Valuation */}
-          <div className="col-span-2 lg:col-span-1 bg-white/5 rounded-xl p-4 border border-white/10">
-            <p className="text-xs text-white/50 uppercase tracking-wider mb-1">Current Valuation</p>
+          <div className="col-span-2 lg:col-span-1 bg-white/10 backdrop-blur-sm rounded-xl p-4 border border-white/20">
+            <p className="text-xs text-white/70 uppercase tracking-wider mb-1">Current Valuation</p>
             <p className="text-2xl md:text-3xl font-bold tabular-nums" data-testid="current-valuation">
               {formatCurrency(currentValue)}
             </p>
             {latestValuation && (
-              <p className="text-xs text-white/40 mt-1">
+              <p className="text-xs text-white/50 mt-1">
                 {latestValuation.company_info?.company_name}
               </p>
             )}
           </div>
 
           {/* Change since last */}
-          <div className="bg-white/5 rounded-xl p-4 border border-white/10">
-            <p className="text-xs text-white/50 uppercase tracking-wider mb-1">Change</p>
+          <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4 border border-white/20">
+            <p className="text-xs text-white/70 uppercase tracking-wider mb-1">Change</p>
             {previousValuation ? (
               <div className="flex items-center gap-2">
                 {hasIncrease ? (
-                  <TrendingUp className="w-5 h-5 text-emerald-400" />
+                  <TrendingUp className="w-5 h-5 text-emerald-300" />
                 ) : (
-                  <TrendingDown className="w-5 h-5 text-red-400" />
+                  <TrendingDown className="w-5 h-5 text-red-300" />
                 )}
                 <div>
-                  <p className={`text-xl font-bold tabular-nums ${hasIncrease ? 'text-emerald-400' : 'text-red-400'}`}>
+                  <p className={`text-xl font-bold tabular-nums ${hasIncrease ? 'text-emerald-300' : 'text-red-300'}`}>
                     {hasIncrease ? '+' : ''}{valueChangePercent}%
                   </p>
-                  <p className="text-xs text-white/40">
+                  <p className="text-xs text-white/50">
                     {hasIncrease ? '+' : ''}{formatCurrency(valueDelta)}
                   </p>
                 </div>
               </div>
             ) : (
-              <p className="text-xl font-bold text-white/40">—</p>
+              <p className="text-xl font-bold text-white/50">—</p>
             )}
           </div>
 
           {/* Exit Readiness Score */}
-          <div className="bg-white/5 rounded-xl p-4 border border-white/10">
-            <p className="text-xs text-white/50 uppercase tracking-wider mb-1">Exit Readiness</p>
+          <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4 border border-white/20">
+            <p className="text-xs text-white/70 uppercase tracking-wider mb-1">Exit Readiness</p>
             {exitReadinessScore !== null ? (
               <div className="flex items-center gap-2">
                 <div className="relative w-10 h-10">
                   <svg className="w-10 h-10 transform -rotate-90" viewBox="0 0 36 36">
-                    <circle cx="18" cy="18" r="14" fill="none" stroke="rgba(255,255,255,0.1)" strokeWidth="3" />
+                    <circle cx="18" cy="18" r="14" fill="none" stroke="rgba(255,255,255,0.2)" strokeWidth="3" />
                     <circle 
                       cx="18" cy="18" r="14" fill="none" 
-                      stroke={exitReadinessScore >= 70 ? '#10B981' : exitReadinessScore >= 50 ? '#F59E0B' : '#EF4444'}
+                      stroke={exitReadinessScore >= 70 ? '#34D399' : exitReadinessScore >= 50 ? '#FBBF24' : '#F87171'}
                       strokeWidth="3" 
                       strokeLinecap="round"
                       strokeDasharray={`${(exitReadinessScore / 100) * 88} 88`}
@@ -205,31 +205,31 @@ const ExitSnapshotCard = ({
                     {exitReadinessScore}
                   </span>
                 </div>
-                <span className="text-sm text-white/60">/ 100</span>
+                <span className="text-sm text-white/70">/ 100</span>
               </div>
             ) : (
-              <p className="text-xl font-bold text-white/40">—</p>
+              <p className="text-xl font-bold text-white/50">—</p>
             )}
           </div>
 
           {/* Target Valuation */}
-          <div className="bg-white/5 rounded-xl p-4 border border-white/10">
-            <p className="text-xs text-white/50 uppercase tracking-wider mb-1">Target</p>
+          <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4 border border-white/20">
+            <p className="text-xs text-white/70 uppercase tracking-wider mb-1">Target</p>
             {isEditingTarget ? (
               <div className="flex items-center gap-1">
                 <Input
                   value={tempTarget}
                   onChange={(e) => setTempTarget(e.target.value)}
                   placeholder="e.g., 1000000"
-                  className="h-8 bg-white/10 border-white/20 text-white text-sm w-24"
+                  className="h-8 bg-white/20 border-white/30 text-white text-sm w-24 placeholder:text-white/40"
                   autoFocus
                   onKeyDown={(e) => e.key === 'Enter' && saveTargetValuation()}
                 />
                 <button onClick={saveTargetValuation} className="p-1 hover:bg-white/10 rounded">
-                  <Check className="w-4 h-4 text-emerald-400" />
+                  <Check className="w-4 h-4 text-emerald-300" />
                 </button>
                 <button onClick={() => setIsEditingTarget(false)} className="p-1 hover:bg-white/10 rounded">
-                  <X className="w-4 h-4 text-red-400" />
+                  <X className="w-4 h-4 text-red-300" />
                 </button>
               </div>
             ) : (
@@ -242,27 +242,27 @@ const ExitSnapshotCard = ({
                   }}
                   className="p-1 hover:bg-white/10 rounded transition-colors"
                 >
-                  <Edit3 className="w-3.5 h-3.5 text-white/40" />
+                  <Edit3 className="w-3.5 h-3.5 text-white/50" />
                 </button>
               </div>
             )}
           </div>
 
           {/* Gap to Target */}
-          <div className="bg-white/5 rounded-xl p-4 border border-white/10">
-            <p className="text-xs text-white/50 uppercase tracking-wider mb-1">Gap to Target</p>
+          <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4 border border-white/20">
+            <p className="text-xs text-white/70 uppercase tracking-wider mb-1">Gap to Target</p>
             <p className="text-xl font-bold tabular-nums">
               {gapToTarget > 0 ? formatCurrency(gapToTarget) : 'Achieved!'}
             </p>
             {gapToTarget > 0 && targetValuation && (
               <div className="mt-2">
-                <div className="h-1.5 bg-white/10 rounded-full overflow-hidden">
+                <div className="h-1.5 bg-white/20 rounded-full overflow-hidden">
                   <div 
-                    className="h-full bg-gradient-to-r from-[#0B4DBB] to-[#1E6AE1] rounded-full transition-all duration-500"
+                    className="h-full bg-white rounded-full transition-all duration-500"
                     style={{ width: `${progressPercent}%` }}
                   />
                 </div>
-                <p className="text-xs text-white/40 mt-1">{progressPercent.toFixed(0)}% complete</p>
+                <p className="text-xs text-white/50 mt-1">{progressPercent.toFixed(0)}% complete</p>
               </div>
             )}
           </div>
