@@ -278,7 +278,7 @@ const BuyerFitSection = ({ metrics }) => {
 
           {/* Micro PE Card */}
           <div 
-            className={`border rounded-xl p-5 cursor-pointer transition-all hover:shadow-md ${getFitBgColor(result.micro_pe_fit)}`}
+            className={`buyer-fit-card border rounded-xl p-5 cursor-pointer ${getFitBgColor(result.micro_pe_fit)}`}
             onClick={() => setExpandedProfile(expandedProfile === 'pe' ? null : 'pe')}
           >
             <div className="flex items-center justify-between mb-3">
