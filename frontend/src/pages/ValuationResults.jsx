@@ -617,87 +617,92 @@ const ValuationResults = () => {
                 ))}
               </div>
             </div>
+            </div>
 
             {/* ═══════════════════════════════════════════════════════════════
-                INFORMATIONAL BLOCKS (Valuation Range, Adjustments, Summary)
+                TIER 3 - INFORMATIONAL BLOCKS
+                Compact, minimal styling, reduced padding
             ═══════════════════════════════════════════════════════════════ */}
 
             {/* Valuation Range with Sliders */}
-            <div className="informational-block bg-white rounded-xl border border-[#EEF2F7] p-6">
-              <h3 className="text-lg font-semibold text-slate-900 mb-6">Valuation Range</h3>
-              
-              <div className="grid grid-cols-3 gap-4 mb-6">
-                <div className="text-center p-4 rounded-xl bg-[#DCEAFF]">
-                  <p className="text-sm text-slate-600 mb-1">Conservative</p>
-                  <p className="text-2xl font-bold text-[#0B4DBB]" data-testid="val-low">{formatCurrency(adjustedVal.low)}</p>
+            <div className="tier-3-block">
+              <div className="bg-white rounded-xl p-5">
+                <h3 className="text-base font-semibold text-slate-900 mb-5">Valuation Range</h3>
+                
+                <div className="grid grid-cols-3 gap-3 mb-5">
+                  <div className="text-center p-3 rounded-xl bg-slate-50">
+                    <p className="text-xs text-slate-500 mb-1">Conservative</p>
+                    <p className="text-xl font-bold text-slate-700" data-testid="val-low">{formatCurrency(adjustedVal.low)}</p>
+                  </div>
+                  <div className="text-center p-3 rounded-xl bg-[#0B4DBB] text-white">
+                    <p className="text-xs text-white/70 mb-1">Base Case</p>
+                    <p className="text-xl font-bold" data-testid="val-base">{formatCurrency(adjustedVal.base)}</p>
+                  </div>
+                  <div className="text-center p-3 rounded-xl bg-slate-100">
+                    <p className="text-xs text-slate-500 mb-1">Optimistic</p>
+                    <p className="text-xl font-bold text-slate-700" data-testid="val-high">{formatCurrency(adjustedVal.high)}</p>
+                  </div>
                 </div>
-                <div className="text-center p-4 rounded-xl bg-[#0B4DBB] text-white">
-                  <p className="text-sm text-white/80 mb-1">Base Case</p>
-                  <p className="text-2xl font-bold" data-testid="val-base">{formatCurrency(adjustedVal.base)}</p>
-                </div>
-                <div className="text-center p-4 rounded-xl bg-[#1E6AE1] text-white">
-                  <p className="text-sm text-white/80 mb-1">Optimistic</p>
-                  <p className="text-2xl font-bold" data-testid="val-high">{formatCurrency(adjustedVal.high)}</p>
-                </div>
-              </div>
 
-              {/* Scenario Sliders */}
-              <div className="space-y-6 pt-6 border-t border-[#EEF2F7]">
-                <h4 className="font-medium text-slate-700">Scenario Analysis</h4>
-                <div>
-                  <div className="flex items-center justify-between mb-3">
-                    <label className="text-sm font-medium text-slate-700">Growth Adjustment</label>
-                    <span className="text-sm font-semibold text-[#0B4DBB]">{growthAdjustment[0]}%</span>
+                {/* Scenario Sliders */}
+                <div className="space-y-4 pt-4 border-t border-slate-100">
+                  <h4 className="text-sm font-medium text-slate-600">Scenario Analysis</h4>
+                  <div>
+                    <div className="flex items-center justify-between mb-2">
+                      <label className="text-sm text-slate-600">Growth Adjustment</label>
+                      <span className="text-sm font-semibold text-[#0B4DBB]">{growthAdjustment[0]}%</span>
+                    </div>
+                    <Slider
+                      value={growthAdjustment}
+                      onValueChange={setGrowthAdjustment}
+                      min={50}
+                      max={150}
+                      step={5}
+                      className="w-full"
+                      data-testid="slider-growth"
+                    />
                   </div>
-                  <Slider
-                    value={growthAdjustment}
-                    onValueChange={setGrowthAdjustment}
-                    min={50}
-                    max={150}
-                    step={5}
-                    className="w-full"
-                    data-testid="slider-growth"
-                  />
-                </div>
-                <div>
-                  <div className="flex items-center justify-between mb-3">
-                    <label className="text-sm font-medium text-slate-700">Multiple Adjustment</label>
-                    <span className="text-sm font-semibold text-[#0B4DBB]">{multipleAdjustment[0]}%</span>
+                  <div>
+                    <div className="flex items-center justify-between mb-2">
+                      <label className="text-sm text-slate-600">Multiple Adjustment</label>
+                      <span className="text-sm font-semibold text-[#0B4DBB]">{multipleAdjustment[0]}%</span>
+                    </div>
+                    <Slider
+                      value={multipleAdjustment}
+                      onValueChange={setMultipleAdjustment}
+                      min={50}
+                      max={150}
+                      step={5}
+                      className="w-full"
+                      data-testid="slider-multiple"
+                    />
                   </div>
-                  <Slider
-                    value={multipleAdjustment}
-                    onValueChange={setMultipleAdjustment}
-                    min={50}
-                    max={150}
-                    step={5}
-                    className="w-full"
-                    data-testid="slider-multiple"
-                  />
                 </div>
               </div>
             </div>
 
             {/* Adjustments Breakdown */}
             {result?.adjustments && result.adjustments.length > 0 && (
-              <div className="bg-white rounded-xl border border-[#EEF2F7] overflow-hidden">
-                <button
-                  onClick={() => setShowAdjustments(!showAdjustments)}
-                  className="w-full px-6 py-4 flex items-center justify-between hover:bg-slate-50 transition-colors"
-                >
-                  <h3 className="text-lg font-semibold text-slate-900">Valuation Adjustments</h3>
-                  {showAdjustments ? <ChevronUp className="w-5 h-5" /> : <ChevronDown className="w-5 h-5" />}
-                </button>
-                
-                <AnimatePresence>
-                  {showAdjustments && (
-                    <motion.div
-                      initial={{ height: 0 }}
-                      animate={{ height: 'auto' }}
-                      exit={{ height: 0 }}
-                      className="overflow-hidden"
-                    >
-                      <div className="px-6 pb-6 space-y-3">
-                        {result.adjustments.map((adj, index) => (
+              <div className="tier-3-block">
+                <div className="bg-white rounded-xl overflow-hidden">
+                  <button
+                    onClick={() => setShowAdjustments(!showAdjustments)}
+                    className="w-full px-5 py-3 flex items-center justify-between hover:bg-slate-50 transition-colors"
+                  >
+                    <h3 className="text-base font-semibold text-slate-900">Valuation Adjustments</h3>
+                    {showAdjustments ? <ChevronUp className="w-4 h-4 text-slate-400" /> : <ChevronDown className="w-4 h-4 text-slate-400" />}
+                  </button>
+                  
+                  <AnimatePresence>
+                    {showAdjustments && (
+                      <motion.div
+                        initial={{ height: 0 }}
+                        animate={{ height: 'auto' }}
+                        exit={{ height: 0 }}
+                        className="overflow-hidden"
+                      >
+                        <div className="px-5 pb-5 space-y-2">
+                          {result.adjustments.map((adj, index) => (
                           <div key={index} className="flex items-start gap-3 p-3 bg-slate-50 rounded-lg">
                             <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
                               adj.adjustment > 0 ? 'bg-green-100 text-green-600' : 
