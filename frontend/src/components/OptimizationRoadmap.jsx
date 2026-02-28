@@ -323,10 +323,10 @@ const OptimizationRoadmap = ({ metrics }) => {
             initial={{ opacity: 0, x: -10 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: index * 0.05 }}
-            className={`border border-slate-200 rounded-xl overflow-hidden border-l-4 ${getCategoryColor(action.category)}`}
+            className={`roadmap-item border border-slate-200 rounded-xl overflow-hidden border-l-4 ${getCategoryColor(action.category)}`}
           >
             <div
-              className="p-4 cursor-pointer hover:bg-slate-50 transition-colors"
+              className="p-4 cursor-pointer hover:bg-slate-50/50 transition-colors"
               onClick={() => setExpandedAction(expandedAction === index ? null : index)}
             >
               <div className="flex items-start justify-between">
