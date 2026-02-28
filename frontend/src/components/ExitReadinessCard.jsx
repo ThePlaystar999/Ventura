@@ -385,8 +385,12 @@ const ExitReadinessCard = ({ metrics, valuationId }) => {
   if (!score) return null;
 
   const gradient = getScoreGradient(score.total_score);
-  const circumference = 2 * Math.PI * 52; // radius = 52
-  const strokeDashoffset = circumference - (score.total_score / 100) * circumference;
+  // Precise circumference calculation: 2 * PI * radius
+  const radius = 52;
+  const circumference = 2 * Math.PI * radius;
+  // Progress calculation: how much of the stroke to show
+  const progress = score.total_score / 100;
+  const strokeDashoffset = circumference * (1 - progress);
 
   return (
     <motion.div
@@ -414,36 +418,41 @@ const ExitReadinessCard = ({ metrics, valuationId }) => {
         <div className="flex items-center gap-8 pb-6">
           {/* Gradient Progress Ring */}
           <div className="relative flex-shrink-0">
-            <svg className="w-32 h-32 transform -rotate-90" viewBox="0 0 120 120">
-              {/* Background circle */}
-              <circle
-                cx="60"
-                cy="60"
-                r="52"
-                fill="none"
-                stroke="#F1F5F9"
-                strokeWidth="10"
-              />
-              {/* Gradient definition */}
+            <svg 
+              className="w-32 h-32" 
+              viewBox="0 0 120 120"
+              style={{ transform: 'rotate(-90deg)' }}
+            >
+              {/* Gradient definition - rotated to follow arc direction */}
               <defs>
-                <linearGradient id="scoreGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                <linearGradient id="scoreGradient" x1="0%" y1="0%" x2="0%" y2="100%">
                   <stop offset="0%" stopColor={gradient.start} />
                   <stop offset="100%" stopColor={gradient.end} />
                 </linearGradient>
               </defs>
-              {/* Animated progress circle */}
+              {/* Background circle - full ring */}
+              <circle
+                cx="60"
+                cy="60"
+                r={radius}
+                fill="none"
+                stroke="#F1F5F9"
+                strokeWidth="10"
+              />
+              {/* Progress circle */}
               <motion.circle
                 cx="60"
                 cy="60"
-                r="52"
+                r={radius}
                 fill="none"
                 stroke="url(#scoreGradient)"
                 strokeWidth="10"
                 strokeLinecap="round"
-                strokeDasharray={circumference}
+                strokeDasharray={`${circumference} ${circumference}`}
                 initial={{ strokeDashoffset: circumference }}
                 animate={{ strokeDashoffset: animateScore ? strokeDashoffset : circumference }}
                 transition={{ duration: 1.2, ease: "easeOut" }}
+                style={{ transformOrigin: 'center' }}
               />
             </svg>
             {/* Score text inside circle */}
