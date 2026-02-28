@@ -185,6 +185,16 @@ const Dashboard = () => {
               onProjectSelect={setSelectedProjectId}
             />
           )}
+
+          {/* Valuation Over Time Chart */}
+          {projects.length > 0 && (
+            <div className="mt-6">
+              <ValuationOverTimeChart
+                valuations={valuations}
+                selectedProjectId={selectedProjectId}
+              />
+            </div>
+          )}
         </div>
 
         {/* Stats Overview - Only show when no projects or as secondary info */}
