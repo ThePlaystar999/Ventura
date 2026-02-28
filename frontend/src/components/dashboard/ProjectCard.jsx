@@ -8,8 +8,7 @@ import {
   Calendar, 
   TrendingUp,
   FileText,
-  ArrowRight,
-  MoreVertical
+  ArrowRight
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 
