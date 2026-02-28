@@ -459,33 +459,74 @@ const ValuationResults = () => {
           
           {/* LEFT COLUMN — Main Content */}
           <div className="space-y-8">
-            {/* SECTION 1 — HERO SNAPSHOT */}
+            {/* SECTION 1 — PREMIUM HERO SNAPSHOT */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              className="valuation-result-card p-8 md:p-12"
+              className="hero-premium-card relative"
             >
-              <div className="text-center">
-                <p className="text-white/80 text-sm uppercase tracking-wider mb-2">
+              {/* Confidence Badge - Top Right */}
+              <div className="absolute top-4 right-4 md:top-6 md:right-6">
+                <div className="flex items-center gap-2 bg-white/10 backdrop-blur-sm border border-white/20 rounded-lg px-3 py-1.5">
+                  <div className="w-2 h-2 rounded-full bg-emerald-400"></div>
+                  <div className="text-xs">
+                    <span className="text-white/90 font-medium">Moderate Confidence</span>
+                    <span className="text-white/50 ml-1">• Based on {Object.keys(valuation.metrics || {}).length} metrics</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Main Content */}
+              <div className="text-center pt-8 md:pt-12 pb-10 md:pb-14 px-6 md:px-12">
+                {/* Small uppercase label */}
+                <p className="text-white/60 text-xs uppercase tracking-[0.2em] mb-6">
                   {valuation.company_info?.company_name}
                 </p>
-                <h1 className="text-4xl md:text-6xl font-bold mb-4" data-testid="valuation-amount">
-                  {formatCurrency(adjustedVal.base)}
-                </h1>
-                <p className="text-white/80">
-                  Estimated Valuation • {result?.methodology}
-                </p>
-                <div className="mt-4 flex items-center justify-center gap-4 text-sm">
-                  <span className="bg-white/20 px-3 py-1 rounded-full">
-                    Base Multiple: {result?.base_multiple}x
-                  </span>
-                  <span className="bg-white/20 px-3 py-1 rounded-full">
-                    Final Multiple: {result?.multiple_used}x
-                  </span>
+                
+                {/* Valuation Amount with Glow */}
+                <div className="relative inline-block">
+                  <div className="absolute inset-0 blur-3xl bg-white/10 scale-150"></div>
+                  <h1 className="relative text-5xl md:text-7xl font-extrabold tracking-tight mb-3" data-testid="valuation-amount">
+                    {formatCurrency(adjustedVal.base)}
+                  </h1>
                 </div>
-                <p className="text-white/60 text-sm mt-4">
-                  Exit intelligence dashboard for bootstrapped SaaS founders.
+                
+                {/* Secondary Label */}
+                <p className="text-white/80 text-base md:text-lg font-medium mb-6">
+                  Estimated Enterprise Value
                 </p>
+                
+                {/* Multiple Display - Value Creation Style */}
+                <div className="flex items-center justify-center gap-3 mb-6">
+                  <span className="text-white/50 text-sm">
+                    Revenue Multiple: <span className="text-white/40">{result?.base_multiple}x</span>
+                  </span>
+                  <span className="text-white/30">→</span>
+                  <span className="text-white font-semibold text-sm">
+                    {result?.multiple_used}x
+                  </span>
+                  {result?.multiple_used > result?.base_multiple && (
+                    <span className="bg-emerald-500/20 text-emerald-300 text-xs font-medium px-2 py-0.5 rounded">
+                      +{(result?.multiple_used - result?.base_multiple).toFixed(2)}x premium
+                    </span>
+                  )}
+                  {result?.multiple_used < result?.base_multiple && (
+                    <span className="bg-amber-500/20 text-amber-300 text-xs font-medium px-2 py-0.5 rounded">
+                      {(result?.multiple_used - result?.base_multiple).toFixed(2)}x discount
+                    </span>
+                  )}
+                </div>
+                
+                {/* Micro KPI Strip */}
+                <div className="flex items-center justify-center gap-2 text-white/50 text-xs tracking-wide">
+                  <span>ARR {formatCurrency(result?.arr_used)}</span>
+                  <span className="text-white/30">·</span>
+                  <span>{valuation.metrics?.growth_rate}% Growth</span>
+                  <span className="text-white/30">·</span>
+                  <span>{valuation.metrics?.gross_margin}% Gross Margin</span>
+                  <span className="text-white/30">·</span>
+                  <span>{valuation.metrics?.nrr}% NRR</span>
+                </div>
               </div>
             </motion.div>
 
