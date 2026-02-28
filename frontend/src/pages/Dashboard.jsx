@@ -225,6 +225,15 @@ const Dashboard = () => {
             </div>
           </div>
         </div>
+        )}
+
+        {/* Projects Section Header - Only show when projects exist */}
+        {projects.length > 0 && (
+          <div className="mb-6">
+            <h2 className="text-lg font-semibold text-slate-900">Your Projects</h2>
+            <p className="text-sm text-slate-500">Manage and track valuations for each project</p>
+          </div>
+        )}
 
         {/* Projects Grid */}
         {projects.length === 0 ? (
