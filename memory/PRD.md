@@ -3,6 +3,19 @@
 ## Product Requirements Document
 
 ### Latest Update: February 28, 2026
+- **BenchmarkBanner Component**: NEW - Constructive tension banner
+  - Shows below ExitSnapshotCard when valuations exist
+  - Compares current valuation against industry benchmark
+  - Simulated benchmark: `currentValuation * 1.35` (placeholder logic)
+  - Two states:
+    - Below benchmark: Amber warning with "See how to close the gap"
+    - Above benchmark: Green success with "Keep the momentum"
+  - Dismissible (X button)
+  - CTA opens Insights modal with:
+    - Valuation vs Benchmark summary
+    - Actionable tips (3 recommendations)
+  - Located: `/app/frontend/src/components/dashboard/BenchmarkBanner.jsx`
+
 - **Exit Command Center Dashboard**: Complete overhaul
   - New hero: "Your Startup Exit Command Center" with strategic subtitle
   - Exit Snapshot card (dark gradient, full-width):
