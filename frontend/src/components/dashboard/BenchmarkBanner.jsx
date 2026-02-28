@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from 'react';
-import { TrendingUp, TrendingDown, ArrowRight, X, Lightbulb, Target, Zap, BarChart3 } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { TrendingUp, ArrowRight, X, Lightbulb, Target, Zap, BarChart3 } from 'lucide-react';
+import { motion } from 'framer-motion';
 import { Button } from '../ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '../ui/dialog';
 
