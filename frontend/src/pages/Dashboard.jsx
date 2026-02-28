@@ -128,52 +128,67 @@ const Dashboard = () => {
       <Navbar />
 
       <main className="pt-24 pb-12 px-6 md:px-12 lg:px-24 max-w-7xl mx-auto">
-        {/* Header */}
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
-          <div>
-            <h1 className="text-2xl md:text-3xl font-bold tracking-tight text-slate-900">
-              Welcome back, {user?.name?.split(' ')[0]}
-            </h1>
-            <p className="text-slate-600 mt-1">Manage your startup valuations</p>
+        {/* Command Center Hero */}
+        <div className="mb-8">
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-6">
+            <div>
+              <h1 className="text-2xl md:text-3xl font-bold tracking-tight text-slate-900">
+                Your Startup Exit Command Center
+              </h1>
+              <p className="text-slate-600 mt-1">
+                Track your valuation. Increase it. Prepare your exit.
+              </p>
+            </div>
+
+            <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+              <DialogTrigger asChild>
+                <Button 
+                  className="bg-[#0B4DBB] hover:bg-[#093c96] text-white shadow-lg shadow-blue-900/20"
+                  data-testid="new-project-btn"
+                >
+                  <Plus className="w-4 h-4 mr-2" />
+                  New Project
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="sm:max-w-md">
+                <DialogHeader>
+                  <DialogTitle>Create New Project</DialogTitle>
+                </DialogHeader>
+                <div className="space-y-4 pt-4">
+                  <Input
+                    placeholder="Project name (e.g., TechStartup Series A)"
+                    value={newProjectName}
+                    onChange={(e) => setNewProjectName(e.target.value)}
+                    className="input-premium"
+                    data-testid="project-name-input"
+                  />
+                  <Button 
+                    onClick={createProject}
+                    disabled={!newProjectName.trim() || creating}
+                    className="w-full bg-[#0B4DBB] hover:bg-[#093c96]"
+                    data-testid="create-project-btn"
+                  >
+                    {creating ? 'Creating...' : 'Create & Start Valuation'}
+                  </Button>
+                </div>
+              </DialogContent>
+            </Dialog>
           </div>
 
-          <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-            <DialogTrigger asChild>
-              <Button 
-                className="bg-[#0B4DBB] hover:bg-[#093c96] text-white shadow-lg shadow-blue-900/20"
-                data-testid="new-project-btn"
-              >
-                <Plus className="w-4 h-4 mr-2" />
-                New Project
-              </Button>
-            </DialogTrigger>
-            <DialogContent className="sm:max-w-md">
-              <DialogHeader>
-                <DialogTitle>Create New Project</DialogTitle>
-              </DialogHeader>
-              <div className="space-y-4 pt-4">
-                <Input
-                  placeholder="Project name (e.g., TechStartup Series A)"
-                  value={newProjectName}
-                  onChange={(e) => setNewProjectName(e.target.value)}
-                  className="input-premium"
-                  data-testid="project-name-input"
-                />
-                <Button 
-                  onClick={createProject}
-                  disabled={!newProjectName.trim() || creating}
-                  className="w-full bg-[#0B4DBB] hover:bg-[#093c96]"
-                  data-testid="create-project-btn"
-                >
-                  {creating ? 'Creating...' : 'Create & Start Valuation'}
-                </Button>
-              </div>
-            </DialogContent>
-          </Dialog>
+          {/* Exit Snapshot Card */}
+          {projects.length > 0 && (
+            <ExitSnapshotCard
+              projects={projects}
+              valuations={valuations}
+              selectedProjectId={selectedProjectId}
+              onProjectSelect={setSelectedProjectId}
+            />
+          )}
         </div>
 
-        {/* Stats Overview */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        {/* Stats Overview - Only show when no projects or as secondary info */}
+        {projects.length === 0 && (
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
           <div className="dashboard-card p-6">
             <div className="flex items-center gap-4">
               <div className="w-12 h-12 rounded-xl bg-[#F0F7FF] flex items-center justify-center">
