@@ -7,8 +7,8 @@ import {
   ExternalLink, 
   Calendar, 
   TrendingUp,
-  FileText,
-  ArrowRight
+  ArrowRight,
+  Activity
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 
@@ -52,12 +52,15 @@ const ProjectCard = ({
       className="bg-white rounded-xl border border-slate-200 overflow-hidden hover:border-slate-300 hover:shadow-md transition-all duration-200 group"
       data-testid={`project-card-${project.project_id}`}
     >
-      {/* Card Header */}
-      <div className="p-5">
+      {/* Card Header - Clickable to Exit OS */}
+      <Link 
+        to={`/projects/${project.project_id}/exit-os`}
+        className="block p-5 hover:bg-slate-50/50 transition-colors"
+      >
         {/* Top row: Name + Delete */}
         <div className="flex items-start justify-between mb-4">
           <div className="flex-1 min-w-0">
-            <h3 className="font-semibold text-slate-900 truncate text-lg">
+            <h3 className="font-semibold text-slate-900 truncate text-lg group-hover:text-[#0B4DBB] transition-colors">
               {project.name}
             </h3>
             <div className="flex items-center gap-2 mt-1 text-xs text-slate-500">
@@ -67,7 +70,11 @@ const ProjectCard = ({
           </div>
           
           <button
-            onClick={() => onDelete(project.project_id)}
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              onDelete(project.project_id);
+            }}
             className="p-2 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors opacity-0 group-hover:opacity-100"
             title="Delete project"
           >
@@ -117,43 +124,48 @@ const ProjectCard = ({
           </div>
           <MiniSparkline valuations={projectValuations} height={48} />
         </div>
+      </Link>
 
-        {/* CTAs */}
-        <div className="flex gap-2">
-          {hasValuations ? (
-            <>
-              <Link to={`/valuation/new/${project.project_id}`} className="flex-1">
-                <Button 
-                  className="w-full bg-[#0B4DBB] hover:bg-[#093c96] text-white text-sm"
-                  size="sm"
-                >
-                  <TrendingUp className="w-3.5 h-3.5 mr-1.5" />
-                  Update Valuation
-                </Button>
-              </Link>
-              <Link to={`/valuation/${latestValuation.valuation_id}`}>
-                <Button 
-                  variant="outline"
-                  size="sm"
-                  className="border-slate-200 hover:bg-slate-50"
-                  title="View Report"
-                >
-                  <FileText className="w-3.5 h-3.5" />
-                </Button>
-              </Link>
-            </>
-          ) : (
-            <Link to={`/valuation/new/${project.project_id}`} className="flex-1">
+      {/* CTAs - Outside the clickable area */}
+      <div className="px-5 pb-5 flex gap-2">
+        {hasValuations ? (
+          <>
+            {/* Primary: Open Exit OS */}
+            <Link to={`/projects/${project.project_id}/exit-os`} className="flex-1">
               <Button 
                 className="w-full bg-[#0B4DBB] hover:bg-[#093c96] text-white text-sm"
                 size="sm"
+                data-testid={`open-exit-os-${project.project_id}`}
               >
-                Start Valuation
-                <ArrowRight className="w-3.5 h-3.5 ml-1.5" />
+                <Activity className="w-3.5 h-3.5 mr-1.5" />
+                Open Exit OS
               </Button>
             </Link>
-          )}
-        </div>
+            {/* Secondary: Update Valuation */}
+            <Link to={`/valuation/new/${project.project_id}`}>
+              <Button 
+                variant="outline"
+                size="sm"
+                className="border-slate-200 hover:bg-slate-50"
+                title="Update Valuation"
+                data-testid={`update-valuation-${project.project_id}`}
+              >
+                <TrendingUp className="w-3.5 h-3.5" />
+              </Button>
+            </Link>
+          </>
+        ) : (
+          <Link to={`/valuation/new/${project.project_id}`} className="flex-1">
+            <Button 
+              className="w-full bg-[#0B4DBB] hover:bg-[#093c96] text-white text-sm"
+              size="sm"
+              data-testid={`start-valuation-${project.project_id}`}
+            >
+              Start Valuation
+              <ArrowRight className="w-3.5 h-3.5 ml-1.5" />
+            </Button>
+          </Link>
+        )}
       </div>
 
       {/* Recent Valuations Footer */}
