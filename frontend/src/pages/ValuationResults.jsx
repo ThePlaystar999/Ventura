@@ -703,16 +703,16 @@ const ValuationResults = () => {
                       >
                         <div className="px-5 pb-5 space-y-2">
                           {result.adjustments.map((adj, index) => (
-                          <div key={index} className="flex items-start gap-3 p-3 bg-slate-50 rounded-lg">
-                            <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
-                              adj.adjustment > 0 ? 'bg-green-100 text-green-600' : 
+                          <div key={index} className="flex items-start gap-2.5 p-2.5 bg-slate-50 rounded-lg">
+                            <div className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-semibold ${
+                              adj.adjustment > 0 ? 'bg-emerald-100 text-emerald-600' : 
                               adj.adjustment < 0 ? 'bg-red-100 text-red-600' : 'bg-slate-100 text-slate-600'
                             }`}>
                               {adj.adjustment > 0 ? '+' : ''}{(adj.adjustment * 100).toFixed(0)}%
                             </div>
                             <div className="flex-1">
-                              <p className="font-medium text-slate-900">{adj.factor}</p>
-                              <p className="text-sm text-slate-600">{adj.reason}</p>
+                              <p className="text-sm font-medium text-slate-900">{adj.factor}</p>
+                              <p className="text-xs text-slate-500">{adj.reason}</p>
                             </div>
                           </div>
                         ))}
@@ -721,33 +721,36 @@ const ValuationResults = () => {
                   )}
                 </AnimatePresence>
               </div>
+              </div>
             )}
 
-            {/* SECTION 8 — ANALYSIS SUMMARY (Investor Memo Style) */}
+            {/* SECTION 8 — EXECUTIVE SUMMARY (Tier 3 - Informational) */}
             {ai_commentary && (
-              <div className="bg-white rounded-xl border border-[#EEF2F7] p-6">
-                <div className="flex items-center gap-2 mb-4">
-                  <Info className="w-4 h-4 text-[#0B4DBB]" />
-                  <h3 className="text-lg font-semibold text-slate-900">Executive Summary</h3>
-                </div>
-                
-                <div className="space-y-4 text-sm text-slate-700 leading-relaxed">
-                  <p>{ai_commentary.summary?.split('.').slice(0, 2).join('.')}.</p>
-                  
-                  <div className="flex gap-4 pt-3 border-t border-slate-100">
-                    <div className="flex-1">
-                      <span className="text-xs font-semibold text-green-600 uppercase">Strengths</span>
-                      <p className="text-slate-600 mt-1">{ai_commentary.key_strengths?.slice(0, 2).join('. ')}.</p>
-                    </div>
-                    <div className="flex-1">
-                      <span className="text-xs font-semibold text-amber-600 uppercase">Risks</span>
-                      <p className="text-slate-600 mt-1">{ai_commentary.key_risks?.slice(0, 2).join('. ')}.</p>
-                    </div>
+              <div className="tier-3-block">
+                <div className="bg-white rounded-xl p-5">
+                  <div className="flex items-center gap-2 mb-3">
+                    <Info className="w-4 h-4 text-slate-400" />
+                    <h3 className="text-base font-semibold text-slate-900">Executive Summary</h3>
                   </div>
                   
-                  <div className="p-3 bg-[#F0F7FF] rounded-lg">
-                    <span className="text-xs font-semibold text-[#0B4DBB] uppercase">Exit Readiness</span>
-                    <p className="text-slate-700 mt-1">{ai_commentary.exit_readiness?.split('.').slice(0, 1).join('.')}.</p>
+                  <div className="space-y-3 text-sm text-slate-600 leading-relaxed">
+                    <p>{ai_commentary.summary?.split('.').slice(0, 2).join('.')}.</p>
+                    
+                    <div className="grid grid-cols-2 gap-3 pt-3 border-t border-slate-100">
+                      <div>
+                        <span className="text-xs font-semibold text-emerald-600 uppercase">Strengths</span>
+                        <p className="text-slate-500 mt-1 text-xs">{ai_commentary.key_strengths?.slice(0, 2).join('. ')}.</p>
+                      </div>
+                      <div>
+                        <span className="text-xs font-semibold text-amber-600 uppercase">Risks</span>
+                        <p className="text-slate-500 mt-1 text-xs">{ai_commentary.key_risks?.slice(0, 2).join('. ')}.</p>
+                      </div>
+                    </div>
+                    
+                    <div className="p-2.5 bg-slate-50 rounded-lg">
+                      <span className="text-xs font-semibold text-[#0B4DBB] uppercase">Exit Readiness</span>
+                      <p className="text-slate-600 mt-1 text-xs">{ai_commentary.exit_readiness?.split('.').slice(0, 1).join('.')}.</p>
+                    </div>
                   </div>
                 </div>
               </div>
