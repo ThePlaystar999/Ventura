@@ -110,13 +110,13 @@ const ExitSnapshotCard = ({
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      className="bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 rounded-2xl p-6 md:p-8 text-white relative overflow-hidden"
+      className="bg-gradient-to-br from-[#0842A0] via-[#0B4DBB] to-[#1E6AE1] rounded-2xl p-6 md:p-8 text-white relative overflow-hidden"
       data-testid="exit-snapshot-card"
     >
       {/* Background decoration */}
-      <div className="absolute inset-0 opacity-10">
-        <div className="absolute top-0 right-0 w-96 h-96 bg-[#0B4DBB] rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
-        <div className="absolute bottom-0 left-0 w-64 h-64 bg-[#1E6AE1] rounded-full blur-3xl translate-y-1/2 -translate-x-1/2" />
+      <div className="absolute inset-0 opacity-20">
+        <div className="absolute top-0 right-0 w-96 h-96 bg-white rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
+        <div className="absolute bottom-0 left-0 w-64 h-64 bg-white rounded-full blur-3xl translate-y-1/2 -translate-x-1/2" />
       </div>
 
       <div className="relative z-10">
