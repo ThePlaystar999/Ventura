@@ -3,14 +3,14 @@
 ## Product Requirements Document
 
 ### Latest Update: February 28, 2026
-- **Global Visual Hierarchy Refinement**: 3-tier premium system
-  - TIER 1 (Exit Readiness, Deal Killers, Buyer Fit, Roadmap): Gradient bg + strongest shadow + top border accent
-  - TIER 2 (What-If, Exit Scenarios): Neutral white + standard shadow
-  - TIER 3 (Valuation Range, Adjustments, Summary): Compact + minimal shadow
-  - Sidebar: Quick Snapshot (investor style, tabular-nums), Buyer Filters (checklist style, ring badges)
-  - Hover lift effects: roadmap items, what-if toggles, buyer fit cards
-  - Consistent border radius (16px main, 12px compact, 20px hero)
-- **Premium Hero Upgrade**: Stripe/Linear/Vercel-level design (February 28, 2026)
+- **Exit Readiness Card Premium Upgrade**: High-end financial scoring intelligence
+  - Gradient progress ring (SVG linearGradient, animated stroke draw)
+  - Score/100 format with readiness classification label
+  - Primary Bottleneck insight (dynamically detects lowest category)
+  - Category scores: current/max format, gradient bars, "Critical Area" tags (<30%)
+  - Premium shadow (blue-tinted rgba 11,77,187), ARR tier in percentile
+- **Global Visual Hierarchy**: 3-tier system (TIER 1/2/3) with hover effects
+- **Premium Hero**: Stripe/Linear/Vercel-level design
 - **Previous**: Dashboard Refactor (February 27, 2026)
 
 ## Original Problem Statement
