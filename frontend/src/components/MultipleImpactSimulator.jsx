@@ -232,7 +232,7 @@ const MultipleImpactSimulator = ({ metrics, currentMultiple = 3.0 }) => {
               key={scenario.id}
               whileTap={{ scale: 0.98 }}
               onClick={() => toggleScenario(scenario.id)}
-              className={`flex items-center justify-between p-4 rounded-xl border cursor-pointer transition-all ${
+              className={`whatif-toggle flex items-center justify-between p-4 rounded-xl border cursor-pointer ${
                 scenarios[scenario.id]
                   ? 'bg-[#F0F7FF] border-[#0B4DBB]/30'
                   : 'bg-white border-slate-200 hover:border-slate-300'
