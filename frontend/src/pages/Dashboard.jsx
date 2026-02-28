@@ -391,22 +391,22 @@ const Dashboard = () => {
           </div>
         )}
 
-        {/* Valuation Over Time Chart - After Projects */}
-        {projects.length > 0 && (
+        {/* Valuation Over Time Chart - Only when active project has valuations */}
+        {projects.length > 0 && hasValuations && (
           <div className="mt-8">
             <ValuationOverTimeChart
               valuations={valuations}
-              selectedProjectId={selectedProjectId}
+              selectedProjectId={selectedProjectId || activeProject?.project_id}
             />
           </div>
         )}
 
-        {/* Valuation Boost Opportunities */}
-        {projects.length > 0 && (
+        {/* Valuation Boost Opportunities - Only when active project has valuations */}
+        {projects.length > 0 && hasValuations && (
           <div className="mt-8">
             <ValuationBoostOpportunities
               valuations={valuations}
-              selectedProjectId={selectedProjectId}
+              selectedProjectId={selectedProjectId || activeProject?.project_id}
             />
           </div>
         )}
