@@ -8,9 +8,7 @@ import {
   Users,
   ArrowRight,
   Zap,
-  Shield,
-  BarChart3,
-  X
+  BarChart3
 } from 'lucide-react';
 import { Button } from '../ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '../ui/dialog';
