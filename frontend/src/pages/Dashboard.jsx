@@ -184,10 +184,10 @@ const Dashboard = () => {
               )}
             </div>
 
-            {/* Right side: Project Selector + New Project Button */}
-            <div className="flex items-center gap-3">
+            {/* Right side: Project Selector + Open Exit OS + New Project Button */}
+            <div className="flex flex-wrap items-center gap-3">
               {/* Project Selector Dropdown */}
-              {projects.length > 1 && (
+              {projects.length > 0 && (
                 <div className="relative">
                   <select
                     value={selectedProjectId || activeProject?.project_id || ''}
@@ -205,10 +205,31 @@ const Dashboard = () => {
                 </div>
               )}
 
+              {/* Open Exit OS Button - Shows when a project is selected */}
+              {activeProject && (
+                <Link to={`/projects/${activeProject.project_id}/exit-os`}>
+                  <Button 
+                    variant={hasValuations ? "default" : "outline"}
+                    className={hasValuations 
+                      ? "bg-[#0B4DBB] hover:bg-[#093c96] text-white shadow-lg shadow-blue-900/20" 
+                      : "border-slate-200 hover:bg-slate-50"
+                    }
+                    data-testid="open-exit-os-global"
+                  >
+                    <Activity className="w-4 h-4 mr-2" />
+                    Open Exit OS
+                  </Button>
+                </Link>
+              )}
+
               <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
                 <DialogTrigger asChild>
                   <Button 
-                    className="bg-[#0B4DBB] hover:bg-[#093c96] text-white shadow-lg shadow-blue-900/20"
+                    variant={hasValuations ? "outline" : "default"}
+                    className={hasValuations 
+                      ? "border-slate-200 hover:bg-slate-50" 
+                      : "bg-[#0B4DBB] hover:bg-[#093c96] text-white shadow-lg shadow-blue-900/20"
+                    }
                     data-testid="new-project-btn"
                   >
                     <Plus className="w-4 h-4 mr-2" />
