@@ -135,14 +135,14 @@ const ValuationResults = () => {
   // Sidebar Content Component (reused for desktop and mobile)
   const SidebarContent = ({ isMobile = false }) => (
     <>
-      {/* QUICK SNAPSHOT */}
+      {/* QUICK SNAPSHOT - Investor Style */}
       {isMobile ? (
-        <div className="bg-[#FAFBFC] rounded-xl border border-[#EEF2F7] overflow-hidden">
+        <div className="sidebar-snapshot rounded-xl overflow-hidden">
           <button
             onClick={() => setShowMobileSnapshot(!showMobileSnapshot)}
-            className="w-full px-5 py-4 flex items-center justify-between"
+            className="w-full px-5 py-4 flex items-center justify-between bg-gradient-to-r from-slate-50 to-transparent"
           >
-            <h3 className="text-sm font-semibold text-slate-500 uppercase tracking-wider">Quick Snapshot</h3>
+            <h3 className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Quick Snapshot</h3>
             {showMobileSnapshot ? <ChevronUp className="w-4 h-4 text-slate-400" /> : <ChevronDown className="w-4 h-4 text-slate-400" />}
           </button>
           <AnimatePresence>
@@ -153,7 +153,7 @@ const ValuationResults = () => {
                 exit={{ height: 0 }}
                 className="overflow-hidden"
               >
-                <div className="px-5 pb-5 space-y-3">
+                <div className="px-5 pb-5">
                   <SnapshotMetrics />
                 </div>
               </motion.div>
@@ -161,20 +161,20 @@ const ValuationResults = () => {
           </AnimatePresence>
         </div>
       ) : (
-        <div className="bg-[#FAFBFC] rounded-xl border border-[#EEF2F7] p-5" data-testid="quick-snapshot">
-          <h3 className="text-sm font-semibold text-slate-500 uppercase tracking-wider mb-4">Quick Snapshot</h3>
+        <div className="sidebar-snapshot rounded-xl p-5" data-testid="quick-snapshot">
+          <h3 className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-3">Quick Snapshot</h3>
           <SnapshotMetrics />
         </div>
       )}
 
-      {/* BUYER FILTERS */}
+      {/* BUYER FILTERS - Checklist Style */}
       {isMobile ? (
-        <div className="bg-[#FAFBFC] rounded-xl border border-[#EEF2F7] overflow-hidden">
+        <div className="sidebar-filters rounded-xl overflow-hidden">
           <button
             onClick={() => setShowMobileBuyerFilters(!showMobileBuyerFilters)}
             className="w-full px-5 py-4 flex items-center justify-between"
           >
-            <h3 className="text-sm font-semibold text-slate-500 uppercase tracking-wider">Buyer Filters</h3>
+            <h3 className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Buyer Filters</h3>
             {showMobileBuyerFilters ? <ChevronUp className="w-4 h-4 text-slate-400" /> : <ChevronDown className="w-4 h-4 text-slate-400" />}
           </button>
           <AnimatePresence>
@@ -185,7 +185,7 @@ const ValuationResults = () => {
                 exit={{ height: 0 }}
                 className="overflow-hidden"
               >
-                <div className="px-5 pb-5 space-y-3">
+                <div className="px-5 pb-5">
                   <BuyerFiltersContent />
                 </div>
               </motion.div>
@@ -193,8 +193,8 @@ const ValuationResults = () => {
           </AnimatePresence>
         </div>
       ) : (
-        <div className="bg-[#FAFBFC] rounded-xl border border-[#EEF2F7] p-5" data-testid="buyer-filters">
-          <h3 className="text-sm font-semibold text-slate-500 uppercase tracking-wider mb-4">Buyer Filters</h3>
+        <div className="sidebar-filters rounded-xl p-5" data-testid="buyer-filters">
+          <h3 className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-3">Buyer Filters</h3>
           <BuyerFiltersContent />
         </div>
       )}
