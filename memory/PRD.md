@@ -2,6 +2,24 @@
 
 ## Product Requirements Document
 
+**Last Updated:** December 28, 2025
+
+---
+
+## Changelog
+
+### December 28, 2025 - Hero Section Redesign (P0)
+- Implemented premium Peec.ai-inspired hero section in `/app/frontend/src/components/landing/HeroSection.jsx`
+- Added immersive dashboard mockup with 3D tilt effect and scroll parallax
+- New gradient headline "Your Startup Exit Command Center"
+- AI-Powered Exit Intelligence badge with animation
+- Trust indicators: 5 min setup, PDF report, Bank-level security
+- Dual CTA with primary button + play button
+- Exit scenarios preview (Strategic Acquisition, PE Buyout, IPO Path)
+- Full mobile responsiveness
+
+---
+
 ### Latest Update: February 28, 2026
 
 - **Exit OS Dashboard Route**: NEW
