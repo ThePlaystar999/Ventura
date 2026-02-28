@@ -278,6 +278,16 @@ const Dashboard = () => {
             />
           </div>
         )}
+
+        {/* Valuation Boost Opportunities */}
+        {projects.length > 0 && (
+          <div className="mt-8">
+            <ValuationBoostOpportunities
+              valuations={valuations}
+              selectedProjectId={selectedProjectId}
+            />
+          </div>
+        )}
       </main>
     </div>
   );
