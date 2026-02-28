@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useAuth } from '../App';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
+import HeroSection from '../components/landing/HeroSection';
 import VLogo from '../components/VLogo';
 import { Button } from '../components/ui/button';
 import { Input } from '../components/ui/input';
