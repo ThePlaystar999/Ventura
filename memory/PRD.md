@@ -3,6 +3,14 @@
 ## Product Requirements Document
 
 ### Latest Update: February 28, 2026
+
+- **Code Cleanup Pass**: 
+  - Removed unused imports across all dashboard components
+  - Fixed Python linting issues (unused variable, f-string without placeholders)
+  - Added shared formatting utilities: `/app/frontend/src/lib/formatters.js`
+  - Added 28 unit tests for deterministic computations: `/app/frontend/src/lib/formatters.test.js`
+  - All linting passes (ESLint + Ruff)
+
 - **BenchmarkBanner Component**: NEW - Constructive tension banner
   - Shows below ExitSnapshotCard when valuations exist
   - Compares current valuation against industry benchmark
