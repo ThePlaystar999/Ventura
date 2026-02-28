@@ -134,11 +134,11 @@ const ExitSnapshotCard = ({
             <select
               value={selectedProjectId || ''}
               onChange={(e) => onProjectSelect(e.target.value || null)}
-              className="bg-white/10 border border-white/20 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-[#0B4DBB] cursor-pointer"
+              className="bg-white/15 backdrop-blur-sm border border-white/30 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-white/50 cursor-pointer"
             >
-              <option value="" className="bg-slate-800">All Projects</option>
+              <option value="" className="bg-[#0B4DBB]">All Projects</option>
               {projects.map(p => (
-                <option key={p.project_id} value={p.project_id} className="bg-slate-800">
+                <option key={p.project_id} value={p.project_id} className="bg-[#0B4DBB]">
                   {p.name}
                 </option>
               ))}
