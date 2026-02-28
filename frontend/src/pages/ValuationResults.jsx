@@ -307,79 +307,73 @@ const ValuationResults = () => {
     </>
   );
 
-  // Snapshot Metrics Component
+  // Snapshot Metrics Component - Investor Style
   const SnapshotMetrics = () => (
-    <div className="space-y-3">
-      <div className="flex items-center justify-between">
-        <span className="text-sm text-slate-500">ARR</span>
-        <span className="text-base font-bold text-slate-900">{formatCurrency(result?.arr_used)}</span>
+    <div className="space-y-1">
+      <div className="metric-row flex items-center justify-between py-2">
+        <span className="metric-label text-sm text-slate-500">ARR</span>
+        <span className="metric-value text-base font-semibold text-slate-900 tabular-nums">{formatCurrency(result?.arr_used)}</span>
       </div>
-      <div className="flex items-center justify-between">
-        <span className="text-sm text-slate-500">Growth</span>
-        <span className="text-base font-bold text-slate-900">{valuation.metrics?.growth_rate}%</span>
+      <div className="metric-row flex items-center justify-between py-2">
+        <span className="metric-label text-sm text-slate-500">Growth</span>
+        <span className="metric-value text-base font-semibold text-slate-900 tabular-nums">{valuation.metrics?.growth_rate}%</span>
       </div>
-      <div className="flex items-center justify-between">
-        <span className="text-sm text-slate-500">Gross Margin</span>
-        <span className="text-base font-bold text-slate-900">{valuation.metrics?.gross_margin}%</span>
+      <div className="metric-row flex items-center justify-between py-2">
+        <span className="metric-label text-sm text-slate-500">Gross Margin</span>
+        <span className="metric-value text-base font-semibold text-slate-900 tabular-nums">{valuation.metrics?.gross_margin}%</span>
       </div>
-      <div className="flex items-center justify-between">
-        <span className="text-sm text-slate-500">NRR</span>
-        <span className="text-base font-bold text-slate-900">{valuation.metrics?.nrr}%</span>
+      <div className="metric-row flex items-center justify-between py-2">
+        <span className="metric-label text-sm text-slate-500">NRR</span>
+        <span className="metric-value text-base font-semibold text-slate-900 tabular-nums">{valuation.metrics?.nrr}%</span>
       </div>
-      {valuation.metrics?.churn_rate !== undefined && (
-        <div className="flex items-center justify-between">
-          <span className="text-sm text-slate-500">Churn</span>
-          <span className="text-base font-bold text-slate-900">{valuation.metrics?.churn_rate || (100 - (valuation.metrics?.nrr || 100))}%</span>
-        </div>
-      )}
-      <div className="flex items-center justify-between pt-2 border-t border-[#EEF2F7]">
-        <span className="text-sm text-slate-500">Multiple Used</span>
-        <span className="text-base font-bold text-[#0B4DBB]">{result?.multiple_used}x</span>
+      <div className="metric-row flex items-center justify-between py-3 mt-2 border-t border-slate-200/60">
+        <span className="metric-label text-sm text-slate-500">Multiple</span>
+        <span className="metric-value text-base font-bold text-[#0B4DBB] tabular-nums">{result?.multiple_used}x</span>
       </div>
     </div>
   );
 
-  // Buyer Filters Component
+  // Buyer Filters Component - Checklist Style
   const BuyerFiltersContent = () => (
-    <div className="space-y-3">
-      <div className="flex items-center justify-between">
+    <div className="space-y-0">
+      <div className="filter-row flex items-center justify-between py-3 border-b border-slate-100">
         <span className="text-sm text-slate-600">Stripe Verified</span>
-        <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${
+        <span className={`text-xs font-medium px-2.5 py-1 rounded-full ${
           valuation.metrics?.stripe_verified 
-            ? 'bg-green-100 text-green-700' 
-            : 'bg-slate-100 text-slate-500'
+            ? 'bg-emerald-50 text-emerald-700 ring-1 ring-emerald-200' 
+            : 'bg-slate-50 text-slate-500 ring-1 ring-slate-200'
         }`}>
           {valuation.metrics?.stripe_verified ? 'Yes' : 'No'}
         </span>
       </div>
-      <div className="flex items-center justify-between">
+      <div className="filter-row flex items-center justify-between py-3 border-b border-slate-100">
         <span className="text-sm text-slate-600">12-Month History</span>
-        <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${
+        <span className={`text-xs font-medium px-2.5 py-1 rounded-full ${
           valuation.metrics?.has_12_month_history 
-            ? 'bg-green-100 text-green-700' 
-            : 'bg-amber-100 text-amber-700'
+            ? 'bg-emerald-50 text-emerald-700 ring-1 ring-emerald-200' 
+            : 'bg-amber-50 text-amber-700 ring-1 ring-amber-200'
         }`}>
           {valuation.metrics?.has_12_month_history ? 'Yes' : 'No'}
         </span>
       </div>
-      <div className="flex items-center justify-between">
+      <div className="filter-row flex items-center justify-between py-3 border-b border-slate-100">
         <span className="text-sm text-slate-600">Founder Involvement</span>
-        <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${
+        <span className={`text-xs font-medium px-2.5 py-1 rounded-full ${
           (valuation.metrics?.founder_hours_per_week || 40) <= 10 
-            ? 'bg-green-100 text-green-700' 
+            ? 'bg-emerald-50 text-emerald-700 ring-1 ring-emerald-200' 
             : (valuation.metrics?.founder_hours_per_week || 40) <= 25 
-              ? 'bg-amber-100 text-amber-700' 
-              : 'bg-red-100 text-red-700'
+              ? 'bg-amber-50 text-amber-700 ring-1 ring-amber-200' 
+              : 'bg-red-50 text-red-700 ring-1 ring-red-200'
         }`}>
           {valuation.metrics?.founder_hours_per_week || '40'}h/wk
         </span>
       </div>
-      <div className="flex items-center justify-between">
+      <div className="filter-row flex items-center justify-between py-3">
         <span className="text-sm text-slate-600">Revenue Concentration &gt;30%</span>
-        <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${
+        <span className={`text-xs font-medium px-2.5 py-1 rounded-full ${
           (valuation.metrics?.top_customer_concentration || 0) > 30 
-            ? 'bg-red-100 text-red-700' 
-            : 'bg-green-100 text-green-700'
+            ? 'bg-red-50 text-red-700 ring-1 ring-red-200' 
+            : 'bg-emerald-50 text-emerald-700 ring-1 ring-emerald-200'
         }`}>
           {(valuation.metrics?.top_customer_concentration || 0) > 30 ? 'Yes' : 'No'}
         </span>
