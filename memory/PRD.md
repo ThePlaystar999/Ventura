@@ -3,14 +3,18 @@
 ## Product Requirements Document
 
 ### Latest Update: February 28, 2026
-- **Exit Readiness Card Premium Upgrade**: High-end financial scoring intelligence
-  - Gradient progress ring (SVG linearGradient, animated stroke draw)
-  - Score/100 format with readiness classification label
-  - Primary Bottleneck insight (dynamically detects lowest category)
-  - Category scores: current/max format, gradient bars, "Critical Area" tags (<30%)
-  - Premium shadow (blue-tinted rgba 11,77,187), ARR tier in percentile
-- **Global Visual Hierarchy**: 3-tier system (TIER 1/2/3) with hover effects
-- **Premium Hero**: Stripe/Linear/Vercel-level design
+- **Exit Command Center Dashboard**: Complete overhaul
+  - New hero: "Your Startup Exit Command Center" with strategic subtitle
+  - Exit Snapshot card (dark gradient, full-width):
+    - Current Valuation, Change % + delta
+    - Exit Readiness mini-score (placeholder)
+    - Editable Target Valuation (localStorage persisted per project)
+    - Gap to Target with progress bar
+    - Dynamic CTA: "Start/Update Valuation"
+  - Project selector dropdown for multi-project users
+  - "Your Projects" section header
+- **Exit Readiness Card**: Premium upgrade + circular ring bug fix
+- **Global Visual Hierarchy**: 3-tier system
 - **Previous**: Dashboard Refactor (February 27, 2026)
 
 ## Original Problem Statement
