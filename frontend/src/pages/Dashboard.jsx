@@ -303,12 +303,19 @@ const Dashboard = () => {
             </motion.div>
           ) : projects.length > 0 ? (
             /* HAS VALUATIONS STATE - Exit Snapshot + Chart + Opportunities */
-            <ExitSnapshotCard
-              projects={projects}
-              valuations={valuations}
-              selectedProjectId={selectedProjectId || activeProject?.project_id}
-              onProjectSelect={setSelectedProjectId}
-            />
+            <>
+              <ExitSnapshotCard
+                projects={projects}
+                valuations={valuations}
+                selectedProjectId={selectedProjectId || activeProject?.project_id}
+                onProjectSelect={setSelectedProjectId}
+              />
+              {/* Benchmark Banner - Shows constructive tension */}
+              <BenchmarkBanner
+                valuations={valuations}
+                selectedProjectId={selectedProjectId || activeProject?.project_id}
+              />
+            </>
           ) : null}
         </div>
 
