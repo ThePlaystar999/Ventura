@@ -530,12 +530,12 @@ const ValuationResults = () => {
             </div>
 
             {/* ═══════════════════════════════════════════════════════════════
-                PRIMARY STRATEGIC BLOCKS (Sections 2-5)
-                Enhanced shadow + subtle background for visual priority
+                TIER 1 - PRIMARY STRATEGIC BLOCKS (Sections 2-5)
+                Highest visual importance: stronger shadow, top border accent
             ═══════════════════════════════════════════════════════════════ */}
             
             {/* SECTION 2 — EXIT READINESS SCORE */}
-            <div className="primary-strategic-block">
+            <div className="tier-1-block">
               <ExitReadinessCard 
                 metrics={valuation.metrics} 
                 valuationId={valuationId}
@@ -543,27 +543,27 @@ const ValuationResults = () => {
             </div>
 
             {/* SECTION 3 — RISK & DEAL KILLERS */}
-            <div className="primary-strategic-block">
+            <div className="tier-1-block">
               <DealKillerAlert metrics={valuation.metrics} />
             </div>
 
             {/* SECTION 4 — BUYER FIT ANALYSIS */}
-            <div className="primary-strategic-block">
+            <div className="tier-1-block">
               <BuyerFitSection metrics={valuation.metrics} />
             </div>
 
             {/* SECTION 5 — EXIT OPTIMIZATION ROADMAP */}
-            <div className="primary-strategic-block">
+            <div className="tier-1-block">
               <OptimizationRoadmap metrics={valuation.metrics} />
             </div>
 
             {/* ═══════════════════════════════════════════════════════════════
-                SECONDARY STRATEGIC BLOCKS (Sections 6-7)
-                Standard styling
+                TIER 2 - SECONDARY STRATEGIC BLOCKS (Sections 6-7)
+                Standard importance: neutral white, standard shadow
             ═══════════════════════════════════════════════════════════════ */}
 
             {/* SECTION 6 — WHAT-IF SIMULATOR */}
-            <div className="secondary-strategic-block">
+            <div className="tier-2-block">
               <MultipleImpactSimulator 
                 metrics={valuation.metrics} 
                 currentMultiple={valuation.results?.base_multiple || 3.0}
@@ -571,7 +571,8 @@ const ValuationResults = () => {
             </div>
 
             {/* SECTION 7 — EXIT SCENARIOS */}
-            <div className="secondary-strategic-block bg-white rounded-xl border border-[#EEF2F7] p-6">
+            <div className="tier-2-block">
+              <div className="bg-white rounded-2xl p-6">
               <div className="mb-6">
                 <p className="text-xs text-slate-500 uppercase tracking-wider mb-1">Realistic Exit Pathways Based on Current Metrics</p>
                 <h3 className="text-lg font-semibold text-slate-900">Exit Scenarios</h3>
