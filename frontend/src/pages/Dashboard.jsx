@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../App';
 import Navbar from '../components/Navbar';
@@ -10,7 +10,7 @@ import { Button } from '../components/ui/button';
 import { Input } from '../components/ui/input';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '../components/ui/dialog';
 import { toast } from 'sonner';
-import { Plus, FolderOpen, TrendingUp, Calendar, Trash2, FileText, ExternalLink } from 'lucide-react';
+import { Plus, FolderOpen, TrendingUp, Calendar, Trash2, FileText, ExternalLink, ChevronDown, Sparkles, ArrowRight } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 const API = process.env.REACT_APP_BACKEND_URL + "/api";
@@ -25,6 +25,31 @@ const Dashboard = () => {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [creating, setCreating] = useState(false);
   const [selectedProjectId, setSelectedProjectId] = useState(null);
+
+  // Determine active project (most recently updated, or first)
+  const activeProject = useMemo(() => {
+    if (projects.length === 0) return null;
+    
+    // If user selected a project, use that
+    if (selectedProjectId) {
+      return projects.find(p => p.project_id === selectedProjectId) || projects[0];
+    }
+    
+    // Default: most recently updated project
+    const sorted = [...projects].sort((a, b) => 
+      new Date(b.updated_at || b.created_at) - new Date(a.updated_at || a.created_at)
+    );
+    return sorted[0];
+  }, [projects, selectedProjectId]);
+
+  // Get valuations for active project
+  const activeProjectValuations = useMemo(() => {
+    if (!activeProject) return [];
+    return valuations.filter(v => v.project_id === activeProject.project_id);
+  }, [activeProject, valuations]);
+
+  // Check if active project has valuations
+  const hasValuations = activeProjectValuations.length > 0;
 
   useEffect(() => {
     fetchData();
