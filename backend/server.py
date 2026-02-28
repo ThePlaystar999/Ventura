@@ -1405,7 +1405,6 @@ def generate_exit_scenarios(
     metrics: ValuationMetrics
 ) -> List[ExitScenario]:
     """Generate detailed exit scenarios with rationale"""
-    base_val = valuation_result.base
     multiple = valuation_result.multiple_used
     arr = valuation_result.arr_used
     
