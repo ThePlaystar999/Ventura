@@ -1974,6 +1974,17 @@ async def create_project(data: ProjectCreate, user: UserBase = Depends(get_curre
     await db.projects.insert_one(doc)
     return project
 
+@api_router.get("/projects/{project_id}", response_model=Project)
+async def get_project(project_id: str, user: UserBase = Depends(get_current_user)):
+    """Get a single project by ID"""
+    project = await db.projects.find_one(
+        {"project_id": project_id, "user_id": user.user_id},
+        {"_id": 0}
+    )
+    if not project:
+        raise HTTPException(status_code=404, detail="Project not found")
+    return project
+
 @api_router.delete("/projects/{project_id}")
 async def delete_project(project_id: str, user: UserBase = Depends(get_current_user)):
     """Delete a project and its valuations"""
