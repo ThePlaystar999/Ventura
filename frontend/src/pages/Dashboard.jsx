@@ -156,62 +156,159 @@ const Dashboard = () => {
       <Navbar />
 
       <main className="pt-24 pb-12 px-6 md:px-12 lg:px-24 max-w-7xl mx-auto">
-        {/* Command Center Hero */}
+        {/* CONDITIONAL HERO SECTION */}
         <div className="mb-8">
-          <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-6">
-            <div>
-              <h1 className="text-2xl md:text-3xl font-bold tracking-tight text-slate-900">
-                Your Startup Exit Command Center
-              </h1>
-              <p className="text-slate-600 mt-1">
-                Track your valuation. Increase it. Prepare your exit.
-              </p>
+          {/* Hero Header with Project Selector */}
+          <div className="flex flex-col md:flex-row md:items-start justify-between gap-4 mb-6">
+            <div className="flex-1">
+              {/* Conditional Title based on valuations */}
+              {projects.length > 0 && !hasValuations ? (
+                <>
+                  <h1 className="text-2xl md:text-3xl font-bold tracking-tight text-slate-900">
+                    Get your first AI Valuation
+                  </h1>
+                  <p className="text-slate-600 mt-1">
+                    Understand what your startup is really worth.
+                  </p>
+                </>
+              ) : (
+                <>
+                  <h1 className="text-2xl md:text-3xl font-bold tracking-tight text-slate-900">
+                    Your Startup Exit Command Center
+                  </h1>
+                  <p className="text-slate-600 mt-1">
+                    Track your valuation. Increase it. Prepare your exit.
+                  </p>
+                </>
+              )}
             </div>
 
-            <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-              <DialogTrigger asChild>
-                <Button 
-                  className="bg-[#0B4DBB] hover:bg-[#093c96] text-white shadow-lg shadow-blue-900/20"
-                  data-testid="new-project-btn"
-                >
-                  <Plus className="w-4 h-4 mr-2" />
-                  New Project
-                </Button>
-              </DialogTrigger>
-              <DialogContent className="sm:max-w-md">
-                <DialogHeader>
-                  <DialogTitle>Create New Project</DialogTitle>
-                </DialogHeader>
-                <div className="space-y-4 pt-4">
-                  <Input
-                    placeholder="Project name (e.g., TechStartup Series A)"
-                    value={newProjectName}
-                    onChange={(e) => setNewProjectName(e.target.value)}
-                    className="input-premium"
-                    data-testid="project-name-input"
-                  />
-                  <Button 
-                    onClick={createProject}
-                    disabled={!newProjectName.trim() || creating}
-                    className="w-full bg-[#0B4DBB] hover:bg-[#093c96]"
-                    data-testid="create-project-btn"
+            {/* Right side: Project Selector + New Project Button */}
+            <div className="flex items-center gap-3">
+              {/* Project Selector Dropdown */}
+              {projects.length > 1 && (
+                <div className="relative">
+                  <select
+                    value={selectedProjectId || activeProject?.project_id || ''}
+                    onChange={(e) => setSelectedProjectId(e.target.value || null)}
+                    className="appearance-none bg-white border border-slate-200 rounded-lg px-4 py-2 pr-10 text-sm font-medium text-slate-700 hover:border-slate-300 focus:outline-none focus:ring-2 focus:ring-[#0B4DBB]/20 focus:border-[#0B4DBB] cursor-pointer min-w-[180px]"
+                    data-testid="project-selector"
                   >
-                    {creating ? 'Creating...' : 'Create & Start Valuation'}
-                  </Button>
+                    {projects.map(p => (
+                      <option key={p.project_id} value={p.project_id}>
+                        {p.name}
+                      </option>
+                    ))}
+                  </select>
+                  <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none" />
                 </div>
-              </DialogContent>
-            </Dialog>
+              )}
+
+              <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+                <DialogTrigger asChild>
+                  <Button 
+                    className="bg-[#0B4DBB] hover:bg-[#093c96] text-white shadow-lg shadow-blue-900/20"
+                    data-testid="new-project-btn"
+                  >
+                    <Plus className="w-4 h-4 mr-2" />
+                    New Project
+                  </Button>
+                </DialogTrigger>
+                <DialogContent className="sm:max-w-md">
+                  <DialogHeader>
+                    <DialogTitle>Create New Project</DialogTitle>
+                  </DialogHeader>
+                  <div className="space-y-4 pt-4">
+                    <Input
+                      placeholder="Project name (e.g., TechStartup Series A)"
+                      value={newProjectName}
+                      onChange={(e) => setNewProjectName(e.target.value)}
+                      className="input-premium"
+                      data-testid="project-name-input"
+                    />
+                    <Button 
+                      onClick={createProject}
+                      disabled={!newProjectName.trim() || creating}
+                      className="w-full bg-[#0B4DBB] hover:bg-[#093c96]"
+                      data-testid="create-project-btn"
+                    >
+                      {creating ? 'Creating...' : 'Create & Start Valuation'}
+                    </Button>
+                  </div>
+                </DialogContent>
+              </Dialog>
+            </div>
           </div>
 
-          {/* Exit Snapshot Card */}
-          {projects.length > 0 && (
+          {/* CONDITIONAL CONTENT based on valuations */}
+          {projects.length > 0 && !hasValuations ? (
+            /* NO VALUATIONS STATE - First Valuation Hero */
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="bg-gradient-to-br from-[#0842A0] via-[#0B4DBB] to-[#1E6AE1] rounded-2xl p-8 md:p-12 text-white relative overflow-hidden"
+              data-testid="first-valuation-hero"
+            >
+              {/* Background decoration */}
+              <div className="absolute inset-0 opacity-20">
+                <div className="absolute top-0 right-0 w-96 h-96 bg-white rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
+                <div className="absolute bottom-0 left-0 w-64 h-64 bg-white rounded-full blur-3xl translate-y-1/2 -translate-x-1/2" />
+              </div>
+
+              <div className="relative z-10 max-w-2xl">
+                <div className="flex items-center gap-2 mb-4">
+                  <div className="w-10 h-10 rounded-xl bg-white/20 flex items-center justify-center">
+                    <Sparkles className="w-5 h-5 text-white" />
+                  </div>
+                  <span className="text-sm font-medium text-white/80">AI-Powered Valuation</span>
+                </div>
+                
+                <h2 className="text-3xl md:text-4xl font-bold mb-3">
+                  Discover your startup's true value
+                </h2>
+                <p className="text-lg text-white/80 mb-6 max-w-xl">
+                  Get an accurate valuation based on your metrics, market data, and exit scenarios. 
+                  Takes only 5 minutes.
+                </p>
+
+                <div className="flex flex-col sm:flex-row gap-3">
+                  <Link to={activeProject ? `/valuation/new/${activeProject.project_id}` : '/valuation/new'}>
+                    <Button 
+                      size="lg"
+                      className="bg-white text-[#0B4DBB] hover:bg-white/90 font-semibold px-8 shadow-lg"
+                      data-testid="start-valuation-cta"
+                    >
+                      Start Valuation
+                      <ArrowRight className="w-4 h-4 ml-2" />
+                    </Button>
+                  </Link>
+                </div>
+
+                <div className="mt-8 pt-6 border-t border-white/20 grid grid-cols-3 gap-6">
+                  <div>
+                    <p className="text-2xl font-bold">5 min</p>
+                    <p className="text-sm text-white/60">to complete</p>
+                  </div>
+                  <div>
+                    <p className="text-2xl font-bold">3+</p>
+                    <p className="text-sm text-white/60">exit scenarios</p>
+                  </div>
+                  <div>
+                    <p className="text-2xl font-bold">PDF</p>
+                    <p className="text-sm text-white/60">report included</p>
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+          ) : projects.length > 0 ? (
+            /* HAS VALUATIONS STATE - Exit Snapshot + Chart + Opportunities */
             <ExitSnapshotCard
               projects={projects}
               valuations={valuations}
-              selectedProjectId={selectedProjectId}
+              selectedProjectId={selectedProjectId || activeProject?.project_id}
               onProjectSelect={setSelectedProjectId}
             />
-          )}
+          ) : null}
         </div>
 
         {/* Stats Overview - Only show when no projects */}
