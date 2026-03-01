@@ -894,14 +894,9 @@ const CreateValuation = () => {
                         {/* ARR/MRR Toggle */}
                         <div>
                           <label className="flex items-center text-sm font-medium text-slate-700 mb-3">
-                            Revenue Input
+                            {VALUATION_FIELDS.revenueType.label}
                             <span className="text-red-500 ml-0.5">*</span>
-                            <EnhancedTooltip 
-                              title="Annual/Monthly Recurring Revenue"
-                              definition="Predictable revenue from subscriptions. ARR = MRR × 12."
-                              example="$1M ARR = ~$83K MRR"
-                              range="Typical: $100K - $50M ARR"
-                            />
+                            <EnhancedTooltip fieldKey="revenueType" />
                           </label>
                           
                           {/* Toggle Buttons */}
@@ -954,7 +949,7 @@ const CreateValuation = () => {
                                   />
                                 </div>
                                 <p className="text-xs text-slate-500 mt-1.5">
-                                  Annual Recurring Revenue (annualized contracts)
+                                  {VALUATION_FIELDS.arr.helper}
                                 </p>
                               </motion.div>
                             ) : (
