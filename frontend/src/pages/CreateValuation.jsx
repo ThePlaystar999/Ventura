@@ -10,7 +10,7 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '../com
 import { toast } from 'sonner';
 import { 
   ArrowLeft, ArrowRight, Building2, BarChart3, Sparkles, Star, Check, 
-  HelpCircle, DollarSign, Percent, Users 
+  HelpCircle, DollarSign, Percent, Users, AlertTriangle, Hash, PieChart
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
