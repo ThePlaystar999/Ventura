@@ -125,6 +125,12 @@ const CreateValuation = () => {
         ? parseFloat(formData.arr) || 0 
         : (parseFloat(formData.mrr) || 0) * 12;
 
+      // Calculate annual churn from monthly if needed
+      const logoChurn = parseFloat(formData.logo_churn) || null;
+      const annualizedChurn = logoChurn && formData.churn_frequency === 'monthly' 
+        ? logoChurn * 12 
+        : logoChurn;
+
       const response = await fetch(`${API}/valuations`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -144,13 +150,28 @@ const CreateValuation = () => {
             mrr: parseFloat(formData.mrr) || 0,
             growth_rate: parseFloat(formData.growth_rate) || 0,
             gross_margin: parseFloat(formData.gross_margin) || 0,
+            // Retention metrics
             nrr: parseFloat(formData.nrr) || 100,
+            grr: parseFloat(formData.grr) || null,
+            logo_churn: annualizedChurn,
+            churn_frequency: formData.churn_frequency,
+            // Profitability
+            ebitda_margin: formData.profitability_metric === 'ebitda' ? parseFloat(formData.ebitda_margin) || null : null,
+            sde_margin: formData.profitability_metric === 'sde' ? parseFloat(formData.sde_margin) || null : null,
+            profitability_metric_type: formData.profitability_metric,
+            // Customer base
+            customer_concentration: parseFloat(formData.customer_concentration) || null,
+            customer_count: parseInt(formData.customer_count) || null,
+            // Revenue mix
+            revenue_subscription_pct: parseInt(formData.revenue_subscription) || 100,
+            revenue_usage_pct: parseInt(formData.revenue_usage) || 0,
+            revenue_services_pct: parseInt(formData.revenue_services) || 0,
+            // Efficiency
             burn_multiple: parseFloat(formData.burn_multiple) || null,
             runway_months: parseInt(formData.runway_months) || null,
             team_size: parseInt(formData.team_size) || 1,
-            customer_concentration: parseFloat(formData.customer_concentration) || null,
+            // Legacy fields
             founder_hours_per_week: parseInt(formData.founder_hours) || null,
-            churn_rate: parseFloat(formData.churn_rate) || null,
             has_audited_financials: formData.has_audited_financials,
             stripe_verified: formData.stripe_connected
           },
