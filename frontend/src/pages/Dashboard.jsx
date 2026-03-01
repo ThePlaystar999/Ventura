@@ -144,9 +144,8 @@ const Dashboard = () => {
   if (loading) {
     return (
       <div className="min-h-screen bg-[#F8FAFC]">
-        <Navbar />
-        <div className="pt-24 flex items-center justify-center">
-          <div className="spinner"></div>
+        <div className="pt-12 flex items-center justify-center">
+          <div className="w-10 h-10 border-4 border-[#0B4DBB] border-t-transparent rounded-full animate-spin"></div>
         </div>
       </div>
     );
@@ -154,9 +153,8 @@ const Dashboard = () => {
 
   return (
     <div className="min-h-screen bg-[#F8FAFC]" data-testid="dashboard">
-      <Navbar />
 
-      <main className="pt-24 pb-12 px-6 md:px-12 lg:px-24 max-w-7xl mx-auto">
+      <main className="py-8 px-6 md:px-8 lg:px-12 max-w-[1400px] mx-auto">
         {/* CONDITIONAL HERO SECTION */}
         <div className="mb-8">
           {/* Hero Header with Project Selector */}
