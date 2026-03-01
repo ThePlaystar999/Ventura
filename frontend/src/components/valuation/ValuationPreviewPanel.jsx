@@ -15,11 +15,15 @@ const ValuationPreviewPanel = ({ formData, isExpanded, onToggle, isMobile = fals
     const growth = parseFloat(formData.growth_rate) || 0;
     const grossMargin = parseFloat(formData.gross_margin) || 70;
     const nrr = parseFloat(formData.nrr) || 100;
+    const grr = parseFloat(formData.grr) || null;
+    const logoChurn = parseFloat(formData.logo_churn) || null;
+    const customerConcentration = parseFloat(formData.customer_concentration) || 0;
     const productMaturity = formData.product_maturity || 3;
     const marketSize = formData.market_size || 'Medium';
     const moat = formData.competitive_moat || 'Medium';
+    const revenueSubscription = parseInt(formData.revenue_subscription) || 100;
     
-    // Base multiple calculation (simplified model)
+    // Base multiple calculation (enhanced M&A model)
     let baseMultiple = 3.0; // Starting point
     
     // Growth premium (biggest driver)
@@ -34,10 +38,26 @@ const ValuationPreviewPanel = ({ formData, isExpanded, onToggle, isMobile = fals
     else if (nrr >= 105) baseMultiple += 0.4;
     else if (nrr < 90) baseMultiple -= 0.5;
     
+    // GRR adjustment (new)
+    if (grr) {
+      if (grr >= 95) baseMultiple += 0.4;
+      else if (grr >= 90) baseMultiple += 0.2;
+      else if (grr < 80) baseMultiple -= 0.4;
+    }
+    
     // Gross margin adjustment
     if (grossMargin >= 85) baseMultiple += 0.5;
     else if (grossMargin >= 75) baseMultiple += 0.3;
     else if (grossMargin < 60) baseMultiple -= 0.5;
+    
+    // Customer concentration discount (new)
+    if (customerConcentration > 50) baseMultiple -= 1.0;
+    else if (customerConcentration > 30) baseMultiple -= 0.5;
+    else if (customerConcentration > 20) baseMultiple -= 0.2;
+    
+    // Revenue mix adjustment (new) - higher subscription % = better
+    if (revenueSubscription >= 90) baseMultiple += 0.3;
+    else if (revenueSubscription < 70) baseMultiple -= 0.3;
     
     // Product maturity adjustment
     baseMultiple += (productMaturity - 3) * 0.3;
@@ -50,7 +70,7 @@ const ValuationPreviewPanel = ({ formData, isExpanded, onToggle, isMobile = fals
     if (moat === 'Strong') baseMultiple += 0.5;
     else if (moat === 'Low') baseMultiple -= 0.3;
     
-    // Industry adjustment (simplified)
+    // Industry adjustment
     const industry = formData.industry || '';
     if (industry === 'AI/ML' || industry === 'Cybersecurity') baseMultiple += 0.5;
     else if (industry === 'E-Commerce') baseMultiple -= 0.3;
@@ -62,28 +82,35 @@ const ValuationPreviewPanel = ({ formData, isExpanded, onToggle, isMobile = fals
     const lowMultiple = Math.max(1.0, baseMultiple * 0.8);
     const highMultiple = baseMultiple * 1.2;
     
-    // Calculate confidence
+    // Calculate confidence (enhanced)
     let confidenceScore = 0;
     if (arr > 0) confidenceScore += 2;
     if (growth > 0) confidenceScore += 1;
     if (grossMargin > 0) confidenceScore += 1;
-    if (nrr !== 100) confidenceScore += 1; // User changed from default
+    if (nrr !== 100 && nrr > 0) confidenceScore += 1;
+    if (grr) confidenceScore += 1;
+    if (logoChurn !== null) confidenceScore += 1;
+    if (customerConcentration > 0) confidenceScore += 1;
     
     let confidence = 'Low';
-    if (confidenceScore >= 4) confidence = 'High';
-    else if (confidenceScore >= 2) confidence = 'Moderate';
+    if (confidenceScore >= 6) confidence = 'High';
+    else if (confidenceScore >= 3) confidence = 'Moderate';
     
-    // Identify top driver
+    // Identify top driver (prioritized)
     let topDriver = null;
     if (growth >= 75) topDriver = { label: `${growth}% YoY Growth`, type: 'positive' };
-    else if (nrr >= 115) topDriver = { label: `${nrr}% NRR`, type: 'positive' };
+    else if (nrr >= 120) topDriver = { label: `${nrr}% NRR`, type: 'positive' };
+    else if (grr && grr >= 95) topDriver = { label: `${grr}% GRR`, type: 'positive' };
     else if (moat === 'Strong') topDriver = { label: 'Strong Competitive Moat', type: 'positive' };
     else if (grossMargin >= 80) topDriver = { label: `${grossMargin}% Gross Margin`, type: 'positive' };
+    else if (revenueSubscription >= 90) topDriver = { label: `${revenueSubscription}% Subscription Revenue`, type: 'positive' };
     else if (growth > 0) topDriver = { label: `${growth}% Growth Rate`, type: 'neutral' };
     
-    // Identify red flag
+    // Identify red flag (prioritized)
     let redFlag = null;
-    if (nrr < 90 && nrr > 0) redFlag = `Low NRR (${nrr}%)`;
+    if (customerConcentration > 30) redFlag = `High concentration (${customerConcentration}%)`;
+    else if (nrr < 90 && nrr > 0) redFlag = `Low NRR (${nrr}%)`;
+    else if (grr && grr < 80) redFlag = `Low GRR (${grr}%)`;
     else if (grossMargin < 60 && grossMargin > 0) redFlag = `Low Margin (${grossMargin}%)`;
     else if (growth < 20 && growth > 0) redFlag = `Slow Growth (${growth}%)`;
     
