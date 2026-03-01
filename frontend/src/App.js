@@ -2,6 +2,7 @@ import React from "react";
 import { BrowserRouter, Routes, Route, useLocation, Navigate } from "react-router-dom";
 import { useState, useEffect, createContext, useContext } from "react";
 import { Toaster } from "./components/ui/sonner";
+import AppLayout from "./components/layout/AppLayout";
 import LandingPage from "./pages/LandingPage";
 import Dashboard from "./pages/Dashboard";
 import CreateValuation from "./pages/CreateValuation";
