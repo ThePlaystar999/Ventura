@@ -75,14 +75,14 @@ const AuthProvider = ({ children }) => {
   );
 };
 
-// Protected Route
+// Protected Route with AppLayout
 const ProtectedRoute = ({ children }) => {
   const { user, loading } = useAuth();
   const location = useLocation();
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-white">
+      <div className="min-h-screen flex items-center justify-center bg-[#F8FAFC]">
         <div className="text-center">
           <div className="w-12 h-12 border-4 border-[#0B4DBB] border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
           <p className="text-slate-600">Loading...</p>
@@ -95,7 +95,7 @@ const ProtectedRoute = ({ children }) => {
     return <Navigate to="/" state={{ from: location }} replace />;
   }
 
-  return children;
+  return <AppLayout>{children}</AppLayout>;
 };
 
 // App Router with session_id detection
