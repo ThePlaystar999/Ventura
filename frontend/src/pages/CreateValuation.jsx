@@ -32,12 +32,28 @@ const CreateValuation = () => {
     stage: '',
     business_model: 'SaaS',
     founding_year: '',
-    // Metrics
+    // Metrics - Core
     arr: '',
     mrr: '',
     growth_rate: '',
     gross_margin: '',
     nrr: '',
+    grr: '',
+    // Metrics - Churn
+    logo_churn: '',
+    churn_frequency: 'monthly', // 'monthly' or 'annual'
+    // Metrics - Profitability
+    profitability_metric: 'ebitda', // 'ebitda' or 'sde'
+    ebitda_margin: '',
+    sde_margin: '',
+    // Metrics - Customer
+    customer_concentration: '',
+    customer_count: '',
+    // Metrics - Revenue Mix (must sum to 100)
+    revenue_subscription: '100',
+    revenue_usage: '0',
+    revenue_services: '0',
+    // Metrics - Other
     burn_multiple: '',
     runway_months: '',
     team_size: '',
@@ -45,9 +61,7 @@ const CreateValuation = () => {
     product_maturity: 3,
     market_size: 'Medium',
     competitive_moat: 'Medium',
-    customer_concentration: '',
     founder_hours: '',
-    churn_rate: '',
     has_audited_financials: false,
     stripe_connected: false
   });
