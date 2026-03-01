@@ -119,9 +119,8 @@ const ValuationResults = () => {
   if (loading) {
     return (
       <div className="min-h-screen bg-[#F8FAFC]">
-        <Navbar />
-        <div className="pt-24 flex items-center justify-center">
-          <div className="spinner"></div>
+        <div className="py-12 flex items-center justify-center">
+          <div className="w-10 h-10 border-4 border-[#0B4DBB] border-t-transparent rounded-full animate-spin"></div>
         </div>
       </div>
     );
