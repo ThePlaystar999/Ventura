@@ -14,6 +14,7 @@ import {
   TrendingUp, Shield, Target, Zap, FileText, Edit3, ChevronRight
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { VALUATION_FIELDS } from '../constants/valuationFields';
 
 const API = process.env.REACT_APP_BACKEND_URL + "/api";
 
