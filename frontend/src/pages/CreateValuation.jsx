@@ -327,6 +327,241 @@ const CreateValuation = () => {
     return { completed, total, percentage: Math.round((completed / total) * 100) };
   };
 
+  // === COMPUTE VALUATION FUNCTION ===
+  // Full valuation computation for Analysis step
+  const computeValuation = () => {
+    // Get ARR (from ARR or MRR)
+    const arr = revenueType === 'arr' 
+      ? parseFloat(formData.arr) || 0 
+      : (parseFloat(formData.mrr) || 0) * 12;
+    const isFromMRR = revenueType === 'mrr' && formData.mrr;
+    
+    // Get all metrics
+    const growth = parseFloat(formData.growth_rate) || 0;
+    const grossMargin = parseFloat(formData.gross_margin) || 70;
+    const nrr = parseFloat(formData.nrr) || 100;
+    const grr = parseFloat(formData.grr) || null;
+    const logoChurn = parseFloat(formData.logo_churn) || null;
+    const customerConcentration = parseFloat(formData.customer_concentration) || 0;
+    const ebitdaMargin = parseFloat(formData.ebitda_margin) || null;
+    const sdeMargin = parseFloat(formData.sde_margin) || null;
+    const revenueSubscription = parseInt(formData.revenue_subscription) || 100;
+    
+    // Base multiple calculation
+    let baseMultiple = 3.0;
+    const drivers = [];
+    const risks = [];
+    const improvements = [];
+    const missingInputs = [];
+    
+    // Track what's missing for confidence
+    if (!formData.logo_churn) missingInputs.push('Churn rate');
+    if (!formData.customer_concentration) missingInputs.push('Customer concentration');
+    if (!formData.ebitda_margin && !formData.sde_margin) missingInputs.push('Profitability (EBITDA/SDE)');
+    if (!formData.grr) missingInputs.push('GRR');
+    if (!formData.nrr || formData.nrr === 100) missingInputs.push('NRR');
+    
+    // Growth premium (biggest driver)
+    if (growth >= 100) {
+      baseMultiple += 2.0;
+      drivers.push({ text: `${growth}% YoY growth`, impact: '+2.0x', type: 'growth' });
+    } else if (growth >= 75) {
+      baseMultiple += 1.5;
+      drivers.push({ text: `${growth}% YoY growth`, impact: '+1.5x', type: 'growth' });
+    } else if (growth >= 50) {
+      baseMultiple += 1.0;
+      drivers.push({ text: `${growth}% YoY growth`, impact: '+1.0x', type: 'growth' });
+    } else if (growth >= 25) {
+      baseMultiple += 0.5;
+    } else if (growth > 0 && growth < 25) {
+      risks.push({ text: `Slow growth (${growth}%)`, impact: 'Multiple at risk' });
+      improvements.push({ text: 'Increase growth rate above 50% YoY', potential: '+0.5x to +1.0x' });
+    }
+    
+    // NRR premium
+    if (nrr >= 130) {
+      baseMultiple += 1.0;
+      drivers.push({ text: `${nrr}% Net Revenue Retention`, impact: '+1.0x', type: 'retention' });
+    } else if (nrr >= 115) {
+      baseMultiple += 0.7;
+      drivers.push({ text: `${nrr}% NRR (strong expansion)`, impact: '+0.7x', type: 'retention' });
+    } else if (nrr >= 105) {
+      baseMultiple += 0.4;
+    } else if (nrr < 90 && nrr > 0) {
+      baseMultiple -= 0.5;
+      risks.push({ text: `Low NRR (${nrr}%)`, impact: '-0.5x' });
+      improvements.push({ text: 'Improve NRR to 110%+', potential: '+0.5x to +1.0x' });
+    }
+    
+    // GRR adjustment
+    if (grr) {
+      if (grr >= 95) {
+        baseMultiple += 0.4;
+        drivers.push({ text: `${grr}% GRR (low churn)`, impact: '+0.4x', type: 'retention' });
+      } else if (grr < 80) {
+        baseMultiple -= 0.4;
+        risks.push({ text: `Low GRR (${grr}%)`, impact: '-0.4x' });
+      }
+    }
+    
+    // Gross margin adjustment
+    if (grossMargin >= 85) {
+      baseMultiple += 0.5;
+      drivers.push({ text: `${grossMargin}% gross margin`, impact: '+0.5x', type: 'profitability' });
+    } else if (grossMargin >= 75) {
+      baseMultiple += 0.3;
+    } else if (grossMargin < 60) {
+      baseMultiple -= 0.5;
+      risks.push({ text: `Low gross margin (${grossMargin}%)`, impact: '-0.5x' });
+      improvements.push({ text: 'Improve gross margin to 70%+', potential: '+0.3x to +0.5x' });
+    }
+    
+    // Customer concentration
+    if (customerConcentration > 50) {
+      baseMultiple -= 1.0;
+      risks.push({ text: `Very high customer concentration (${customerConcentration}%)`, impact: '-1.0x' });
+      improvements.push({ text: 'Reduce top customer below 30%', potential: '+0.5x to +1.0x' });
+    } else if (customerConcentration > 30) {
+      baseMultiple -= 0.5;
+      risks.push({ text: `High customer concentration (${customerConcentration}%)`, impact: '-0.5x' });
+      improvements.push({ text: 'Diversify customer base', potential: '+0.3x to +0.5x' });
+    }
+    
+    // Revenue mix
+    if (revenueSubscription >= 90) {
+      baseMultiple += 0.3;
+      drivers.push({ text: `${revenueSubscription}% subscription revenue`, impact: '+0.3x', type: 'model' });
+    } else if (revenueSubscription < 70) {
+      baseMultiple -= 0.3;
+      risks.push({ text: `Low subscription revenue (${revenueSubscription}%)`, impact: '-0.3x' });
+    }
+    
+    // Product maturity
+    const maturityBonus = (formData.product_maturity - 3) * 0.3;
+    baseMultiple += maturityBonus;
+    if (formData.product_maturity >= 4) {
+      drivers.push({ text: 'Strong product-market fit', impact: `+${maturityBonus.toFixed(1)}x`, type: 'product' });
+    } else if (formData.product_maturity <= 2) {
+      risks.push({ text: 'Early-stage product', impact: `${maturityBonus.toFixed(1)}x` });
+    }
+    
+    // Market size
+    if (formData.market_size === 'Large') {
+      baseMultiple += 0.5;
+      drivers.push({ text: 'Large addressable market (>$10B)', impact: '+0.5x', type: 'market' });
+    } else if (formData.market_size === 'Small') {
+      baseMultiple -= 0.3;
+      risks.push({ text: 'Limited market size', impact: '-0.3x' });
+    }
+    
+    // Competitive moat
+    if (formData.competitive_moat === 'Strong') {
+      baseMultiple += 0.5;
+      drivers.push({ text: 'Strong competitive moat', impact: '+0.5x', type: 'moat' });
+    } else if (formData.competitive_moat === 'Low') {
+      baseMultiple -= 0.3;
+      risks.push({ text: 'Weak competitive moat', impact: '-0.3x' });
+      improvements.push({ text: 'Build defensibility (IP, network effects, data moat)', potential: '+0.3x to +0.5x' });
+    }
+    
+    // Founder dependency
+    if (formData.founder_dependency === 'Low') {
+      baseMultiple += 0.3;
+      drivers.push({ text: 'Low founder dependency', impact: '+0.3x', type: 'operations' });
+    } else if (formData.founder_dependency === 'High') {
+      baseMultiple -= 0.5;
+      risks.push({ text: 'High founder dependency', impact: '-0.5x' });
+      improvements.push({ text: 'Delegate operations, document processes', potential: '+0.3x to +0.5x' });
+    }
+    
+    // Sales predictability
+    if (formData.sales_predictability === 'Self-serve') {
+      baseMultiple += 0.3;
+      drivers.push({ text: 'Self-serve sales motion', impact: '+0.3x', type: 'sales' });
+    } else if (formData.sales_predictability === 'Enterprise-lumpy') {
+      baseMultiple -= 0.2;
+      risks.push({ text: 'Enterprise-lumpy revenue', impact: '-0.2x' });
+    }
+    
+    // Audited financials bonus
+    if (formData.has_audited_financials) {
+      baseMultiple += 0.2;
+      drivers.push({ text: 'Audited financials', impact: '+0.2x', type: 'trust' });
+    } else {
+      improvements.push({ text: 'Get audited financials', potential: '+0.2x' });
+    }
+    
+    // Industry adjustment
+    if (formData.industry === 'AI/ML' || formData.industry === 'Cybersecurity') {
+      baseMultiple += 0.5;
+      drivers.push({ text: `${formData.industry} industry premium`, impact: '+0.5x', type: 'industry' });
+    }
+    
+    // Ensure minimum multiple
+    baseMultiple = Math.max(1.5, baseMultiple);
+    
+    // Calculate range
+    const lowMultiple = Math.max(1.0, baseMultiple * 0.8);
+    const highMultiple = baseMultiple * 1.2;
+    
+    // Calculate valuations
+    const lowValuation = arr * lowMultiple;
+    const baseValuation = arr * baseMultiple;
+    const highValuation = arr * highMultiple;
+    
+    // Calculate confidence
+    let confidenceScore = 0;
+    if (arr > 0) confidenceScore += 2;
+    if (growth > 0) confidenceScore += 1;
+    if (grossMargin > 0) confidenceScore += 1;
+    if (nrr !== 100 && nrr > 0) confidenceScore += 1;
+    if (grr) confidenceScore += 1;
+    if (logoChurn !== null) confidenceScore += 1;
+    if (customerConcentration > 0) confidenceScore += 1;
+    if (ebitdaMargin || sdeMargin) confidenceScore += 1;
+    if (formData.founder_dependency) confidenceScore += 0.5;
+    if (formData.sales_predictability) confidenceScore += 0.5;
+    
+    let confidence = 'Low';
+    let confidenceExplanation = 'Limited data provided. Add more metrics for accuracy.';
+    if (confidenceScore >= 8) {
+      confidence = 'High';
+      confidenceExplanation = 'Comprehensive data provided. High accuracy estimate.';
+    } else if (confidenceScore >= 5) {
+      confidence = 'Medium';
+      confidenceExplanation = 'Good data coverage. Some metrics missing.';
+    }
+    
+    // Sort drivers by impact (highest first) and limit to top 5
+    const sortedDrivers = drivers
+      .sort((a, b) => parseFloat(b.impact) - parseFloat(a.impact))
+      .slice(0, 5);
+    
+    // Limit risks to 3
+    const sortedRisks = risks.slice(0, 3);
+    
+    // Limit improvements to 4
+    const sortedImprovements = improvements.slice(0, 4);
+    
+    return {
+      arr,
+      isFromMRR,
+      lowMultiple,
+      baseMultiple,
+      highMultiple,
+      lowValuation,
+      baseValuation,
+      highValuation,
+      confidence,
+      confidenceScore,
+      confidenceExplanation,
+      missingInputs,
+      drivers: sortedDrivers,
+      risks: sortedRisks,
+      improvements: sortedImprovements
+    };
+  };
+
   // Calculate qualitative score (0-100) and generate notes
   const calculateQualitativeScore = () => {
     let score = 0;
