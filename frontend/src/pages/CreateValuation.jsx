@@ -109,7 +109,14 @@ const CreateValuation = () => {
     } else if (step === 2 && isStep2Valid()) {
       setStep(3);
     } else if (step === 3) {
-      submitValuation();
+      // Go to analysis step first
+      setStep(4);
+      setAnalyzing(true);
+      // Simulate analysis delay, then show results
+      setTimeout(() => {
+        setAnalyzing(false);
+        setAnalysisComplete(true);
+      }, 2500);
     }
   };
 
