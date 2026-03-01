@@ -8,6 +8,41 @@
 
 ## Changelog
 
+### March 1, 2026 - Financial Metrics M&A-Grade Enhancement
+
+**Enhanced Step 2 (Financial Metrics) with M&A-grade inputs:**
+
+**New Toggle Components:**
+- ARR/MRR toggle: "I know ARR" / "I know MRR" - only one input visible at a time
+- Computed ARR shown in real-time when MRR entered (MRR × 12)
+- EBITDA/SDE margin toggle with contextual tooltips
+- Logo churn frequency toggle (Monthly/Annual)
+
+**New Fields Added:**
+- GRR % (Gross Revenue Retention)
+- Logo churn % with frequency selector
+- EBITDA margin % OR SDE margin % (toggle-based)
+- Top customer concentration %
+- # of customers
+- Revenue mix: Subscription / Usage / Services (must total 100%)
+
+**Inline Validations (Soft Warnings - Non-blocking):**
+- NRR < GRR: "NRR < GRR is unusual. Please verify."
+- NRR > 200%: "Very high (>200%). Double-check your data."
+- Gross margin < 30%: "Unusually low for SaaS (<30%). Verify data."
+- Gross margin > 95%: "Unusually high (>95%). Verify COGS calculation."
+- Concentration > 30%: "High concentration (>30%). Multiple likely discounted."
+- Revenue mix != 100%: "Total: X% — must equal 100%"
+
+**Enhanced Tooltips:**
+- Every field has definition, example, and typical range
+- Dark themed tooltips with structured content
+- EnhancedTooltip component for consistent styling
+
+**Testing:** All 12 features verified working (100% pass rate)
+
+---
+
 ### March 1, 2026 - Create Valuation Premium UX Redesign
 
 **2-Column Layout with Live Preview Panel:**
