@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../App';
-import Navbar from '../components/Navbar';
 import ExitSnapshotCard from '../components/dashboard/ExitSnapshotCard';
 import ValuationOverTimeChart from '../components/dashboard/ValuationOverTimeChart';
 import ValuationBoostOpportunities from '../components/dashboard/ValuationBoostOpportunities';
@@ -10,8 +9,10 @@ import BenchmarkBanner from '../components/dashboard/BenchmarkBanner';
 import { Button } from '../components/ui/button';
 import { Input } from '../components/ui/input';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '../components/ui/dialog';
+import { Skeleton } from '../components/ui/skeleton';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '../components/ui/tooltip';
 import { toast } from 'sonner';
-import { Plus, FolderOpen, TrendingUp, FileText, ChevronDown, Sparkles, ArrowRight, Activity } from 'lucide-react';
+import { Plus, FolderOpen, TrendingUp, FileText, ChevronDown, Sparkles, ArrowRight, Activity, HelpCircle } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 const API = process.env.REACT_APP_BACKEND_URL + "/api";
