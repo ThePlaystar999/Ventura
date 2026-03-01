@@ -200,35 +200,51 @@ const Dashboard = () => {
   }
 
   return (
-    <div className="min-h-screen bg-[#F8FAFC]" data-testid="dashboard">
+    <TooltipProvider delayDuration={300}>
+      <div className="min-h-screen bg-[#F8FAFC]" data-testid="dashboard">
 
-      <main className="py-8 px-6 md:px-8 lg:px-12 max-w-[1400px] mx-auto">
-        {/* CONDITIONAL HERO SECTION */}
-        <div className="mb-8">
-          {/* Hero Header with Project Selector */}
-          <div className="flex flex-col md:flex-row md:items-start justify-between gap-4 mb-6">
-            <div className="flex-1">
-              {/* Conditional Title based on valuations */}
-              {projects.length > 0 && !hasValuations ? (
-                <>
-                  <h1 className="text-2xl md:text-3xl font-bold tracking-tight text-slate-900">
-                    Get your first AI Valuation
-                  </h1>
-                  <p className="text-slate-600 mt-1">
-                    Understand what your startup is really worth.
-                  </p>
-                </>
-              ) : (
-                <>
-                  <h1 className="text-2xl md:text-3xl font-bold tracking-tight text-slate-900">
-                    Your Startup Exit Command Center
-                  </h1>
+        <main className="py-8 px-6 md:px-8 lg:px-12 max-w-[1400px] mx-auto">
+          {/* CONDITIONAL HERO SECTION */}
+          <div className="mb-8">
+            {/* Hero Header with Project Selector */}
+            <div className="flex flex-col md:flex-row md:items-start justify-between gap-4 mb-6">
+              <div className="flex-1">
+                {/* Conditional Title based on valuations */}
+                {projects.length > 0 && !hasValuations ? (
+                  <>
+                    <h1 className="text-2xl md:text-3xl font-bold tracking-tight text-slate-900">
+                      Get your first AI Valuation
+                    </h1>
+                    <p className="text-slate-600 mt-1">
+                      Understand what your startup is really worth.
+                    </p>
+                  </>
+                ) : (
+                  <div className="flex items-center gap-2">
+                    <h1 className="text-2xl md:text-3xl font-bold tracking-tight text-slate-900">
+                      Your Startup Exit Command Center
+                    </h1>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <button className="text-slate-400 hover:text-slate-600 transition-colors">
+                          <HelpCircle className="w-5 h-5" />
+                        </button>
+                      </TooltipTrigger>
+                      <TooltipContent side="bottom" className="max-w-xs">
+                        <p className="text-sm">Track your valuation over time, identify growth opportunities, and prepare for a successful exit.</p>
+                      </TooltipContent>
+                    </Tooltip>
+                    <p className="text-slate-600 mt-1 hidden">
+                      Track your valuation. Increase it. Prepare your exit.
+                    </p>
+                  </div>
+                )}
+                {hasValuations && (
                   <p className="text-slate-600 mt-1">
                     Track your valuation. Increase it. Prepare your exit.
                   </p>
-                </>
-              )}
-            </div>
+                )}
+              </div>
 
             {/* Right side: Project Selector + Open Exit OS + New Project Button */}
             <div className="flex flex-wrap items-center gap-3">
