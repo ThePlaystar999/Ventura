@@ -173,9 +173,8 @@ const CreateValuation = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-white to-[#F8FAFC]" data-testid="create-valuation">
-      <Navbar />
 
-      <main className="pt-24 pb-12 px-6 md:px-12 lg:px-24 max-w-3xl mx-auto">
+      <main className="py-8 px-6 md:px-8 lg:px-12 max-w-3xl mx-auto">
         {/* Header */}
         <div className="text-center mb-12">
           <h1 className="text-2xl md:text-3xl font-bold tracking-tight text-slate-900 mb-2">
