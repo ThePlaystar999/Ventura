@@ -70,6 +70,16 @@ const ValuationPreviewPanel = ({ formData, isExpanded, onToggle, isMobile = fals
     if (moat === 'Strong') baseMultiple += 0.5;
     else if (moat === 'Low') baseMultiple -= 0.3;
     
+    // Founder dependency adjustment (new)
+    const founderDependency = formData.founder_dependency || '';
+    if (founderDependency === 'Low') baseMultiple += 0.3;
+    else if (founderDependency === 'High') baseMultiple -= 0.5;
+    
+    // Sales predictability adjustment (new)
+    const salesPredictability = formData.sales_predictability || '';
+    if (salesPredictability === 'Self-serve') baseMultiple += 0.3;
+    else if (salesPredictability === 'Enterprise-lumpy') baseMultiple -= 0.2;
+    
     // Industry adjustment
     const industry = formData.industry || '';
     if (industry === 'AI/ML' || industry === 'Cybersecurity') baseMultiple += 0.5;
