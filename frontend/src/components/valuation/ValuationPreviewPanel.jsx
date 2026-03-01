@@ -111,6 +111,8 @@ const ValuationPreviewPanel = ({ formData, isExpanded, onToggle, isMobile = fals
     if (growth >= 75) topDriver = { label: `${growth}% YoY Growth`, type: 'positive' };
     else if (nrr >= 120) topDriver = { label: `${nrr}% NRR`, type: 'positive' };
     else if (grr && grr >= 95) topDriver = { label: `${grr}% GRR`, type: 'positive' };
+    else if (founderDependency === 'Low') topDriver = { label: 'Low Founder Dependency', type: 'positive' };
+    else if (salesPredictability === 'Self-serve') topDriver = { label: 'Self-Serve Sales', type: 'positive' };
     else if (moat === 'Strong') topDriver = { label: 'Strong Competitive Moat', type: 'positive' };
     else if (grossMargin >= 80) topDriver = { label: `${grossMargin}% Gross Margin`, type: 'positive' };
     else if (revenueSubscription >= 90) topDriver = { label: `${revenueSubscription}% Subscription Revenue`, type: 'positive' };
@@ -118,9 +120,11 @@ const ValuationPreviewPanel = ({ formData, isExpanded, onToggle, isMobile = fals
     
     // Identify red flag (prioritized)
     let redFlag = null;
-    if (customerConcentration > 30) redFlag = `High concentration (${customerConcentration}%)`;
+    if (founderDependency === 'High') redFlag = 'High Founder Dependency';
+    else if (customerConcentration > 30) redFlag = `High concentration (${customerConcentration}%)`;
     else if (nrr < 90 && nrr > 0) redFlag = `Low NRR (${nrr}%)`;
     else if (grr && grr < 80) redFlag = `Low GRR (${grr}%)`;
+    else if (salesPredictability === 'Enterprise-lumpy') redFlag = 'Enterprise-lumpy Sales';
     else if (grossMargin < 60 && grossMargin > 0) redFlag = `Low Margin (${grossMargin}%)`;
     else if (growth < 20 && growth > 0) redFlag = `Slow Growth (${growth}%)`;
     
