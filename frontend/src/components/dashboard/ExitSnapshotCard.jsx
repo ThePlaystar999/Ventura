@@ -149,7 +149,19 @@ const ExitSnapshotCard = ({
         <div className="grid grid-cols-2 lg:grid-cols-5 gap-4 md:gap-6">
           {/* Current Valuation */}
           <div className="col-span-2 lg:col-span-1 bg-white/10 backdrop-blur-sm rounded-xl p-4 border border-white/20">
-            <p className="text-xs text-white/70 uppercase tracking-wider mb-1">Current Valuation</p>
+            <div className="flex items-center gap-1 mb-1">
+              <p className="text-xs text-white/70 uppercase tracking-wider">Current Valuation</p>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <button className="text-white/40 hover:text-white/70 transition-colors">
+                    <HelpCircle className="w-3.5 h-3.5" />
+                  </button>
+                </TooltipTrigger>
+                <TooltipContent side="top" className="max-w-xs">
+                  <p className="text-sm">Your estimated enterprise value based on revenue multiple and growth metrics.</p>
+                </TooltipContent>
+              </Tooltip>
+            </div>
             <p className="text-2xl md:text-3xl font-bold tabular-nums" data-testid="current-valuation">
               {formatCurrency(currentValue)}
             </p>
@@ -162,7 +174,19 @@ const ExitSnapshotCard = ({
 
           {/* Change since last */}
           <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4 border border-white/20">
-            <p className="text-xs text-white/70 uppercase tracking-wider mb-1">Change</p>
+            <div className="flex items-center gap-1 mb-1">
+              <p className="text-xs text-white/70 uppercase tracking-wider">Change</p>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <button className="text-white/40 hover:text-white/70 transition-colors">
+                    <HelpCircle className="w-3.5 h-3.5" />
+                  </button>
+                </TooltipTrigger>
+                <TooltipContent side="top" className="max-w-xs">
+                  <p className="text-sm">Valuation change since your previous assessment.</p>
+                </TooltipContent>
+              </Tooltip>
+            </div>
             {previousValuation ? (
               <div className="flex items-center gap-2">
                 {hasIncrease ? (
@@ -186,7 +210,19 @@ const ExitSnapshotCard = ({
 
           {/* Exit Readiness Score */}
           <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4 border border-white/20">
-            <p className="text-xs text-white/70 uppercase tracking-wider mb-1">Exit Readiness</p>
+            <div className="flex items-center gap-1 mb-1">
+              <p className="text-xs text-white/70 uppercase tracking-wider">Exit Readiness</p>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <button className="text-white/40 hover:text-white/70 transition-colors">
+                    <HelpCircle className="w-3.5 h-3.5" />
+                  </button>
+                </TooltipTrigger>
+                <TooltipContent side="top" className="max-w-xs">
+                  <p className="text-sm">Score from 0-100 measuring how prepared your startup is for acquisition or exit.</p>
+                </TooltipContent>
+              </Tooltip>
+            </div>
             {exitReadinessScore !== null ? (
               <div className="flex items-center gap-2">
                 <div className="relative w-10 h-10">
