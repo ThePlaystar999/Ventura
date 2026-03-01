@@ -80,10 +80,10 @@ const HeroSection = ({ onGetStarted }) => {
             transition={{ duration: 0.6, delay: 0.1 }}
             className="text-4xl sm:text-5xl md:text-6xl lg:text-[4.25rem] font-bold tracking-tight text-slate-900 leading-[1.08] mb-6"
           >
-            Your Startup Exit
+            Know Your Value.
             <br />
             <span className="bg-gradient-to-r from-[#0B4DBB] via-[#1E6AE1] to-[#0B4DBB] bg-clip-text text-transparent">
-              Command Center
+              Build Your Exit.
             </span>
           </motion.h1>
 
