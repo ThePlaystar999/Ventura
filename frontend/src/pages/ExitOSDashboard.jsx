@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../App';
-import Navbar from '../components/Navbar';
 import { Button } from '../components/ui/button';
 import { 
   ArrowLeft, 
