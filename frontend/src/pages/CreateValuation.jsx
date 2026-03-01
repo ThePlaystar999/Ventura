@@ -306,6 +306,91 @@ const CreateValuation = () => {
     return null;
   };
 
+  // === QUALITATIVE SCORING SYSTEM ===
+  
+  // Count completed qualitative dimensions
+  const getQualitativeCompletion = () => {
+    let completed = 0;
+    const total = 5;
+    
+    if (formData.product_maturity) completed++;
+    if (formData.market_size) completed++;
+    if (formData.competitive_moat) completed++;
+    if (formData.founder_dependency) completed++;
+    if (formData.sales_predictability) completed++;
+    
+    return { completed, total, percentage: Math.round((completed / total) * 100) };
+  };
+
+  // Calculate qualitative score (0-100) and generate notes
+  const calculateQualitativeScore = () => {
+    let score = 0;
+    const strengths = [];
+    const risks = [];
+    
+    // Product Maturity (0-25 points)
+    const maturityScore = ((formData.product_maturity - 1) / 4) * 25;
+    score += maturityScore;
+    if (formData.product_maturity >= 4) {
+      strengths.push('Strong product-market fit');
+    } else if (formData.product_maturity <= 2) {
+      risks.push('Early-stage product, higher risk');
+    }
+    
+    // Market Size (0-20 points)
+    if (formData.market_size === 'Large') {
+      score += 20;
+      strengths.push('Large addressable market (>$10B TAM)');
+    } else if (formData.market_size === 'Medium') {
+      score += 12;
+    } else if (formData.market_size === 'Small') {
+      score += 5;
+      risks.push('Limited market size (<$1B TAM)');
+    }
+    
+    // Competitive Moat (0-20 points)
+    if (formData.competitive_moat === 'Strong') {
+      score += 20;
+      strengths.push('Strong competitive moat');
+    } else if (formData.competitive_moat === 'Medium') {
+      score += 12;
+    } else if (formData.competitive_moat === 'Low') {
+      score += 5;
+      risks.push('Weak defensibility, easy to replicate');
+    }
+    
+    // Founder Dependency (0-20 points) - Lower is better
+    if (formData.founder_dependency === 'Low') {
+      score += 20;
+      strengths.push('Low founder dependency, highly transferable');
+    } else if (formData.founder_dependency === 'Medium') {
+      score += 12;
+    } else if (formData.founder_dependency === 'High') {
+      score += 5;
+      risks.push('High founder dependency, key-person risk');
+    }
+    
+    // Sales Predictability (0-15 points)
+    if (formData.sales_predictability === 'Self-serve') {
+      score += 15;
+      strengths.push('Self-serve sales motion, scalable');
+    } else if (formData.sales_predictability === 'Mixed') {
+      score += 10;
+    } else if (formData.sales_predictability === 'Enterprise-lumpy') {
+      score += 5;
+      risks.push('Enterprise sales, lumpy revenue recognition');
+    }
+    
+    // Normalize to 0-100
+    const normalizedScore = Math.min(100, Math.round(score));
+    
+    return {
+      qualitativeScore: normalizedScore,
+      qualitativeNotes: { strengths, risks },
+      multiplierAdjustment: (normalizedScore - 50) / 100 // -0.5 to +0.5 multiplier adjustment
+    };
+  };
+
   // Revenue Mix Handler (auto-adjust to total 100)
   const handleRevenueMixChange = (field, value) => {
     const numValue = Math.max(0, Math.min(100, parseInt(value) || 0));
