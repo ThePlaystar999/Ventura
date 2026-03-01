@@ -407,9 +407,8 @@ const ValuationResults = () => {
 
   return (
     <div className="min-h-screen bg-[#F8FAFC]" data-testid="valuation-results">
-      <Navbar />
 
-      <main className="pt-24 pb-12 px-6 md:px-12 lg:px-24 max-w-7xl mx-auto">
+      <main className="py-8 px-6 md:px-8 lg:px-12 max-w-[1400px] mx-auto">
         {/* Header */}
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
           <div className="flex items-center gap-4">
