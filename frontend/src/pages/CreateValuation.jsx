@@ -201,6 +201,100 @@ const CreateValuation = () => {
     </Tooltip>
   );
 
+  // Enhanced Tooltip with definition, example, and range
+  const EnhancedTooltip = ({ title, definition, example, range }) => (
+    <Tooltip>
+      <TooltipTrigger asChild>
+        <button type="button" className="text-slate-400 hover:text-slate-600 transition-colors ml-1">
+          <HelpCircle className="w-3.5 h-3.5" />
+        </button>
+      </TooltipTrigger>
+      <TooltipContent side="top" className="max-w-sm p-0 overflow-hidden">
+        <div className="bg-slate-900 text-white">
+          <div className="px-3 py-2 border-b border-slate-700">
+            <p className="font-semibold text-sm">{title}</p>
+          </div>
+          <div className="px-3 py-2 space-y-2 text-xs">
+            <p className="text-slate-300">{definition}</p>
+            {example && (
+              <p className="text-slate-400">
+                <span className="text-slate-500">Example:</span> {example}
+              </p>
+            )}
+            {range && (
+              <p className="text-emerald-400 font-medium">
+                {range}
+              </p>
+            )}
+          </div>
+        </div>
+      </TooltipContent>
+    </Tooltip>
+  );
+
+  // Warning Badge Component (non-blocking)
+  const WarningBadge = ({ message }) => (
+    <motion.div 
+      initial={{ opacity: 0, y: -5 }}
+      animate={{ opacity: 1, y: 0 }}
+      className="flex items-center gap-1.5 mt-1.5 px-2 py-1 bg-amber-50 border border-amber-200 rounded-md"
+    >
+      <AlertTriangle className="w-3.5 h-3.5 text-amber-500 flex-shrink-0" />
+      <span className="text-xs text-amber-700">{message}</span>
+    </motion.div>
+  );
+
+  // === VALIDATION FUNCTIONS (soft warnings, non-blocking) ===
+  
+  const getGrossMarginWarning = () => {
+    const gm = parseFloat(formData.gross_margin);
+    if (!gm) return null;
+    if (gm < 30) return "Unusually low for SaaS (<30%). Verify data.";
+    if (gm > 95) return "Unusually high (>95%). Verify COGS calculation.";
+    if (gm < 60) return "Below typical SaaS range. May impact multiple.";
+    return null;
+  };
+
+  const getNRRWarning = () => {
+    const nrr = parseFloat(formData.nrr);
+    const grr = parseFloat(formData.grr);
+    if (!nrr) return null;
+    if (nrr > 200) return "Very high (>200%). Double-check your data.";
+    if (nrr < 80) return "Low NRR (<80%). High churn concern.";
+    if (grr && nrr < grr) return "NRR < GRR is unusual. Please verify.";
+    return null;
+  };
+
+  const getGRRWarning = () => {
+    const grr = parseFloat(formData.grr);
+    const nrr = parseFloat(formData.nrr);
+    if (!grr) return null;
+    if (grr > 100) return "GRR cannot exceed 100%.";
+    if (grr < 70) return "Low GRR (<70%). Significant churn concern.";
+    if (nrr && grr > nrr) return "GRR > NRR is impossible. Please verify.";
+    return null;
+  };
+
+  const getConcentrationWarning = () => {
+    const conc = parseFloat(formData.customer_concentration);
+    if (!conc) return null;
+    if (conc > 50) return "Very high (>50%). Major risk to acquirers.";
+    if (conc > 30) return "High concentration (>30%). Multiple likely discounted.";
+    return null;
+  };
+
+  // Revenue Mix Handler (auto-adjust to total 100)
+  const handleRevenueMixChange = (field, value) => {
+    const numValue = Math.max(0, Math.min(100, parseInt(value) || 0));
+    handleChange(field, String(numValue));
+  };
+
+  const getRevenueMixTotal = () => {
+    return (parseInt(formData.revenue_subscription) || 0) +
+           (parseInt(formData.revenue_usage) || 0) +
+           (parseInt(formData.revenue_services) || 0);
+  };
+
   return (
     <TooltipProvider delayDuration={200}>
       <div className="min-h-screen bg-gradient-to-b from-white to-[#F8FAFC]" data-testid="create-valuation">
