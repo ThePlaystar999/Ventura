@@ -2,16 +2,42 @@
 
 ## Product Requirements Document
 
-**Last Updated:** December 28, 2025
+**Last Updated:** March 1, 2026
 
 ---
 
 ## Changelog
 
+### March 1, 2026 - Global Sidebar Layout + UX Polish (P0)
+
+**Sidebar Navigation Implementation:**
+- Created `/app/frontend/src/components/layout/AppLayout.jsx` - Main layout wrapper
+- Created `/app/frontend/src/components/layout/Sidebar.jsx` - Collapsible sidebar navigation
+- Integrated AppLayout into `App.js` ProtectedRoute for all authenticated routes
+- Sidebar features:
+  - Dashboard, New Valuation, Exit OS (with "NEW" badge) navigation items
+  - Collapsible with toggle button (state persists in localStorage)
+  - User profile section with avatar and logout
+  - Pricing and Help secondary links
+  - Tooltips on collapsed items
+
+**Dashboard UX Polish:**
+- Added skeleton loading states using Shadcn Skeleton component
+- Added tooltips to key metrics (Current Valuation, Change, Exit Readiness)
+- Enhanced hover states on ProjectCard (delete button appears on hover)
+- Wrapped dashboard in TooltipProvider for consistent tooltip behavior
+
+**Hero Section Updates:**
+- Changed headline from "Your Startup Exit Command Center" to "Know Your Value. Build Your Exit."
+- Made V logo bigger in navbar (64x64, text-2xl) to match Peec.ai style
+
+**Testing:** All 9 frontend features verified working (100% pass rate)
+
+---
+
 ### December 28, 2025 - Hero Section Redesign (P0)
 - Implemented premium Peec.ai-inspired hero section in `/app/frontend/src/components/landing/HeroSection.jsx`
 - Added immersive dashboard mockup with 3D tilt effect and scroll parallax
-- New gradient headline "Your Startup Exit Command Center"
 - AI-Powered Exit Intelligence badge with animation
 - Trust indicators: 5 min setup, PDF report, Bank-level security
 - Dual CTA with primary button + play button
