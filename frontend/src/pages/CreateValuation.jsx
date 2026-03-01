@@ -391,7 +391,7 @@ const CreateValuation = () => {
                   </motion.div>
                 )}
 
-                {/* Step 2: Financial Metrics */}
+                {/* Step 2: Financial Metrics - M&A Grade */}
                 {step === 2 && (
                   <motion.div
                     key="step2"
@@ -401,193 +401,588 @@ const CreateValuation = () => {
                     transition={{ duration: 0.3 }}
                     className="p-6 md:p-8"
                   >
-                    <h2 className="text-xl font-semibold text-slate-900 mb-6">Financial Metrics</h2>
+                    <h2 className="text-xl font-semibold text-slate-900 mb-1">Financial Metrics</h2>
+                    <p className="text-sm text-slate-500 mb-6">M&A-grade inputs for accurate valuation</p>
                     
-                    <div className="space-y-5">
-                      {/* ARR/MRR Toggle */}
-                      <div>
-                        <label className="flex items-center text-sm font-medium text-slate-700 mb-3">
-                          Revenue Input
-                          <span className="text-red-500 ml-0.5">*</span>
-                          <FieldTooltip content="Choose ARR (Annual) or MRR (Monthly). MRR will be multiplied by 12." />
-                        </label>
-                        
-                        {/* Toggle Button */}
-                        <div className="flex items-center gap-2 mb-3">
-                          <button
-                            type="button"
-                            onClick={() => setRevenueType('arr')}
-                            className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
-                              revenueType === 'arr'
-                                ? 'bg-[#0B4DBB] text-white shadow-md'
-                                : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
-                            }`}
-                            data-testid="toggle-arr"
-                          >
-                            ARR
-                          </button>
-                          <button
-                            type="button"
-                            onClick={() => setRevenueType('mrr')}
-                            className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
-                              revenueType === 'mrr'
-                                ? 'bg-[#0B4DBB] text-white shadow-md'
-                                : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
-                            }`}
-                            data-testid="toggle-mrr"
-                          >
-                            MRR
-                          </button>
-                        </div>
+                    <div className="space-y-6">
+                      {/* === SECTION: Revenue === */}
+                      <div className="space-y-5">
+                        <h3 className="text-xs font-semibold text-slate-400 uppercase tracking-wider flex items-center gap-2">
+                          <DollarSign className="w-3.5 h-3.5" />
+                          Revenue
+                        </h3>
 
-                        {/* Revenue Input - Conditional based on toggle */}
-                        <AnimatePresence mode="wait">
-                          {revenueType === 'arr' ? (
-                            <motion.div
-                              key="arr-input"
-                              initial={{ opacity: 0, y: 10 }}
-                              animate={{ opacity: 1, y: 0 }}
-                              exit={{ opacity: 0, y: -10 }}
-                              transition={{ duration: 0.2 }}
+                        {/* ARR/MRR Toggle */}
+                        <div>
+                          <label className="flex items-center text-sm font-medium text-slate-700 mb-3">
+                            Revenue Input
+                            <span className="text-red-500 ml-0.5">*</span>
+                            <EnhancedTooltip 
+                              title="Annual/Monthly Recurring Revenue"
+                              definition="Predictable revenue from subscriptions. ARR = MRR × 12."
+                              example="$1M ARR = ~$83K MRR"
+                              range="Typical: $100K - $50M ARR"
+                            />
+                          </label>
+                          
+                          {/* Toggle Buttons */}
+                          <div className="flex items-center gap-1 p-1 bg-slate-100 rounded-lg w-fit mb-3">
+                            <button
+                              type="button"
+                              onClick={() => setRevenueType('arr')}
+                              className={`px-4 py-2 rounded-md text-sm font-medium transition-all ${
+                                revenueType === 'arr'
+                                  ? 'bg-white text-slate-900 shadow-sm'
+                                  : 'text-slate-600 hover:text-slate-900'
+                              }`}
+                              data-testid="toggle-arr"
                             >
-                              <div className="relative">
-                                <DollarSign className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-                                <Input
-                                  type="number"
-                                  value={formData.arr}
-                                  onChange={(e) => handleChange('arr', e.target.value)}
-                                  placeholder="1,000,000"
-                                  className="h-11 pl-9"
-                                  data-testid="input-arr"
-                                />
-                              </div>
-                              <p className="text-xs text-slate-500 mt-1.5">
-                                Annual Recurring Revenue (annualized contracts)
-                              </p>
-                            </motion.div>
-                          ) : (
-                            <motion.div
-                              key="mrr-input"
-                              initial={{ opacity: 0, y: 10 }}
-                              animate={{ opacity: 1, y: 0 }}
-                              exit={{ opacity: 0, y: -10 }}
-                              transition={{ duration: 0.2 }}
+                              I know ARR
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => setRevenueType('mrr')}
+                              className={`px-4 py-2 rounded-md text-sm font-medium transition-all ${
+                                revenueType === 'mrr'
+                                  ? 'bg-white text-slate-900 shadow-sm'
+                                  : 'text-slate-600 hover:text-slate-900'
+                              }`}
+                              data-testid="toggle-mrr"
                             >
-                              <div className="relative">
-                                <DollarSign className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-                                <Input
-                                  type="number"
-                                  value={formData.mrr}
-                                  onChange={(e) => handleChange('mrr', e.target.value)}
-                                  placeholder="85,000"
-                                  className="h-11 pl-9"
-                                  data-testid="input-mrr"
-                                />
-                              </div>
-                              <p className="text-xs text-slate-500 mt-1.5">
-                                Monthly Recurring Revenue
-                                {formData.mrr && (
-                                  <span className="text-[#0B4DBB] font-medium ml-1">
-                                    (= ${(parseFloat(formData.mrr) * 12).toLocaleString()} ARR)
-                                  </span>
+                              I know MRR
+                            </button>
+                          </div>
+
+                          {/* Revenue Input - Conditional */}
+                          <AnimatePresence mode="wait">
+                            {revenueType === 'arr' ? (
+                              <motion.div
+                                key="arr-input"
+                                initial={{ opacity: 0, y: 10 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                exit={{ opacity: 0, y: -10 }}
+                                transition={{ duration: 0.2 }}
+                              >
+                                <div className="relative">
+                                  <DollarSign className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                                  <Input
+                                    type="number"
+                                    value={formData.arr}
+                                    onChange={(e) => handleChange('arr', e.target.value)}
+                                    placeholder="1,000,000"
+                                    className="h-11 pl-9 text-base"
+                                    data-testid="input-arr"
+                                  />
+                                </div>
+                                <p className="text-xs text-slate-500 mt-1.5">
+                                  Annual Recurring Revenue (annualized contracts)
+                                </p>
+                              </motion.div>
+                            ) : (
+                              <motion.div
+                                key="mrr-input"
+                                initial={{ opacity: 0, y: 10 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                exit={{ opacity: 0, y: -10 }}
+                                transition={{ duration: 0.2 }}
+                              >
+                                <div className="relative">
+                                  <DollarSign className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                                  <Input
+                                    type="number"
+                                    value={formData.mrr}
+                                    onChange={(e) => handleChange('mrr', e.target.value)}
+                                    placeholder="85,000"
+                                    className="h-11 pl-9 text-base"
+                                    data-testid="input-mrr"
+                                  />
+                                </div>
+                                {formData.mrr ? (
+                                  <div className="mt-2 p-2.5 bg-[#F0F7FF] rounded-lg border border-[#DCEAFF]">
+                                    <p className="text-xs text-slate-600">
+                                      Computed ARR: <span className="font-semibold text-[#0B4DBB]">${(parseFloat(formData.mrr) * 12).toLocaleString()}</span>
+                                    </p>
+                                  </div>
+                                ) : (
+                                  <p className="text-xs text-slate-500 mt-1.5">
+                                    Monthly Recurring Revenue (will compute ARR = MRR × 12)
+                                  </p>
                                 )}
-                              </p>
-                            </motion.div>
-                          )}
-                        </AnimatePresence>
-                      </div>
-
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                        <div>
-                          <label className="flex items-center text-sm font-medium text-slate-700 mb-2">
-                            YoY Growth Rate
-                            <span className="text-red-500 ml-0.5">*</span>
-                            <FieldTooltip content="Year-over-year ARR growth. Major driver of valuation multiple." />
-                          </label>
-                          <div className="relative">
-                            <Input
-                              type="number"
-                              value={formData.growth_rate}
-                              onChange={(e) => handleChange('growth_rate', e.target.value)}
-                              placeholder="85"
-                              className="h-11 pr-9"
-                              data-testid="input-growth-rate"
-                            />
-                            <Percent className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-                          </div>
-                          <p className="text-xs text-slate-500 mt-1">Typical SaaS: 50-100%+</p>
+                              </motion.div>
+                            )}
+                          </AnimatePresence>
                         </div>
 
-                        <div>
-                          <label className="flex items-center text-sm font-medium text-slate-700 mb-2">
-                            Gross Margin
-                            <span className="text-red-500 ml-0.5">*</span>
-                            <FieldTooltip content="(Revenue - COGS) / Revenue. SaaS benchmark: 70-85%." />
-                          </label>
-                          <div className="relative">
-                            <Input
-                              type="number"
-                              value={formData.gross_margin}
-                              onChange={(e) => handleChange('gross_margin', e.target.value)}
-                              placeholder="78"
-                              className="h-11 pr-9"
-                              data-testid="input-gross-margin"
-                            />
-                            <Percent className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                        {/* Growth Rate */}
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                          <div>
+                            <label className="flex items-center text-sm font-medium text-slate-700 mb-2">
+                              YoY Growth Rate
+                              <span className="text-red-500 ml-0.5">*</span>
+                              <EnhancedTooltip 
+                                title="Year-over-Year Growth"
+                                definition="(Current ARR - Prior Year ARR) / Prior Year ARR × 100"
+                                example="Grew from $500K to $1M = 100% YoY"
+                                range="Good: 50%+ | Great: 100%+ | Elite: 150%+"
+                              />
+                            </label>
+                            <div className="relative">
+                              <Input
+                                type="number"
+                                value={formData.growth_rate}
+                                onChange={(e) => handleChange('growth_rate', e.target.value)}
+                                placeholder="85"
+                                className="h-11 pr-9"
+                                data-testid="input-growth-rate"
+                              />
+                              <Percent className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                            </div>
                           </div>
-                          <p className="text-xs text-slate-500 mt-1">Target: 70%+</p>
-                        </div>
-                      </div>
 
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                        <div>
-                          <label className="flex items-center text-sm font-medium text-slate-700 mb-2">
-                            Net Revenue Retention
-                            <FieldTooltip content="(Start MRR + Expansion - Churn) / Start MRR. >100% = net expansion." />
-                          </label>
-                          <div className="relative">
-                            <Input
-                              type="number"
-                              value={formData.nrr}
-                              onChange={(e) => handleChange('nrr', e.target.value)}
-                              placeholder="110"
-                              className="h-11 pr-9"
-                              data-testid="input-nrr"
-                            />
-                            <Percent className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-                          </div>
-                          <p className="text-xs text-slate-500 mt-1">Best-in-class: 120%+</p>
-                        </div>
-
-                        <div>
-                          <label className="flex items-center text-sm font-medium text-slate-700 mb-2">
-                            Team Size
-                            <FieldTooltip content="Full-time equivalent employees." />
-                          </label>
-                          <div className="relative">
-                            <Input
-                              type="number"
-                              value={formData.team_size}
-                              onChange={(e) => handleChange('team_size', e.target.value)}
-                              placeholder="25"
-                              className="h-11 pl-9"
-                              data-testid="input-team-size"
-                            />
-                            <Users className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                          <div>
+                            <label className="flex items-center text-sm font-medium text-slate-700 mb-2">
+                              Gross Margin
+                              <span className="text-red-500 ml-0.5">*</span>
+                              <EnhancedTooltip 
+                                title="Gross Margin"
+                                definition="(Revenue - Cost of Goods Sold) / Revenue × 100"
+                                example="$1M revenue, $250K COGS = 75% GM"
+                                range="SaaS target: 70-85% | Below 60% is concerning"
+                              />
+                            </label>
+                            <div className="relative">
+                              <Input
+                                type="number"
+                                value={formData.gross_margin}
+                                onChange={(e) => handleChange('gross_margin', e.target.value)}
+                                placeholder="78"
+                                className={`h-11 pr-9 ${getGrossMarginWarning() ? 'border-amber-300 focus:border-amber-400' : ''}`}
+                                data-testid="input-gross-margin"
+                              />
+                              <Percent className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                            </div>
+                            {/* Gross Margin Warning */}
+                            {getGrossMarginWarning() && (
+                              <WarningBadge message={getGrossMarginWarning()} />
+                            )}
                           </div>
                         </div>
                       </div>
 
-                      {/* Advanced Metrics - Collapsible */}
-                      <div className="pt-4 border-t border-slate-100">
-                        <p className="text-xs font-medium text-slate-500 uppercase tracking-wider mb-4">
-                          Advanced Metrics (Optional)
-                        </p>
+                      {/* === SECTION: Retention === */}
+                      <div className="pt-5 border-t border-slate-100 space-y-5">
+                        <h3 className="text-xs font-semibold text-slate-400 uppercase tracking-wider flex items-center gap-2">
+                          <PieChart className="w-3.5 h-3.5" />
+                          Retention & Churn
+                        </h3>
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                          {/* NRR */}
+                          <div>
+                            <label className="flex items-center text-sm font-medium text-slate-700 mb-2">
+                              Net Revenue Retention (NRR)
+                              <EnhancedTooltip 
+                                title="Net Revenue Retention"
+                                definition="(Starting MRR + Expansion - Contraction - Churn) / Starting MRR × 100"
+                                example="Started $100K, ended $110K = 110% NRR"
+                                range="Good: 100%+ | Great: 110%+ | Elite: 130%+"
+                              />
+                            </label>
+                            <div className="relative">
+                              <Input
+                                type="number"
+                                value={formData.nrr}
+                                onChange={(e) => handleChange('nrr', e.target.value)}
+                                placeholder="110"
+                                className={`h-11 pr-9 ${getNRRWarning() ? 'border-amber-300 focus:border-amber-400' : ''}`}
+                                data-testid="input-nrr"
+                              />
+                              <Percent className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                            </div>
+                            {getNRRWarning() && (
+                              <WarningBadge message={getNRRWarning()} />
+                            )}
+                          </div>
+
+                          {/* GRR */}
+                          <div>
+                            <label className="flex items-center text-sm font-medium text-slate-700 mb-2">
+                              Gross Revenue Retention (GRR)
+                              <EnhancedTooltip 
+                                title="Gross Revenue Retention"
+                                definition="(Starting MRR - Contraction - Churn) / Starting MRR × 100. Excludes expansion."
+                                example="Started $100K, lost $8K = 92% GRR"
+                                range="Good: 85%+ | Great: 90%+ | Elite: 95%+"
+                              />
+                            </label>
+                            <div className="relative">
+                              <Input
+                                type="number"
+                                value={formData.grr}
+                                onChange={(e) => handleChange('grr', e.target.value)}
+                                placeholder="92"
+                                className={`h-11 pr-9 ${getGRRWarning() ? 'border-amber-300 focus:border-amber-400' : ''}`}
+                                data-testid="input-grr"
+                              />
+                              <Percent className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                            </div>
+                            {getGRRWarning() && (
+                              <WarningBadge message={getGRRWarning()} />
+                            )}
+                          </div>
+                        </div>
+
+                        {/* Logo Churn */}
+                        <div>
+                          <label className="flex items-center text-sm font-medium text-slate-700 mb-2">
+                            Logo Churn Rate
+                            <EnhancedTooltip 
+                              title="Logo (Customer) Churn"
+                              definition="Percentage of customers lost in a period. Different from revenue churn."
+                              example={formData.churn_frequency === 'monthly' 
+                                ? "Lost 5 of 200 customers/month = 2.5% monthly churn" 
+                                : "Lost 24 of 200 customers/year = 12% annual churn"}
+                              range={formData.churn_frequency === 'monthly'
+                                ? "Good: <3% | Great: <2% | Elite: <1%"
+                                : "Good: <20% | Great: <15% | Elite: <10%"}
+                            />
+                          </label>
+                          <div className="flex gap-3">
+                            {/* Frequency Toggle */}
+                            <div className="flex items-center gap-1 p-1 bg-slate-100 rounded-lg h-11">
+                              <button
+                                type="button"
+                                onClick={() => handleChange('churn_frequency', 'monthly')}
+                                className={`px-3 py-1.5 rounded-md text-xs font-medium transition-all ${
+                                  formData.churn_frequency === 'monthly'
+                                    ? 'bg-white text-slate-900 shadow-sm'
+                                    : 'text-slate-500'
+                                }`}
+                                data-testid="churn-monthly"
+                              >
+                                Monthly
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => handleChange('churn_frequency', 'annual')}
+                                className={`px-3 py-1.5 rounded-md text-xs font-medium transition-all ${
+                                  formData.churn_frequency === 'annual'
+                                    ? 'bg-white text-slate-900 shadow-sm'
+                                    : 'text-slate-500'
+                                }`}
+                                data-testid="churn-annual"
+                              >
+                                Annual
+                              </button>
+                            </div>
+                            {/* Churn Input */}
+                            <div className="relative flex-1">
+                              <Input
+                                type="number"
+                                step="0.1"
+                                value={formData.logo_churn}
+                                onChange={(e) => handleChange('logo_churn', e.target.value)}
+                                placeholder={formData.churn_frequency === 'monthly' ? "2.5" : "15"}
+                                className="h-11 pr-9"
+                                data-testid="input-logo-churn"
+                              />
+                              <Percent className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* === SECTION: Profitability === */}
+                      <div className="pt-5 border-t border-slate-100 space-y-5">
+                        <h3 className="text-xs font-semibold text-slate-400 uppercase tracking-wider flex items-center gap-2">
+                          <BarChart3 className="w-3.5 h-3.5" />
+                          Profitability
+                        </h3>
+
+                        <div>
+                          <label className="flex items-center text-sm font-medium text-slate-700 mb-2">
+                            Profitability Metric
+                            <EnhancedTooltip 
+                              title="EBITDA vs SDE"
+                              definition="EBITDA: Earnings Before Interest, Taxes, Depreciation, Amortization. SDE: Seller's Discretionary Earnings (adds back owner salary)."
+                              example="SDE is common for owner-operated businesses <$5M revenue. EBITDA for larger companies."
+                              range="EBITDA margin: 10-30% | SDE margin: 20-40%"
+                            />
+                          </label>
+                          
+                          {/* EBITDA/SDE Toggle */}
+                          <div className="flex items-center gap-1 p-1 bg-slate-100 rounded-lg w-fit mb-3">
+                            <button
+                              type="button"
+                              onClick={() => handleChange('profitability_metric', 'ebitda')}
+                              className={`px-4 py-2 rounded-md text-sm font-medium transition-all ${
+                                formData.profitability_metric === 'ebitda'
+                                  ? 'bg-white text-slate-900 shadow-sm'
+                                  : 'text-slate-600'
+                              }`}
+                              data-testid="toggle-ebitda"
+                            >
+                              EBITDA
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => handleChange('profitability_metric', 'sde')}
+                              className={`px-4 py-2 rounded-md text-sm font-medium transition-all ${
+                                formData.profitability_metric === 'sde'
+                                  ? 'bg-white text-slate-900 shadow-sm'
+                                  : 'text-slate-600'
+                              }`}
+                              data-testid="toggle-sde"
+                            >
+                              SDE
+                            </button>
+                          </div>
+
+                          <AnimatePresence mode="wait">
+                            {formData.profitability_metric === 'ebitda' ? (
+                              <motion.div
+                                key="ebitda-input"
+                                initial={{ opacity: 0, y: 10 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                exit={{ opacity: 0, y: -10 }}
+                                transition={{ duration: 0.2 }}
+                              >
+                                <div className="relative">
+                                  <Input
+                                    type="number"
+                                    value={formData.ebitda_margin}
+                                    onChange={(e) => handleChange('ebitda_margin', e.target.value)}
+                                    placeholder="15"
+                                    className="h-11 pr-9"
+                                    data-testid="input-ebitda"
+                                  />
+                                  <Percent className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                                </div>
+                                <p className="text-xs text-slate-500 mt-1.5">
+                                  EBITDA Margin — typical SaaS range: 10-30%
+                                </p>
+                              </motion.div>
+                            ) : (
+                              <motion.div
+                                key="sde-input"
+                                initial={{ opacity: 0, y: 10 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                exit={{ opacity: 0, y: -10 }}
+                                transition={{ duration: 0.2 }}
+                              >
+                                <div className="relative">
+                                  <Input
+                                    type="number"
+                                    value={formData.sde_margin}
+                                    onChange={(e) => handleChange('sde_margin', e.target.value)}
+                                    placeholder="25"
+                                    className="h-11 pr-9"
+                                    data-testid="input-sde"
+                                  />
+                                  <Percent className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                                </div>
+                                <p className="text-xs text-slate-500 mt-1.5">
+                                  SDE Margin — includes add-back of owner compensation
+                                </p>
+                              </motion.div>
+                            )}
+                          </AnimatePresence>
+                        </div>
+                      </div>
+
+                      {/* === SECTION: Customer Base === */}
+                      <div className="pt-5 border-t border-slate-100 space-y-5">
+                        <h3 className="text-xs font-semibold text-slate-400 uppercase tracking-wider flex items-center gap-2">
+                          <Users className="w-3.5 h-3.5" />
+                          Customer Base
+                        </h3>
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                          {/* Customer Count */}
+                          <div>
+                            <label className="flex items-center text-sm font-medium text-slate-700 mb-2">
+                              # of Customers
+                              <EnhancedTooltip 
+                                title="Customer Count"
+                                definition="Total active paying customers or accounts."
+                                example="200 active subscriptions"
+                                range="Varies by ACV. Higher count = more diversified."
+                              />
+                            </label>
+                            <div className="relative">
+                              <Hash className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                              <Input
+                                type="number"
+                                value={formData.customer_count}
+                                onChange={(e) => handleChange('customer_count', e.target.value)}
+                                placeholder="150"
+                                className="h-11 pl-9"
+                                data-testid="input-customer-count"
+                              />
+                            </div>
+                          </div>
+
+                          {/* Customer Concentration */}
+                          <div>
+                            <label className="flex items-center text-sm font-medium text-slate-700 mb-2">
+                              Top Customer %
+                              <EnhancedTooltip 
+                                title="Customer Concentration"
+                                definition="Revenue percentage from your largest single customer."
+                                example="Largest customer is $50K of $500K ARR = 10%"
+                                range="Green: <15% | Yellow: 15-30% | Red: >30%"
+                              />
+                            </label>
+                            <div className="relative">
+                              <Input
+                                type="number"
+                                value={formData.customer_concentration}
+                                onChange={(e) => handleChange('customer_concentration', e.target.value)}
+                                placeholder="12"
+                                className={`h-11 pr-9 ${getConcentrationWarning() ? 'border-amber-300 focus:border-amber-400' : ''}`}
+                                data-testid="input-concentration"
+                              />
+                              <Percent className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                            </div>
+                            {getConcentrationWarning() && (
+                              <WarningBadge message={getConcentrationWarning()} />
+                            )}
+                          </div>
+                        </div>
+
+                        {/* Team Size */}
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                          <div>
+                            <label className="flex items-center text-sm font-medium text-slate-700 mb-2">
+                              Team Size
+                              <EnhancedTooltip 
+                                title="Team Size"
+                                definition="Full-time equivalent (FTE) employees including founders."
+                                example="12 full-time + 4 contractors (0.5 FTE each) = 14 FTE"
+                                range="Used to calculate revenue per employee efficiency."
+                              />
+                            </label>
+                            <div className="relative">
+                              <Users className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                              <Input
+                                type="number"
+                                value={formData.team_size}
+                                onChange={(e) => handleChange('team_size', e.target.value)}
+                                placeholder="25"
+                                className="h-11 pl-9"
+                                data-testid="input-team-size"
+                              />
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* === SECTION: Revenue Mix === */}
+                      <div className="pt-5 border-t border-slate-100 space-y-4">
+                        <h3 className="text-xs font-semibold text-slate-400 uppercase tracking-wider flex items-center gap-2">
+                          <PieChart className="w-3.5 h-3.5" />
+                          Revenue Mix
+                          <span className="text-slate-300 font-normal normal-case">(must total 100%)</span>
+                        </h3>
+
+                        <div className="grid grid-cols-3 gap-4">
+                          <div>
+                            <label className="flex items-center text-xs font-medium text-slate-600 mb-2">
+                              Subscription
+                              <EnhancedTooltip 
+                                title="Subscription Revenue"
+                                definition="Recurring revenue from fixed-price subscriptions."
+                                example="Monthly/annual SaaS plans"
+                                range="Higher = better multiple (target: 80%+)"
+                              />
+                            </label>
+                            <div className="relative">
+                              <Input
+                                type="number"
+                                value={formData.revenue_subscription}
+                                onChange={(e) => handleRevenueMixChange('revenue_subscription', e.target.value)}
+                                placeholder="80"
+                                className="h-10 pr-8 text-sm"
+                                data-testid="input-rev-subscription"
+                              />
+                              <Percent className="absolute right-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-slate-400" />
+                            </div>
+                          </div>
+                          <div>
+                            <label className="flex items-center text-xs font-medium text-slate-600 mb-2">
+                              Usage-Based
+                              <EnhancedTooltip 
+                                title="Usage-Based Revenue"
+                                definition="Revenue that scales with customer usage/consumption."
+                                example="API calls, storage, transactions"
+                                range="Growing trend, but less predictable"
+                              />
+                            </label>
+                            <div className="relative">
+                              <Input
+                                type="number"
+                                value={formData.revenue_usage}
+                                onChange={(e) => handleRevenueMixChange('revenue_usage', e.target.value)}
+                                placeholder="15"
+                                className="h-10 pr-8 text-sm"
+                                data-testid="input-rev-usage"
+                              />
+                              <Percent className="absolute right-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-slate-400" />
+                            </div>
+                          </div>
+                          <div>
+                            <label className="flex items-center text-xs font-medium text-slate-600 mb-2">
+                              Services
+                              <EnhancedTooltip 
+                                title="Services Revenue"
+                                definition="One-time or ongoing professional services, implementation, consulting."
+                                example="Implementation fees, custom dev"
+                                range="Lower multiple. Target: <20%"
+                              />
+                            </label>
+                            <div className="relative">
+                              <Input
+                                type="number"
+                                value={formData.revenue_services}
+                                onChange={(e) => handleRevenueMixChange('revenue_services', e.target.value)}
+                                placeholder="5"
+                                className="h-10 pr-8 text-sm"
+                                data-testid="input-rev-services"
+                              />
+                              <Percent className="absolute right-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-slate-400" />
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Revenue Mix Total Indicator */}
+                        {getRevenueMixTotal() !== 100 && (formData.revenue_subscription || formData.revenue_usage || formData.revenue_services) && (
+                          <div className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm ${
+                            getRevenueMixTotal() === 100 
+                              ? 'bg-emerald-50 text-emerald-700' 
+                              : 'bg-amber-50 text-amber-700'
+                          }`}>
+                            <AlertTriangle className="w-4 h-4" />
+                            <span>Total: {getRevenueMixTotal()}% — must equal 100%</span>
+                          </div>
+                        )}
+                      </div>
+
+                      {/* === SECTION: Efficiency (Optional) === */}
+                      <div className="pt-5 border-t border-slate-100 space-y-4">
+                        <h3 className="text-xs font-semibold text-slate-400 uppercase tracking-wider">
+                          Efficiency Metrics <span className="text-slate-300 font-normal">(Optional)</span>
+                        </h3>
+
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                           <div>
                             <label className="flex items-center text-sm font-medium text-slate-700 mb-2">
                               Burn Multiple
-                              <FieldTooltip content="Net Burn / Net New ARR. <1x = efficient, >2x = concerning." />
+                              <EnhancedTooltip 
+                                title="Burn Multiple"
+                                definition="Net Burn / Net New ARR. Measures capital efficiency."
+                                example="Burned $500K to add $400K ARR = 1.25x"
+                                range="Efficient: <1x | Acceptable: 1-2x | Concerning: >2x"
+                              />
                             </label>
                             <Input
                               type="number"
@@ -603,7 +998,12 @@ const CreateValuation = () => {
                           <div>
                             <label className="flex items-center text-sm font-medium text-slate-700 mb-2">
                               Runway (Months)
-                              <FieldTooltip content="Months of cash remaining at current burn rate." />
+                              <EnhancedTooltip 
+                                title="Cash Runway"
+                                definition="Months of cash remaining at current burn rate."
+                                example="$1M cash, $80K/mo burn = 12.5 months"
+                                range="Safe: 18+ | Acceptable: 12-18 | Urgent: <12"
+                              />
                             </label>
                             <Input
                               type="number"
