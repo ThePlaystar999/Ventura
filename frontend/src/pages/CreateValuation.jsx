@@ -240,35 +240,62 @@ const CreateValuation = () => {
   );
 
   // Enhanced Tooltip with definition, example, and range
-  const EnhancedTooltip = ({ title, definition, example, range }) => (
-    <Tooltip>
-      <TooltipTrigger asChild>
-        <button type="button" className="text-slate-400 hover:text-slate-600 transition-colors ml-1">
-          <HelpCircle className="w-3.5 h-3.5" />
-        </button>
-      </TooltipTrigger>
-      <TooltipContent side="top" className="max-w-sm p-0 overflow-hidden">
-        <div className="bg-slate-900 text-white">
-          <div className="px-3 py-2 border-b border-slate-700">
-            <p className="font-semibold text-sm">{title}</p>
+  const EnhancedTooltip = ({ title, definition, example, range, fieldKey }) => {
+    // If fieldKey provided, use constants
+    const field = fieldKey ? VALUATION_FIELDS[fieldKey] : null;
+    const t = field?.tooltip || { title, definition, example, range };
+    
+    return (
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <button type="button" className="text-slate-400 hover:text-slate-600 transition-colors ml-1">
+            <HelpCircle className="w-3.5 h-3.5" />
+          </button>
+        </TooltipTrigger>
+        <TooltipContent side="top" className="max-w-sm p-0 overflow-hidden">
+          <div className="bg-slate-900 text-white">
+            <div className="px-3 py-2 border-b border-slate-700">
+              <p className="font-semibold text-sm">{t.title}</p>
+            </div>
+            <div className="px-3 py-2 space-y-2 text-xs">
+              <p className="text-slate-300">{t.definition}</p>
+              {t.example && (
+                <p className="text-slate-400">
+                  <span className="text-slate-500">Example:</span> {t.example}
+                </p>
+              )}
+              {t.range && (
+                <p className="text-emerald-400 font-medium">
+                  {typeof t.range === 'object' ? t.range[formData.churn_frequency] || t.range.monthly : t.range}
+                </p>
+              )}
+            </div>
           </div>
-          <div className="px-3 py-2 space-y-2 text-xs">
-            <p className="text-slate-300">{definition}</p>
-            {example && (
-              <p className="text-slate-400">
-                <span className="text-slate-500">Example:</span> {example}
-              </p>
-            )}
-            {range && (
-              <p className="text-emerald-400 font-medium">
-                {range}
-              </p>
-            )}
-          </div>
-        </div>
-      </TooltipContent>
-    </Tooltip>
-  );
+        </TooltipContent>
+      </Tooltip>
+    );
+  };
+
+  // Field Label with Tooltip - uses constants
+  const FieldLabel = ({ fieldKey, required = false, children }) => {
+    const field = VALUATION_FIELDS[fieldKey];
+    if (!field) return <span>{children}</span>;
+    
+    return (
+      <label className="flex items-center text-sm font-medium text-slate-700 mb-2">
+        {field.label}
+        {required && <span className="text-red-500 ml-0.5">*</span>}
+        <EnhancedTooltip fieldKey={fieldKey} />
+      </label>
+    );
+  };
+
+  // Field Helper Text - uses constants
+  const FieldHelper = ({ fieldKey }) => {
+    const field = VALUATION_FIELDS[fieldKey];
+    if (!field?.helper) return null;
+    return <p className="text-xs text-slate-500 mt-1">{field.helper}</p>;
+  };
 
   // Warning Badge Component (non-blocking)
   const WarningBadge = ({ message }) => (
