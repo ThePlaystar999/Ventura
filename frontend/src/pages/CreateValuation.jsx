@@ -1222,7 +1222,7 @@ const CreateValuation = () => {
                   </motion.div>
                 )}
 
-                {/* Step 3: Qualitative Assessment */}
+                {/* Step 3: Qualitative Assessment - M&A Enhanced */}
                 {step === 3 && (
                   <motion.div
                     key="step3"
@@ -1232,17 +1232,49 @@ const CreateValuation = () => {
                     transition={{ duration: 0.3 }}
                     className="p-6 md:p-8"
                   >
-                    <h2 className="text-xl font-semibold text-slate-900 mb-6">Qualitative Assessment</h2>
-                    
-                    <div className="space-y-6">
-                      {/* Product Maturity Slider */}
+                    {/* Header with Completion Counter */}
+                    <div className="flex items-start justify-between mb-6">
                       <div>
-                        <div className="flex items-center justify-between mb-3">
-                          <label className="flex items-center text-sm font-medium text-slate-700">
+                        <h2 className="text-xl font-semibold text-slate-900 mb-1">Qualitative Assessment</h2>
+                        <p className="text-sm text-slate-500">These factors impact your valuation multiple</p>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <div className="text-right">
+                          <span className="text-2xl font-bold text-[#0B4DBB]">
+                            {getQualitativeCompletion().completed}
+                          </span>
+                          <span className="text-lg text-slate-400">/{getQualitativeCompletion().total}</span>
+                        </div>
+                        <div className="w-10 h-10 rounded-full bg-[#F0F7FF] flex items-center justify-center">
+                          <svg className="w-6 h-6" viewBox="0 0 36 36">
+                            <circle cx="18" cy="18" r="16" fill="none" stroke="#E5E7EB" strokeWidth="3" />
+                            <circle 
+                              cx="18" cy="18" r="16" fill="none" 
+                              stroke="#0B4DBB" strokeWidth="3"
+                              strokeDasharray={`${getQualitativeCompletion().percentage} 100`}
+                              strokeLinecap="round"
+                              transform="rotate(-90 18 18)"
+                            />
+                          </svg>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <div className="space-y-8">
+                      {/* 1. Product Maturity Slider */}
+                      <div className="bg-slate-50 rounded-xl p-5 border border-slate-100">
+                        <div className="flex items-center justify-between mb-4">
+                          <label className="flex items-center text-sm font-semibold text-slate-800">
+                            <span className="w-6 h-6 rounded-full bg-[#0B4DBB] text-white text-xs flex items-center justify-center mr-2">1</span>
                             Product Maturity
-                            <FieldTooltip content="Product-market fit strength. 1=MVP, 5=Market leader." />
+                            <EnhancedTooltip 
+                              title="Product Maturity"
+                              definition="Measures product-market fit strength and development stage."
+                              example="1=MVP testing, 3=Clear PMF, 5=Market leader"
+                              range="Higher maturity = +0.5x to +1.5x multiple premium"
+                            />
                           </label>
-                          <span className="text-sm font-semibold text-[#0B4DBB] bg-[#F0F7FF] px-2.5 py-1 rounded-lg">
+                          <span className="text-sm font-bold text-[#0B4DBB] bg-white px-3 py-1.5 rounded-lg shadow-sm border border-slate-200">
                             {formData.product_maturity}/5
                           </span>
                         </div>
@@ -1255,26 +1287,32 @@ const CreateValuation = () => {
                           className="w-full"
                           data-testid="slider-product-maturity"
                         />
-                        <div className="flex justify-between text-[11px] text-slate-500 mt-2 px-1">
-                          <span>MVP</span>
-                          <span>Traction</span>
-                          <span>PMF</span>
-                          <span>Scaling</span>
-                          <span>Leader</span>
+                        <div className="flex justify-between text-[11px] text-slate-500 mt-3 px-1">
+                          <span className={formData.product_maturity === 1 ? 'text-[#0B4DBB] font-semibold' : ''}>MVP</span>
+                          <span className={formData.product_maturity === 2 ? 'text-[#0B4DBB] font-semibold' : ''}>Traction</span>
+                          <span className={formData.product_maturity === 3 ? 'text-[#0B4DBB] font-semibold' : ''}>PMF</span>
+                          <span className={formData.product_maturity === 4 ? 'text-[#0B4DBB] font-semibold' : ''}>Scaling</span>
+                          <span className={formData.product_maturity === 5 ? 'text-[#0B4DBB] font-semibold' : ''}>Leader</span>
                         </div>
                       </div>
 
-                      {/* Market Size */}
+                      {/* 2. Market Size */}
                       <div>
-                        <label className="flex items-center text-sm font-medium text-slate-700 mb-3">
+                        <label className="flex items-center text-sm font-semibold text-slate-800 mb-3">
+                          <span className="w-6 h-6 rounded-full bg-[#0B4DBB] text-white text-xs flex items-center justify-center mr-2">2</span>
                           Target Market Size
-                          <FieldTooltip content="Total Addressable Market (TAM) estimate." />
+                          <EnhancedTooltip 
+                            title="Total Addressable Market (TAM)"
+                            definition="The total revenue opportunity if you captured 100% market share."
+                            example="CRM market = ~$100B (Large). Niche vertical = ~$500M (Small)"
+                            range="Large TAM = +0.3x to +0.5x multiple | Small TAM = -0.2x to -0.3x"
+                          />
                         </label>
                         <div className="grid grid-cols-3 gap-3">
                           {[
-                            { value: 'Small', label: 'Small', sub: '<$1B TAM' },
-                            { value: 'Medium', label: 'Medium', sub: '$1-10B TAM' },
-                            { value: 'Large', label: 'Large', sub: '>$10B TAM' }
+                            { value: 'Small', label: 'Small', sub: '<$1B TAM', impact: '-0.3x multiple' },
+                            { value: 'Medium', label: 'Medium', sub: '$1-10B TAM', impact: 'Baseline' },
+                            { value: 'Large', label: 'Large', sub: '>$10B TAM', impact: '+0.5x multiple' }
                           ].map(opt => (
                             <motion.button
                               key={opt.value}
@@ -1282,10 +1320,10 @@ const CreateValuation = () => {
                               onClick={() => handleChange('market_size', opt.value)}
                               whileHover={{ scale: 1.02 }}
                               whileTap={{ scale: 0.98 }}
-                              className={`p-4 rounded-xl border-2 transition-all ${
+                              className={`p-4 rounded-xl border-2 transition-all text-left ${
                                 formData.market_size === opt.value
                                   ? 'border-[#0B4DBB] bg-[#F0F7FF] shadow-sm'
-                                  : 'border-slate-200 hover:border-slate-300'
+                                  : 'border-slate-200 hover:border-slate-300 bg-white'
                               }`}
                               data-testid={`btn-market-${opt.value.toLowerCase()}`}
                             >
@@ -1295,22 +1333,34 @@ const CreateValuation = () => {
                                 {opt.label}
                               </div>
                               <div className="text-xs text-slate-500 mt-0.5">{opt.sub}</div>
+                              <div className={`text-[10px] mt-1 font-medium ${
+                                opt.value === 'Large' ? 'text-emerald-600' : 
+                                opt.value === 'Small' ? 'text-amber-600' : 'text-slate-400'
+                              }`}>
+                                {opt.impact}
+                              </div>
                             </motion.button>
                           ))}
                         </div>
                       </div>
 
-                      {/* Competitive Moat */}
+                      {/* 3. Competitive Moat */}
                       <div>
-                        <label className="flex items-center text-sm font-medium text-slate-700 mb-3">
+                        <label className="flex items-center text-sm font-semibold text-slate-800 mb-3">
+                          <span className="w-6 h-6 rounded-full bg-[#0B4DBB] text-white text-xs flex items-center justify-center mr-2">3</span>
                           Competitive Moat
-                          <FieldTooltip content="Defensibility: IP, network effects, switching costs, brand." />
+                          <EnhancedTooltip 
+                            title="Competitive Defensibility"
+                            definition="How difficult is it for competitors to replicate your product/position?"
+                            example="Network effects, proprietary data, patents, brand, switching costs"
+                            range="Strong moat = +0.5x multiple | Weak moat = -0.3x discount"
+                          />
                         </label>
                         <div className="grid grid-cols-3 gap-3">
                           {[
-                            { value: 'Low', label: 'Low', sub: 'Easy to replicate' },
-                            { value: 'Medium', label: 'Medium', sub: 'Some barriers' },
-                            { value: 'Strong', label: 'Strong', sub: 'Hard to compete' }
+                            { value: 'Low', label: 'Low', sub: 'Easy to replicate', impact: '-0.3x multiple' },
+                            { value: 'Medium', label: 'Medium', sub: 'Some barriers', impact: 'Baseline' },
+                            { value: 'Strong', label: 'Strong', sub: 'Hard to compete', impact: '+0.5x multiple' }
                           ].map(opt => (
                             <motion.button
                               key={opt.value}
@@ -1318,10 +1368,10 @@ const CreateValuation = () => {
                               onClick={() => handleChange('competitive_moat', opt.value)}
                               whileHover={{ scale: 1.02 }}
                               whileTap={{ scale: 0.98 }}
-                              className={`p-4 rounded-xl border-2 transition-all ${
+                              className={`p-4 rounded-xl border-2 transition-all text-left ${
                                 formData.competitive_moat === opt.value
                                   ? 'border-[#0B4DBB] bg-[#F0F7FF] shadow-sm'
-                                  : 'border-slate-200 hover:border-slate-300'
+                                  : 'border-slate-200 hover:border-slate-300 bg-white'
                               }`}
                               data-testid={`btn-moat-${opt.value.toLowerCase()}`}
                             >
@@ -1331,91 +1381,204 @@ const CreateValuation = () => {
                                 {opt.label}
                               </div>
                               <div className="text-xs text-slate-500 mt-0.5">{opt.sub}</div>
+                              <div className={`text-[10px] mt-1 font-medium ${
+                                opt.value === 'Strong' ? 'text-emerald-600' : 
+                                opt.value === 'Low' ? 'text-amber-600' : 'text-slate-400'
+                              }`}>
+                                {opt.impact}
+                              </div>
                             </motion.button>
                           ))}
                         </div>
                       </div>
 
-                      {/* Deal Readiness - Advanced */}
-                      <div className="pt-4 border-t border-slate-100">
-                        <p className="text-xs font-medium text-slate-500 uppercase tracking-wider mb-4">
-                          Deal Readiness (Optional)
-                        </p>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                          <div>
-                            <label className="flex items-center text-sm font-medium text-slate-700 mb-2">
-                              Top Customer %
-                              <FieldTooltip content="Revenue from largest customer. >30% is a red flag for buyers." />
-                            </label>
-                            <div className="relative">
-                              <Input
-                                type="number"
-                                value={formData.customer_concentration}
-                                onChange={(e) => handleChange('customer_concentration', e.target.value)}
-                                placeholder="15"
-                                className="h-11 pr-9"
-                                data-testid="input-customer-concentration"
-                              />
-                              <Percent className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                      {/* 4. Founder Dependency (NEW) */}
+                      <div>
+                        <label className="flex items-center text-sm font-semibold text-slate-800 mb-3">
+                          <span className="w-6 h-6 rounded-full bg-[#0B4DBB] text-white text-xs flex items-center justify-center mr-2">4</span>
+                          Founder Dependency
+                          <EnhancedTooltip 
+                            title="Founder/Key Person Risk"
+                            definition="How dependent is the business on the founder's daily involvement?"
+                            example="Low: Delegated ops, documented processes. High: Founder handles sales, product, customers."
+                            range="Low dependency = +0.3x (transferable) | High = -0.5x (key-person risk)"
+                          />
+                        </label>
+                        <div className="grid grid-cols-3 gap-3">
+                          {[
+                            { value: 'Low', label: 'Low', sub: 'Delegated ops', impact: '+0.3x (transferable)' },
+                            { value: 'Medium', label: 'Medium', sub: 'Some involvement', impact: 'Baseline' },
+                            { value: 'High', label: 'High', sub: 'Founder-critical', impact: '-0.5x (key-person risk)' }
+                          ].map(opt => (
+                            <motion.button
+                              key={opt.value}
+                              type="button"
+                              onClick={() => handleChange('founder_dependency', opt.value)}
+                              whileHover={{ scale: 1.02 }}
+                              whileTap={{ scale: 0.98 }}
+                              className={`p-4 rounded-xl border-2 transition-all text-left ${
+                                formData.founder_dependency === opt.value
+                                  ? 'border-[#0B4DBB] bg-[#F0F7FF] shadow-sm'
+                                  : 'border-slate-200 hover:border-slate-300 bg-white'
+                              }`}
+                              data-testid={`btn-founder-${opt.value.toLowerCase()}`}
+                            >
+                              <div className={`text-base font-semibold ${
+                                formData.founder_dependency === opt.value ? 'text-[#0B4DBB]' : 'text-slate-700'
+                              }`}>
+                                {opt.label}
+                              </div>
+                              <div className="text-xs text-slate-500 mt-0.5">{opt.sub}</div>
+                              <div className={`text-[10px] mt-1 font-medium ${
+                                opt.value === 'Low' ? 'text-emerald-600' : 
+                                opt.value === 'High' ? 'text-amber-600' : 'text-slate-400'
+                              }`}>
+                                {opt.impact}
+                              </div>
+                            </motion.button>
+                          ))}
+                        </div>
+                      </div>
+
+                      {/* 5. Sales Predictability (NEW) */}
+                      <div>
+                        <label className="flex items-center text-sm font-semibold text-slate-800 mb-3">
+                          <span className="w-6 h-6 rounded-full bg-[#0B4DBB] text-white text-xs flex items-center justify-center mr-2">5</span>
+                          Sales Predictability
+                          <EnhancedTooltip 
+                            title="Revenue Acquisition Model"
+                            definition="How predictable and scalable is your sales motion?"
+                            example="Self-serve: PLG, credit card signups. Enterprise: 6+ month sales cycles, lumpy quarters."
+                            range="Self-serve = +0.3x (scalable) | Enterprise-lumpy = -0.2x (unpredictable)"
+                          />
+                        </label>
+                        <div className="grid grid-cols-3 gap-3">
+                          {[
+                            { value: 'Self-serve', label: 'Self-Serve', sub: 'PLG, credit card', impact: '+0.3x (scalable)' },
+                            { value: 'Mixed', label: 'Mixed', sub: 'PLG + sales', impact: 'Baseline' },
+                            { value: 'Enterprise-lumpy', label: 'Enterprise', sub: 'Long cycles', impact: '-0.2x (unpredictable)' }
+                          ].map(opt => (
+                            <motion.button
+                              key={opt.value}
+                              type="button"
+                              onClick={() => handleChange('sales_predictability', opt.value)}
+                              whileHover={{ scale: 1.02 }}
+                              whileTap={{ scale: 0.98 }}
+                              className={`p-4 rounded-xl border-2 transition-all text-left ${
+                                formData.sales_predictability === opt.value
+                                  ? 'border-[#0B4DBB] bg-[#F0F7FF] shadow-sm'
+                                  : 'border-slate-200 hover:border-slate-300 bg-white'
+                              }`}
+                              data-testid={`btn-sales-${opt.value.toLowerCase().replace('-', '')}`}
+                            >
+                              <div className={`text-base font-semibold ${
+                                formData.sales_predictability === opt.value ? 'text-[#0B4DBB]' : 'text-slate-700'
+                              }`}>
+                                {opt.label}
+                              </div>
+                              <div className="text-xs text-slate-500 mt-0.5">{opt.sub}</div>
+                              <div className={`text-[10px] mt-1 font-medium ${
+                                opt.value === 'Self-serve' ? 'text-emerald-600' : 
+                                opt.value === 'Enterprise-lumpy' ? 'text-amber-600' : 'text-slate-400'
+                              }`}>
+                                {opt.impact}
+                              </div>
+                            </motion.button>
+                          ))}
+                        </div>
+                      </div>
+
+                      {/* Qualitative Score Summary */}
+                      {getQualitativeCompletion().completed >= 3 && (
+                        <motion.div 
+                          initial={{ opacity: 0, y: 10 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          className="bg-gradient-to-br from-[#F0F7FF] to-white rounded-xl p-5 border border-[#DCEAFF]"
+                        >
+                          <div className="flex items-center justify-between mb-4">
+                            <h4 className="text-sm font-semibold text-slate-800">Qualitative Score</h4>
+                            <div className="flex items-center gap-2">
+                              <span className="text-2xl font-bold text-[#0B4DBB]">
+                                {calculateQualitativeScore().qualitativeScore}
+                              </span>
+                              <span className="text-sm text-slate-500">/100</span>
                             </div>
                           </div>
-
-                          <div>
-                            <label className="flex items-center text-sm font-medium text-slate-700 mb-2">
-                              Monthly Churn Rate
-                              <FieldTooltip content="Logo churn (customers lost / total). <2% is healthy." />
-                            </label>
-                            <div className="relative">
-                              <Input
-                                type="number"
-                                step="0.1"
-                                value={formData.churn_rate}
-                                onChange={(e) => handleChange('churn_rate', e.target.value)}
-                                placeholder="1.5"
-                                className="h-11 pr-9"
-                                data-testid="input-churn-rate"
-                              />
-                              <Percent className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-                            </div>
-                          </div>
-
-                          <div>
-                            <label className="flex items-center text-sm font-medium text-slate-700 mb-2">
-                              Founder Hours/Week
-                              <FieldTooltip content="Founder involvement in daily ops. <10h = highly transferable." />
-                            </label>
-                            <Input
-                              type="number"
-                              value={formData.founder_hours}
-                              onChange={(e) => handleChange('founder_hours', e.target.value)}
-                              placeholder="40"
-                              className="h-11"
-                              data-testid="input-founder-hours"
+                          
+                          {/* Score Bar */}
+                          <div className="h-2 bg-slate-200 rounded-full overflow-hidden mb-4">
+                            <motion.div 
+                              className="h-full bg-gradient-to-r from-[#0B4DBB] to-[#1E6AE1] rounded-full"
+                              initial={{ width: 0 }}
+                              animate={{ width: `${calculateQualitativeScore().qualitativeScore}%` }}
+                              transition={{ duration: 0.5, ease: 'easeOut' }}
                             />
                           </div>
-                        </div>
 
+                          {/* Strengths & Risks */}
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            {calculateQualitativeScore().qualitativeNotes.strengths.length > 0 && (
+                              <div>
+                                <p className="text-xs font-semibold text-emerald-700 mb-2 flex items-center gap-1">
+                                  <Check className="w-3.5 h-3.5" /> Strengths
+                                </p>
+                                <ul className="space-y-1">
+                                  {calculateQualitativeScore().qualitativeNotes.strengths.map((s, i) => (
+                                    <li key={i} className="text-xs text-emerald-600 flex items-start gap-1.5">
+                                      <span className="w-1 h-1 rounded-full bg-emerald-500 mt-1.5 flex-shrink-0" />
+                                      {s}
+                                    </li>
+                                  ))}
+                                </ul>
+                              </div>
+                            )}
+                            {calculateQualitativeScore().qualitativeNotes.risks.length > 0 && (
+                              <div>
+                                <p className="text-xs font-semibold text-amber-700 mb-2 flex items-center gap-1">
+                                  <AlertTriangle className="w-3.5 h-3.5" /> Risks to Address
+                                </p>
+                                <ul className="space-y-1">
+                                  {calculateQualitativeScore().qualitativeNotes.risks.map((r, i) => (
+                                    <li key={i} className="text-xs text-amber-600 flex items-start gap-1.5">
+                                      <span className="w-1 h-1 rounded-full bg-amber-500 mt-1.5 flex-shrink-0" />
+                                      {r}
+                                    </li>
+                                  ))}
+                                </ul>
+                              </div>
+                            )}
+                          </div>
+                        </motion.div>
+                      )}
+
+                      {/* Deal Readiness (Optional) */}
+                      <div className="pt-6 border-t border-slate-100">
+                        <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-4">
+                          Deal Readiness <span className="text-slate-300 font-normal">(Optional)</span>
+                        </p>
+                        
                         {/* Toggle Options */}
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-5">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                           <button
                             type="button"
                             onClick={() => handleChange('has_audited_financials', !formData.has_audited_financials)}
                             className={`flex items-center gap-3 p-4 rounded-xl border-2 transition-all text-left ${
                               formData.has_audited_financials
                                 ? 'border-emerald-500 bg-emerald-50'
-                                : 'border-slate-200 hover:border-slate-300'
+                                : 'border-slate-200 hover:border-slate-300 bg-white'
                             }`}
                             data-testid="toggle-audited-financials"
                           >
-                            <div className={`w-5 h-5 rounded-md flex items-center justify-center ${
+                            <div className={`w-6 h-6 rounded-md flex items-center justify-center ${
                               formData.has_audited_financials ? 'bg-emerald-500' : 'bg-slate-200'
                             }`}>
-                              {formData.has_audited_financials && <Check className="w-3.5 h-3.5 text-white" />}
+                              {formData.has_audited_financials && <Check className="w-4 h-4 text-white" />}
                             </div>
-                            <div>
+                            <div className="flex-1">
                               <p className="text-sm font-medium text-slate-700">Audited Financials</p>
-                              <p className="text-xs text-slate-500">CPA-reviewed statements</p>
+                              <p className="text-xs text-slate-500">CPA-reviewed or audited statements</p>
                             </div>
+                            <span className="text-[10px] font-medium text-emerald-600">+0.2x</span>
                           </button>
 
                           <button
@@ -1424,19 +1587,20 @@ const CreateValuation = () => {
                             className={`flex items-center gap-3 p-4 rounded-xl border-2 transition-all text-left ${
                               formData.stripe_connected
                                 ? 'border-emerald-500 bg-emerald-50'
-                                : 'border-slate-200 hover:border-slate-300'
+                                : 'border-slate-200 hover:border-slate-300 bg-white'
                             }`}
                             data-testid="toggle-stripe-connected"
                           >
-                            <div className={`w-5 h-5 rounded-md flex items-center justify-center ${
+                            <div className={`w-6 h-6 rounded-md flex items-center justify-center ${
                               formData.stripe_connected ? 'bg-emerald-500' : 'bg-slate-200'
                             }`}>
-                              {formData.stripe_connected && <Check className="w-3.5 h-3.5 text-white" />}
+                              {formData.stripe_connected && <Check className="w-4 h-4 text-white" />}
                             </div>
-                            <div>
+                            <div className="flex-1">
                               <p className="text-sm font-medium text-slate-700">Revenue Verified</p>
-                              <p className="text-xs text-slate-500">Stripe/processor linked</p>
+                              <p className="text-xs text-slate-500">Stripe or payment processor linked</p>
                             </div>
+                            <span className="text-[10px] font-medium text-emerald-600">+0.1x</span>
                           </button>
                         </div>
                       </div>
