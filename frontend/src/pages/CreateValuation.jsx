@@ -59,8 +59,10 @@ const CreateValuation = () => {
     team_size: '',
     // Qualitative
     product_maturity: 3,
-    market_size: 'Medium',
-    competitive_moat: 'Medium',
+    market_size: '',
+    competitive_moat: '',
+    founder_dependency: '',
+    sales_predictability: '',
     founder_hours: '',
     has_audited_financials: false,
     stripe_connected: false
