@@ -8,6 +8,35 @@
 
 ## Changelog
 
+### March 1, 2026 - Valuation Field Constants & Microcopy
+
+**Created `/app/frontend/src/constants/valuationFields.js` with M&A-grade microcopy:**
+
+**VALUATION_FIELDS Object (18 fields):**
+- Each field includes: label, helper text, tooltip (title, definition, example, range), validation rules
+- Revenue: ARR/MRR toggle, arr, mrr
+- Growth: growth_rate
+- Margins: gross_margin, ebitda_margin, sde_margin
+- Retention: nrr, grr, logo_churn, churn_frequency
+- Customers: customer_count, customer_concentration, team_size
+- Revenue Mix: revenue_subscription, revenue_usage, revenue_services
+- Efficiency: burn_multiple, runway_months
+- Qualitative: product_maturity, market_size, competitive_moat, founder_dependency, sales_predictability
+- Deal Readiness: has_audited_financials, stripe_connected
+
+**Supporting Constants:**
+- VALUATION_SECTIONS: Section definitions with icons and descriptions
+- CONFIDENCE_LEVELS: High/Medium/Low with colors, explanations, thresholds
+- MULTIPLE_IMPACTS: Reference table for all multiple adjustments
+
+**Microcopy Style:**
+- Simple language for founders, credible for buyers
+- Concrete examples (e.g., "$100K MRR = $1.2M ARR")
+- Clear ranges (e.g., "Good: 50%+ | Great: 100%+ | Elite: 150%+")
+- Impact indicators (e.g., "+0.5x multiple", "-0.3x discount")
+
+---
+
 ### March 1, 2026 - Analysis Step Premium UI
 
 **Enhanced Step 4 (Analysis Results) with comprehensive valuation display:**
