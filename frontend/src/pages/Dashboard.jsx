@@ -503,6 +503,7 @@ const Dashboard = () => {
         )}
       </main>
     </div>
+    </TooltipProvider>
   );
 };
 
