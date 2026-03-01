@@ -1857,48 +1857,285 @@ const CreateValuation = () => {
                   </motion.div>
                 )}
 
-                {/* Step 4: Analysis */}
+                {/* Step 4: Analysis Results */}
                 {step === 4 && (
                   <motion.div
                     key="step4"
-                    initial={{ opacity: 0, scale: 0.95 }}
-                    animate={{ opacity: 1, scale: 1 }}
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
                     transition={{ duration: 0.4 }}
-                    className="p-12 text-center"
+                    className="p-6 md:p-8"
                   >
-                    <motion.div 
-                      className="mb-8"
-                      animate={{ 
-                        scale: [1, 1.05, 1],
-                        opacity: [0.8, 1, 0.8]
-                      }}
-                      transition={{ 
-                        duration: 2,
-                        repeat: Infinity,
-                        ease: "easeInOut"
-                      }}
-                    >
-                      <div className="w-20 h-20 mx-auto rounded-2xl bg-gradient-to-br from-[#0B4DBB] to-[#1E6AE1] flex items-center justify-center shadow-xl shadow-blue-900/20">
-                        <Sparkles className="w-10 h-10 text-white" />
-                      </div>
-                    </motion.div>
-                    <h2 className="text-2xl font-semibold text-slate-900 mb-3">
-                      Analyzing Your Company
-                    </h2>
-                    <p className="text-slate-600 mb-8 max-w-md mx-auto">
-                      Processing financials, market data, and comparable transactions...
-                    </p>
-                    <div className="max-w-xs mx-auto">
-                      <div className="h-2 bg-slate-100 rounded-full overflow-hidden">
+                    {/* Loading State */}
+                    {analyzing && !analysisComplete && (
+                      <div className="py-12 text-center">
                         <motion.div 
-                          className="h-full bg-gradient-to-r from-[#0B4DBB] to-[#1E6AE1] rounded-full"
-                          initial={{ width: '0%' }}
-                          animate={{ width: '90%' }}
-                          transition={{ duration: 2.5, ease: 'easeInOut' }}
-                        />
+                          className="mb-8"
+                          animate={{ 
+                            scale: [1, 1.05, 1],
+                            opacity: [0.8, 1, 0.8]
+                          }}
+                          transition={{ 
+                            duration: 2,
+                            repeat: Infinity,
+                            ease: "easeInOut"
+                          }}
+                        >
+                          <div className="w-20 h-20 mx-auto rounded-2xl bg-gradient-to-br from-[#0B4DBB] to-[#1E6AE1] flex items-center justify-center shadow-xl shadow-blue-900/20">
+                            <Sparkles className="w-10 h-10 text-white" />
+                          </div>
+                        </motion.div>
+                        <h2 className="text-2xl font-semibold text-slate-900 mb-3">
+                          Analyzing Your Company
+                        </h2>
+                        <p className="text-slate-600 mb-8 max-w-md mx-auto">
+                          Processing financials, market data, and comparable transactions...
+                        </p>
+                        <div className="max-w-xs mx-auto">
+                          <div className="h-2 bg-slate-100 rounded-full overflow-hidden">
+                            <motion.div 
+                              className="h-full bg-gradient-to-r from-[#0B4DBB] to-[#1E6AE1] rounded-full"
+                              initial={{ width: '0%' }}
+                              animate={{ width: '90%' }}
+                              transition={{ duration: 2.5, ease: 'easeInOut' }}
+                            />
+                          </div>
+                          <p className="text-xs text-slate-400 mt-3">This usually takes 5-10 seconds</p>
+                        </div>
                       </div>
-                      <p className="text-xs text-slate-400 mt-3">This usually takes 5-10 seconds</p>
-                    </div>
+                    )}
+
+                    {/* Analysis Results */}
+                    {analysisComplete && (() => {
+                      const results = computeValuation();
+                      const formatCurrency = (val) => {
+                        if (val >= 1000000) return `$${(val / 1000000).toFixed(1)}M`;
+                        if (val >= 1000) return `$${(val / 1000).toFixed(0)}K`;
+                        return `$${Math.round(val)}`;
+                      };
+
+                      return (
+                        <motion.div
+                          initial={{ opacity: 0, y: 20 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ duration: 0.5 }}
+                          className="space-y-6"
+                        >
+                          {/* Header */}
+                          <div className="text-center mb-8">
+                            <h2 className="text-2xl font-bold text-slate-900 mb-2">Valuation Analysis</h2>
+                            <p className="text-slate-600">{formData.company_name}</p>
+                          </div>
+
+                          {/* Valuation Range Card */}
+                          <div className="bg-gradient-to-br from-[#0B4DBB] via-[#1456c7] to-[#1E6AE1] rounded-2xl p-6 md:p-8 text-white relative overflow-hidden">
+                            {/* Pattern overlay */}
+                            <div className="absolute inset-0 opacity-10" style={{
+                              backgroundImage: `url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23ffffff' fill-opacity='0.4' fill-rule='evenodd'%3E%3Cpath d='M0 40L40 0H20L0 20M40 40V20L20 40'/%3E%3C/g%3E%3C/svg%3E")`
+                            }} />
+                            
+                            <div className="relative">
+                              <div className="flex items-center justify-between mb-6">
+                                <div>
+                                  <p className="text-white/70 text-sm mb-1">Estimated Enterprise Value</p>
+                                  <div className="flex items-baseline gap-3">
+                                    <span className="text-4xl md:text-5xl font-bold">{formatCurrency(results.baseValuation)}</span>
+                                    <span className="text-white/60 text-sm">Base case</span>
+                                  </div>
+                                </div>
+                                <div className="text-right">
+                                  <p className="text-white/70 text-sm mb-1">Multiple Used</p>
+                                  <p className="text-2xl font-bold">{results.lowMultiple.toFixed(1)}x – {results.highMultiple.toFixed(1)}x</p>
+                                  <p className="text-white/60 text-xs">Base: {results.baseMultiple.toFixed(1)}x ARR</p>
+                                </div>
+                              </div>
+
+                              {/* Low/Base/High Range */}
+                              <div className="grid grid-cols-3 gap-4 mb-6">
+                                <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4 border border-white/20">
+                                  <p className="text-xs text-white/60 uppercase tracking-wider mb-1">Low</p>
+                                  <p className="text-xl font-bold">{formatCurrency(results.lowValuation)}</p>
+                                  <p className="text-xs text-white/50">{results.lowMultiple.toFixed(1)}x ARR</p>
+                                </div>
+                                <div className="bg-white/20 backdrop-blur-sm rounded-xl p-4 border border-white/30 ring-2 ring-white/30">
+                                  <p className="text-xs text-white/80 uppercase tracking-wider mb-1">Base</p>
+                                  <p className="text-xl font-bold">{formatCurrency(results.baseValuation)}</p>
+                                  <p className="text-xs text-white/60">{results.baseMultiple.toFixed(1)}x ARR</p>
+                                </div>
+                                <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4 border border-white/20">
+                                  <p className="text-xs text-white/60 uppercase tracking-wider mb-1">High</p>
+                                  <p className="text-xl font-bold">{formatCurrency(results.highValuation)}</p>
+                                  <p className="text-xs text-white/50">{results.highMultiple.toFixed(1)}x ARR</p>
+                                </div>
+                              </div>
+
+                              {/* ARR Used */}
+                              <div className="flex items-center gap-2 text-sm text-white/70">
+                                <DollarSign className="w-4 h-4" />
+                                <span>ARR used: {formatCurrency(results.arr)}</span>
+                                {results.isFromMRR && (
+                                  <span className="px-2 py-0.5 bg-white/20 rounded text-xs">Derived from MRR</span>
+                                )}
+                              </div>
+                            </div>
+                          </div>
+
+                          {/* Two Column Grid: Confidence + Drivers/Risks */}
+                          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                            {/* Confidence Card */}
+                            <div className="bg-white rounded-xl border border-slate-200 p-6">
+                              <div className="flex items-center justify-between mb-4">
+                                <h3 className="font-semibold text-slate-900 flex items-center gap-2">
+                                  <Target className="w-5 h-5 text-slate-400" />
+                                  Confidence Level
+                                </h3>
+                                <span className={`px-3 py-1 rounded-full text-sm font-semibold ${
+                                  results.confidence === 'High' 
+                                    ? 'bg-emerald-100 text-emerald-700' 
+                                    : results.confidence === 'Medium'
+                                      ? 'bg-blue-100 text-blue-700'
+                                      : 'bg-amber-100 text-amber-700'
+                                }`}>
+                                  {results.confidence}
+                                </span>
+                              </div>
+                              
+                              {/* Confidence Bar */}
+                              <div className="h-2 bg-slate-100 rounded-full overflow-hidden mb-3">
+                                <motion.div 
+                                  className={`h-full rounded-full ${
+                                    results.confidence === 'High'
+                                      ? 'bg-emerald-500'
+                                      : results.confidence === 'Medium'
+                                        ? 'bg-blue-500'
+                                        : 'bg-amber-500'
+                                  }`}
+                                  initial={{ width: 0 }}
+                                  animate={{ width: `${Math.min(100, results.confidenceScore * 10)}%` }}
+                                  transition={{ duration: 0.5, delay: 0.2 }}
+                                />
+                              </div>
+                              
+                              <p className="text-sm text-slate-600 mb-4">{results.confidenceExplanation}</p>
+                              
+                              {/* Missing Inputs */}
+                              {results.missingInputs.length > 0 && results.confidence !== 'High' && (
+                                <div className="bg-amber-50 border border-amber-100 rounded-lg p-3">
+                                  <p className="text-xs font-medium text-amber-800 mb-2">Missing inputs:</p>
+                                  <div className="flex flex-wrap gap-1.5">
+                                    {results.missingInputs.map((input, i) => (
+                                      <span key={i} className="px-2 py-0.5 bg-amber-100 text-amber-700 rounded text-xs">
+                                        {input}
+                                      </span>
+                                    ))}
+                                  </div>
+                                  <p className="text-[11px] text-amber-600 mt-2">
+                                    Add these for a more accurate valuation.
+                                  </p>
+                                </div>
+                              )}
+                            </div>
+
+                            {/* Drivers & Risks */}
+                            <div className="bg-white rounded-xl border border-slate-200 p-6">
+                              <div className="grid grid-cols-1 gap-6">
+                                {/* Key Drivers */}
+                                <div>
+                                  <h4 className="font-semibold text-slate-900 flex items-center gap-2 mb-3">
+                                    <TrendingUp className="w-4 h-4 text-emerald-500" />
+                                    Key Drivers
+                                  </h4>
+                                  {results.drivers.length > 0 ? (
+                                    <ul className="space-y-2">
+                                      {results.drivers.map((driver, i) => (
+                                        <li key={i} className="flex items-center justify-between text-sm">
+                                          <span className="text-slate-700">{driver.text}</span>
+                                          <span className="px-2 py-0.5 bg-emerald-50 text-emerald-700 rounded text-xs font-medium">
+                                            {driver.impact}
+                                          </span>
+                                        </li>
+                                      ))}
+                                    </ul>
+                                  ) : (
+                                    <p className="text-sm text-slate-500">No significant drivers identified.</p>
+                                  )}
+                                </div>
+
+                                {/* Red Flags */}
+                                {results.risks.length > 0 && (
+                                  <div>
+                                    <h4 className="font-semibold text-slate-900 flex items-center gap-2 mb-3">
+                                      <AlertTriangle className="w-4 h-4 text-amber-500" />
+                                      Red Flags
+                                    </h4>
+                                    <ul className="space-y-2">
+                                      {results.risks.map((risk, i) => (
+                                        <li key={i} className="flex items-center justify-between text-sm">
+                                          <span className="text-slate-700">{risk.text}</span>
+                                          <span className="px-2 py-0.5 bg-amber-50 text-amber-700 rounded text-xs font-medium">
+                                            {risk.impact}
+                                          </span>
+                                        </li>
+                                      ))}
+                                    </ul>
+                                  </div>
+                                )}
+                              </div>
+                            </div>
+                          </div>
+
+                          {/* Improvements Card */}
+                          {results.improvements.length > 0 && (
+                            <div className="bg-gradient-to-br from-[#F0F7FF] to-white rounded-xl border border-[#DCEAFF] p-6">
+                              <h3 className="font-semibold text-slate-900 flex items-center gap-2 mb-4">
+                                <Zap className="w-5 h-5 text-[#0B4DBB]" />
+                                What to Improve to Increase Valuation
+                              </h3>
+                              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                {results.improvements.map((item, i) => (
+                                  <div key={i} className="flex items-start gap-3 bg-white rounded-lg p-3 border border-slate-100">
+                                    <div className="w-6 h-6 rounded-full bg-[#0B4DBB]/10 flex items-center justify-center flex-shrink-0 mt-0.5">
+                                      <ChevronRight className="w-4 h-4 text-[#0B4DBB]" />
+                                    </div>
+                                    <div>
+                                      <p className="text-sm text-slate-700">{item.text}</p>
+                                      <p className="text-xs text-emerald-600 font-medium mt-0.5">
+                                        Potential: {item.potential}
+                                      </p>
+                                    </div>
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+                          )}
+
+                          {/* CTAs */}
+                          <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-4 border-t border-slate-100">
+                            <Button
+                              variant="outline"
+                              onClick={() => {
+                                setStep(2);
+                                setAnalysisComplete(false);
+                              }}
+                              className="w-full sm:w-auto order-2 sm:order-1"
+                              data-testid="btn-edit-inputs"
+                            >
+                              <Edit3 className="w-4 h-4 mr-2" />
+                              Edit Inputs
+                            </Button>
+                            
+                            <Button
+                              onClick={submitValuation}
+                              className="w-full sm:w-auto bg-[#0B4DBB] hover:bg-[#093c96] text-white shadow-lg shadow-blue-900/20 px-8 order-1 sm:order-2"
+                              data-testid="btn-generate-report"
+                            >
+                              <FileText className="w-4 h-4 mr-2" />
+                              Generate Report
+                            </Button>
+                          </div>
+                        </motion.div>
+                      );
+                    })()}
                   </motion.div>
                 )}
               </AnimatePresence>
