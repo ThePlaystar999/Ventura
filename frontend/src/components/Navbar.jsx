@@ -24,8 +24,8 @@ const Navbar = ({ transparent = false }) => {
         <div className="flex items-center justify-between h-16 md:h-20">
           {/* Logo */}
           <Link to="/" className="flex items-center gap-3 group" data-testid="navbar-logo">
-            <VLogo size="sm" />
-            <span className="text-xl font-bold tracking-tight text-slate-900 group-hover:text-[#0B4DBB] transition-colors">
+            <VLogo size="md" />
+            <span className="text-2xl font-bold tracking-tight text-slate-900 group-hover:text-[#0B4DBB] transition-colors">
               Ventura
             </span>
           </Link>
