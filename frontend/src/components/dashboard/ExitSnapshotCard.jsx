@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '../ui/button';
 import { Input } from '../ui/input';
-import { TrendingUp, TrendingDown, ArrowRight, Edit3, Check, X } from 'lucide-react';
+import { Tooltip, TooltipContent, TooltipTrigger } from '../ui/tooltip';
+import { TrendingUp, TrendingDown, ArrowRight, Edit3, Check, X, HelpCircle } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 const ExitSnapshotCard = ({ 
