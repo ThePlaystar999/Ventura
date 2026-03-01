@@ -144,10 +144,57 @@ const Dashboard = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#F8FAFC]">
-        <div className="pt-12 flex items-center justify-center">
-          <div className="w-10 h-10 border-4 border-[#0B4DBB] border-t-transparent rounded-full animate-spin"></div>
-        </div>
+      <div className="min-h-screen bg-[#F8FAFC]" data-testid="dashboard-loading">
+        <main className="py-8 px-6 md:px-8 lg:px-12 max-w-[1400px] mx-auto">
+          {/* Header Skeleton */}
+          <div className="mb-8">
+            <div className="flex flex-col md:flex-row md:items-start justify-between gap-4 mb-6">
+              <div className="flex-1">
+                <Skeleton className="h-8 w-80 mb-2" />
+                <Skeleton className="h-5 w-64" />
+              </div>
+              <div className="flex items-center gap-3">
+                <Skeleton className="h-10 w-44" />
+                <Skeleton className="h-10 w-36" />
+              </div>
+            </div>
+          </div>
+
+          {/* Cards Skeleton */}
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+            {/* Main valuation card skeleton */}
+            <div className="lg:col-span-2 bg-gradient-to-br from-slate-100 to-slate-50 rounded-2xl p-8">
+              <Skeleton className="h-6 w-32 mb-4" />
+              <Skeleton className="h-16 w-48 mb-4" />
+              <div className="flex gap-8">
+                <Skeleton className="h-5 w-24" />
+                <Skeleton className="h-5 w-24" />
+                <Skeleton className="h-5 w-24" />
+              </div>
+            </div>
+            
+            {/* Side card skeleton */}
+            <div className="bg-white rounded-2xl border border-slate-200 p-6">
+              <Skeleton className="h-5 w-28 mb-4" />
+              <Skeleton className="h-12 w-20 mb-2" />
+              <Skeleton className="h-3 w-full" />
+            </div>
+          </div>
+
+          {/* Projects Skeleton */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {[1, 2, 3].map((i) => (
+              <div key={i} className="bg-white rounded-xl border border-slate-200 p-6">
+                <Skeleton className="h-6 w-40 mb-3" />
+                <Skeleton className="h-4 w-24 mb-4" />
+                <div className="flex gap-2">
+                  <Skeleton className="h-9 w-24" />
+                  <Skeleton className="h-9 w-24" />
+                </div>
+              </div>
+            ))}
+          </div>
+        </main>
       </div>
     );
   }
