@@ -21,7 +21,7 @@ const Navbar = ({ transparent = false }) => {
       data-testid="navbar"
     >
       <div className="max-w-7xl mx-auto px-6 md:px-12 lg:px-24">
-        <div className="flex items-center justify-between h-16 md:h-20">
+        <div className="flex items-center justify-between h-20 md:h-24">
           {/* Logo */}
           <Link to="/" className="flex items-center gap-3 group" data-testid="navbar-logo">
             <VLogo size="md" />
