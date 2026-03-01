@@ -180,7 +180,12 @@ const CreateValuation = () => {
           qualitative: {
             product_maturity: formData.product_maturity,
             market_size: formData.market_size,
-            competitive_moat: formData.competitive_moat
+            competitive_moat: formData.competitive_moat,
+            founder_dependency: formData.founder_dependency,
+            sales_predictability: formData.sales_predictability,
+            // Calculated score
+            qualitative_score: calculateQualitativeScore().qualitativeScore,
+            qualitative_notes: calculateQualitativeScore().qualitativeNotes
           }
         })
       });
