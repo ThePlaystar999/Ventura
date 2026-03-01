@@ -8,6 +8,37 @@
 
 ## Changelog
 
+### March 1, 2026 - Qualitative Step M&A Enhancement
+
+**Enhanced Step 3 (Qualitative Assessment) with M&A-grade dimensions:**
+
+**5 Qualitative Dimensions:**
+1. Product Maturity (slider 1-5): MVP → Traction → PMF → Scaling → Leader
+2. Market Size (cards): Small (<$1B TAM), Medium ($1-10B), Large (>$10B)
+3. Competitive Moat (cards): Low, Medium, Strong
+4. Founder Dependency (NEW): Low (transferable), Medium, High (key-person risk)
+5. Sales Predictability (NEW): Self-serve (scalable), Mixed, Enterprise-lumpy
+
+**Completion Counter:**
+- Header shows X/5 dimensions completed
+- Circular progress indicator (SVG-based)
+- Real-time updates as user selects options
+
+**Qualitative Score (0-100):**
+- Appears when 3+ dimensions completed
+- Animated progress bar
+- Generates Strengths list (emerald/green)
+- Generates Risks list (amber/warning)
+- Used for multiplier adjustment in analysis
+
+**Multiple Impact Labels:**
+- Each card shows impact (e.g., "+0.5x multiple", "-0.3x multiple", "Baseline")
+- Deal Readiness toggles show: Audited Financials (+0.2x), Revenue Verified (+0.1x)
+
+**Testing:** All 12 features verified working (100% pass rate)
+
+---
+
 ### March 1, 2026 - Financial Metrics M&A-Grade Enhancement
 
 **Enhanced Step 2 (Financial Metrics) with M&A-grade inputs:**
