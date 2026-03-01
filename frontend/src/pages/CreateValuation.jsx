@@ -22,6 +22,7 @@ const CreateValuation = () => {
   const navigate = useNavigate();
   const [step, setStep] = useState(1);
   const [analyzing, setAnalyzing] = useState(false);
+  const [analysisComplete, setAnalysisComplete] = useState(false);
   const [previewExpanded, setPreviewExpanded] = useState(false);
   const [revenueType, setRevenueType] = useState('arr'); // 'arr' or 'mrr'
 
